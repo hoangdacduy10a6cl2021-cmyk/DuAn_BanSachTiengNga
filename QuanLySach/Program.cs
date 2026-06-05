@@ -7,7 +7,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddDistributedMemoryCache(); // ✅ THÊM DÒNG NÀY
+builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
 {
@@ -27,6 +27,24 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
+
+// ← MIDDLEWARE: đọc cookie "Запомнить меня" → khôi phục session
+app.Use(async (context, next) =>
+{
+    if (context.Session.GetInt32("UserId") == null)
+    {
+        var userIdCookie = context.Request.Cookies["RememberUserId"];
+        var userNameCookie = context.Request.Cookies["RememberUserName"];
+
+        if (!string.IsNullOrEmpty(userIdCookie) && int.TryParse(userIdCookie, out int uid))
+        {
+            context.Session.SetInt32("UserId", uid);
+            context.Session.SetString("UserName", userNameCookie ?? "");
+        }
+    }
+    await next();
+});
+
 app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
