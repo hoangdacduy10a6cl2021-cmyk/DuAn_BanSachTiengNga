@@ -1,0 +1,43 @@
+﻿@model QuanLySach.ViewModels.HomeViewModel
+
+<!-- HERO BANNER -->
+<section class="hero-banner">
+    <div class="hero-slides">
+        <div class="hero-slide active" style="background-image: url('/images/hero1.png')"></div>
+        <div class="hero-slide" style="background-image: url('/images/hero2.png')"></div>
+        <div class="hero-slide" style="background-image: url('/images/hero3.png')"></div>
+    </div>
+
+    <div class="hero-content">
+        <p class="hero-sub">Добро пожаловать в</p>
+        <h2 class="hero-title">Книжный Рай</h2>
+        <p class="hero-desc">Место, где живут книги<br />и рождаются мечты</p>
+        <a href="#popular" class="btn-hero">К покупкам</a>
+    </div>
+
+    <button class="hero-prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+    <button class="hero-next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+
+    <div class="hero-dots">
+        <span class="dot active" onclick="goToSlide(0)"></span>
+        <span class="dot" onclick="goToSlide(1)"></span>
+        <span class="dot" onclick="goToSlide(2)"></span>
+    </div>
+</section>
+
+<!-- POPULAR BOOKS -->
+<section id="popular" class="popular-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Популярные книги</h2>
+            <a href="#" class="view-all">Смотреть все →</a>
+        </div>
+
+        <div class="books-grid">
+            @foreach (var book in Model.PopularBooks)
+            {
+                <partial name="_BookCard" model="book" />
+            }
+        </div>
+    </div>
+</section>

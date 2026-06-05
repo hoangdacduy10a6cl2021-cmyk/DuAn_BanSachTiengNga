@@ -1,0 +1,287 @@
+﻿@{
+    ViewData["Title"] = "Акции";
+}
+
+<div class="promo-page">
+    <div class="container">
+
+        <!-- BANNER -->
+        <div class="promo-banner">
+            <div class="promo-banner-text">
+                <span class="promo-tag">Специальные предложения</span>
+                <h1>Акции и скидки</h1>
+                <p>Выгодные предложения для любителей книг</p>
+            </div>
+            <div class="promo-banner-icon">🎉</div>
+        </div>
+
+        <!-- PROMO CARDS -->
+        <div class="promo-grid">
+
+            <div class="promo-card featured">
+                <div class="promo-badge">-30%</div>
+                <div class="promo-card-icon">📚</div>
+                <h3>Классика со скидкой</h3>
+                <p>Скидка 30% на все книги из раздела «Художественная литература»</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> До 30 июня 2026</div>
+                <a asp-controller="Books" asp-action="Index" asp-route-categoryId="1" class="promo-btn">Перейти к книгам</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">2+1</div>
+                <div class="promo-card-icon">🎁</div>
+                <h3>Три по цене двух</h3>
+                <p>При покупке 2 книг — третья в подарок. Акция распространяется на весь каталог</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> До 15 июля 2026</div>
+                <a asp-controller="Books" asp-action="Index" class="promo-btn">Перейти к каталогу</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">-20%</div>
+                <div class="promo-card-icon">🚀</div>
+                <h3>Фантастика месяца</h3>
+                <p>Скидка 20% на все книги в жанре фантастики. Отличный повод открыть новые миры!</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> До 31 июля 2026</div>
+                <a asp-controller="Books" asp-action="Index" asp-route-categoryId="3" class="promo-btn">Смотреть фантастику</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">Бесплатно</div>
+                <div class="promo-card-icon">🚚</div>
+                <h3>Бесплатная доставка</h3>
+                <p>Бесплатная доставка при заказе от 1500 ₽. Доставляем по всей России</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> Постоянная акция</div>
+                <a asp-controller="Books" asp-action="Index" class="promo-btn">Сделать заказ</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">-15%</div>
+                <div class="promo-card-icon">🧒</div>
+                <h3>Детские книги</h3>
+                <p>Скидка 15% на детскую литературу. Подарите ребёнку радость чтения!</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> До 1 сентября 2026</div>
+                <a asp-controller="Books" asp-action="Index" asp-route-categoryId="5" class="promo-btn">Детская литература</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">Подарок</div>
+                <div class="promo-card-icon">💌</div>
+                <h3>Подарочная упаковка</h3>
+                <p>Бесплатная подарочная упаковка для любого заказа в июне. Порадуйте близких!</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> Весь июнь 2026</div>
+                <a asp-controller="Books" asp-action="Index" class="promo-btn">Выбрать подарок</a>
+            </div>
+
+        </div>
+
+        <!-- NEWSLETTER -->
+        <div class="promo-newsletter">
+            <div class="promo-newsletter-text">
+                <h3>Подпишитесь на рассылку</h3>
+                <p>Получайте информацию о новых акциях и скидках первыми</p>
+            </div>
+            <div class="promo-newsletter-form">
+                <input type="email" placeholder="Введите ваш e-mail" />
+                <button>Подписаться</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .promo-page {
+        padding: 40px 0 60px;
+        background: #fdf8f0;
+    }
+
+    /* BANNER */
+    .promo-banner {
+        background: linear-gradient(135deg, #b8860b, #d4a017);
+        border-radius: 16px;
+        padding: 50px 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 48px;
+        color: white;
+    }
+
+    .promo-tag {
+        background: rgba(255,255,255,0.25);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 14px;
+        letter-spacing: 0.5px;
+    }
+
+    .promo-banner h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 42px;
+        margin: 0 0 10px;
+        color: white;
+    }
+
+    .promo-banner p {
+        font-size: 16px;
+        opacity: 0.9;
+        margin: 0;
+    }
+
+    .promo-banner-icon {
+        font-size: 90px;
+        line-height: 1;
+    }
+
+    /* GRID */
+    .promo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-bottom: 48px;
+    }
+
+    .promo-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 32px 28px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .promo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .promo-card.featured {
+            border: 2px solid #b8860b;
+        }
+
+    .promo-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #b8860b;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .promo-card-icon {
+        font-size: 44px;
+        line-height: 1;
+    }
+
+    .promo-card h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        color: #333;
+        margin: 0;
+    }
+
+    .promo-card p {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+        flex: 1;
+    }
+
+    .promo-period {
+        font-size: 13px;
+        color: #999;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .promo-period i {
+            color: #b8860b;
+        }
+
+    .promo-btn {
+        display: inline-block;
+        background: #b8860b;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        text-align: center;
+        transition: background 0.2s;
+        margin-top: 4px;
+    }
+
+        .promo-btn:hover {
+            background: #9a6f00;
+            color: white;
+        }
+
+    /* NEWSLETTER */
+    .promo-newsletter {
+        background: #333;
+        border-radius: 12px;
+        padding: 40px 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .promo-newsletter-text h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 24px;
+        color: white;
+        margin: 0 0 8px;
+    }
+
+    .promo-newsletter-text p {
+        color: #aaa;
+        margin: 0;
+        font-size: 15px;
+    }
+
+    .promo-newsletter-form {
+        display: flex;
+        gap: 12px;
+        flex: 1;
+        max-width: 440px;
+    }
+
+        .promo-newsletter-form input {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .promo-newsletter-form button {
+            padding: 12px 24px;
+            background: #b8860b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+            .promo-newsletter-form button:hover {
+                background: #9a6f00;
+            }
+</style>

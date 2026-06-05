@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Новинки";
+}
+
+<div class="coming-soon-box">
+    <div class="coming-soon-icon">📚</div>
+    <h2>В разработке...</h2>
+    <p class="coming-soon-title">Этот раздел скоро появится</p>
+    <p class="coming-soon-desc">Мы работаем над тем, чтобы предложить вам лучшие новинки книжного мира</p>
+    <a asp-controller="Books" asp-action="Index" class="back-btn">← Вернуться к книгам</a>
+</div>
+
+<style>
+    .coming-soon-box {
+        text-align: center;
+        padding: 80px 20px;
+        background: #fdf8f0;
+        border-radius: 16px;
+        max-width: 600px;
+        margin: 60px auto;
+    }
+
+    .coming-soon-icon {
+        font-size: 72px;
+        margin-bottom: 24px;
+    }
+
+    .coming-soon-box {
+        text-align: center;
+        padding: 80px 20px;
+        background: transparent;
+        border-radius: 0;
+        max-width: 600px;
+        margin: 60px auto;
+    }
+
+    .coming-soon-title {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 8px;
+    }
+
+    .coming-soon-desc {
+        font-size: 0.95rem;
+        color: #888;
+        margin-bottom: 32px;
+    }
+
+    .back-btn {
+        display: inline-block;
+        background: #b8860b;
+        color: white;
+        padding: 14px 40px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: background 0.2s;
+    }
+
+        .back-btn:hover {
+            background: #9a6f00;
+            color: white;
+        }
+</style>

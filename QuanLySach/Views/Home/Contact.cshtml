@@ -1,0 +1,225 @@
+﻿@{
+    ViewData["Title"] = "Контакты";
+}
+
+<div class="contact-page">
+    <div class="container">
+        <div class="contact-wrapper">
+
+            <!-- LEFT: THÔNG TIN LIÊN HỆ -->
+            <div class="contact-info">
+                <div class="contact-logo">
+                    <img src="~/images/logo.png" alt="Книжный Рай" />
+                    <div>
+                        <h2>Книжный Рай</h2>
+                        <span>— Thiên đường sách —</span>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <strong>Наш адрес</strong>
+                        <p>ул. Мясницкая, д. 6/3, стр. 1, Москва, Россия, 101000</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <strong>Телефон</strong>
+                        <p class="highlight"> 0946029615</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <strong>E-mail</strong>
+                        <p>Русские-книги@gmail.com</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <strong>Время работы</strong>
+                        <p>Ежедневно с 9:00 до 21:00</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: FORM -->
+            <div class="contact-form">
+                <h3>Напишите нам</h3>
+
+                <div class="form-group">
+                    <label>Имя</label>
+                    <input type="text" placeholder="Введите ваше имя" />
+                </div>
+
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" placeholder="Введите ваш e-mail" />
+                </div>
+
+                <div class="form-group">
+                    <label>Сообщение</label>
+                    <textarea rows="5" placeholder="Введите сообщение"></textarea>
+                </div>
+
+                <button class="btn-send">Отправить сообщение</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .contact-page {
+        padding: 60px 0;
+        background: #fdf8f0;
+    }
+
+    .contact-wrapper {
+        display: flex;
+        gap: 40px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .contact-info {
+        flex: 1;
+        padding: 40px;
+        background: #fff;
+    }
+
+    .contact-logo {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 36px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #eee;
+    }
+
+        .contact-logo img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+        }
+
+        .contact-logo h2 {
+            font-family: 'Playfair Display', serif;
+            color: #b8860b;
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .contact-logo span {
+            color: #999;
+            font-size: 13px;
+        }
+
+    .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+        .contact-item i {
+            font-size: 20px;
+            color: #b8860b;
+            margin-top: 2px;
+            width: 24px;
+        }
+
+        .contact-item strong {
+            display: block;
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .contact-item p {
+            margin: 0;
+            font-size: 15px;
+            color: #333;
+        }
+
+            .contact-item p.highlight {
+                color: #b8860b;
+                font-weight: 700;
+                font-size: 18px;
+            }
+
+    .contact-form {
+        flex: 1;
+        padding: 40px;
+        background: #fafafa;
+    }
+
+        .contact-form h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Lato', sans-serif;
+            background: #fff;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+            .form-group input:focus,
+            .form-group textarea:focus {
+                outline: none;
+                border-color: #b8860b;
+            }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+    .btn-send {
+        width: 100%;
+        padding: 14px;
+        background: #b8860b;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 700;
+        font-family: 'Lato', sans-serif;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        transition: background 0.2s;
+    }
+
+        .btn-send:hover {
+            background: #9a6f00;
+        }
+</style>

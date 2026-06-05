@@ -1,0 +1,43 @@
+﻿@{
+    var current = ViewData["ActiveMenu"]?.ToString();
+}
+
+<div class="profile-sidebar">
+    <ul>
+        <li class="@(current == "Profile" ? "active" : "")">
+            <a asp-controller="Account" asp-action="Profile">
+                <i class="fas fa-user"></i> Мой профиль
+            </a>
+        </li>
+        <li class="@(current == "Orders" ? "active" : "")">
+            <a asp-controller="Account" asp-action="Orders">
+                <i class="fas fa-box"></i> Мои заказы
+            </a>
+        </li>
+        <li class="@(current == "Wishlist" ? "active" : "")">
+            <a asp-controller="Account" asp-action="Wishlist">
+                <i class="fas fa-heart"></i> Избранное
+            </a>
+        </li>
+        <li class="@(current == "Addresses" ? "active" : "")">
+            <a asp-controller="Account" asp-action="Addresses">
+                <i class="fas fa-map-marker-alt"></i> Адреса доставки
+            </a>
+        </li>
+        <li class="@(current == "Payment" ? "active" : "")">
+            <a asp-controller="Account" asp-action="Payment">
+                <i class="fas fa-credit-card"></i> Способы оплаты
+            </a>
+        </li>
+        <li class="@(current == "Settings" ? "active" : "")">
+            <a asp-controller="Account" asp-action="Settings">
+                <i class="fas fa-cog"></i> Настройки
+            </a>
+        </li>
+        <li>
+            <a href="/Account/Logout">
+                <i class="fas fa-sign-out-alt"></i> Выйти
+            </a>
+        </li>
+    </ul>
+</div>

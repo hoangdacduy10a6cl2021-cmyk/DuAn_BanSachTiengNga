@@ -1,0 +1,183 @@
+﻿@model IEnumerable<QuanLySach.Models.CartItem>
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<div class="cart-page">
+    <h2 class="cart-title">Корзина</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="cart-empty">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Корзина пуста</p>
+            <a asp-controller="Books" asp-action="Index" class="btn-back">Перейти к книгам</a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-layout">
+            <div class="cart-items">
+                @foreach (var item in Model)
+                {
+                    <div class="cart-item">
+                        <img src="@item.Book?.CoverImageUrl" alt="@item.Book?.Title" />
+                        <div class="cart-item-info">
+                            <h4>@item.Book?.Title</h4>
+                            <p>@item.Book?.Author</p>
+                        </div>
+                        <div class="cart-item-price">@item.Book?.Price.ToString("0.00") ₽</div>
+                        <div class="cart-item-qty">× @item.Quantity</div>
+                        <div class="cart-item-total">@((item.Book!.Price * item.Quantity).ToString("0.00")) ₽</div>
+                        <form asp-action="Remove" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="cart-remove">✕</button>
+                        </form>
+                    </div>
+                }
+            </div>
+            <div class="cart-summary">
+                <h3>Итого</h3>
+                <div class="cart-total">@Model.Sum(i => i.Book!.Price * i.Quantity).ToString("0.00") ₽</div>
+                <a asp-action="Checkout" class="btn-checkout">Оформить заказ</a>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .cart-page {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .cart-title {
+        font-family: Georgia, serif;
+        font-size: 2rem;
+        color: #b8860b;
+        margin-bottom: 30px;
+    }
+
+    .cart-empty {
+        text-align: center;
+        padding: 60px;
+        color: #888;
+    }
+
+        .cart-empty i {
+            font-size: 60px;
+            color: #ddd;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+    .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 30px;
+    }
+
+    .cart-items {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 0;
+        border-bottom: 1px solid #f0e8d8;
+    }
+
+        .cart-item img {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+    .cart-item-info {
+        flex: 1;
+    }
+
+        .cart-item-info h4 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-info p {
+            font-size: 12px;
+            color: #888;
+        }
+
+    .cart-item-price, .cart-item-qty, .cart-item-total {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+        min-width: 70px;
+        text-align: right;
+    }
+
+    .cart-remove {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        .cart-remove:hover {
+            color: #e53935;
+        }
+
+    .cart-summary {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        height: fit-content;
+    }
+
+        .cart-summary h3 {
+            font-family: Georgia, serif;
+            color: #4a2c00;
+            margin-bottom: 16px;
+        }
+
+    .cart-total {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #b8860b;
+        margin-bottom: 20px;
+    }
+
+    .btn-checkout {
+        display: block;
+        background: #b8860b;
+        color: #fff;
+        text-align: center;
+        padding: 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+        .btn-checkout:hover {
+            background: #9a6f00;
+        }
+
+    .btn-back {
+        display: inline-block;
+        background: #b8860b;
+        color: #fff;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        margin-top: 16px;
+    }
+</style>

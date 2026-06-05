@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/site.css?v=4" />
+    <title>Книжный Рай — Thiên đường sách</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container top-bar-inner">
+            <div class="top-contacts">
+                <span><i class="fas fa-phone"></i> 0946029615</span>
+                <span><i class="fas fa-envelope"></i> Русские-книги@gmail.com</span>
+            </div>
+            <div class="top-links">
+                <a href="#">Доставка и оплата</a>
+                <a asp-controller="Home" asp-action="About">О нас</a>
+                <a href="#">Контакты</a>
+                <div class="lang-selector">
+                    <span class="lang-current">
+                        <i class="fas fa-globe"></i> RU ▾
+                    </span>
+                    <ul class="lang-dropdown">
+                        <li onclick="doTranslate('en')">🇬🇧 English</li>
+                        <li onclick="doTranslate('vi')">🇻🇳 Tiếng Việt</li>
+                        <li onclick="doTranslate('de')">🇩🇪 Deutsch</li>
+                        <li onclick="doTranslate('ru')">🇷🇺 Русский</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Translate Element ẩn -->
+    <div id="google_translate_element" style="display:none"></div>
+
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="logo">
+                <img src="~/images/logo.png" alt="Книжный Рай" />
+                <div class="logo-text">
+                    <h1>Книжный Рай</h1>
+                    <span>— Thiên đường sách —</span>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="Поиск книг..." />
+                <button><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="header-actions">
+                @if (Context.Session.GetString("UserName") != null)
+                {
+                    <a asp-controller="Account" asp-action="Profile" class="action-btn">
+                        <i class="fas fa-user-circle"></i>
+                        <span>@Context.Session.GetString("UserName")</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="action-btn">
+                        <i class="fas fa-user"></i>
+                        <span>Войти<br />Аккаунт</span>
+                    </a>
+                }
+                <a asp-controller="Cart" asp-action="Index" class="action-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Корзина<br />0 ₽</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="main-nav">
+        <div class="container" style="position:relative;">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars" id="menu-icon"></i>
+            </button>
+            <ul id="main-menu">
+                <li><a asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> Главная</a></li>
+                <li class="has-dropdown">
+                    <a href="#" onclick="toggleDropdown(event, this)">Книги <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown">
+                        <li><a asp-controller="Books" asp-action="Index">Все книги</a></li>
+                        <li><a asp-controller="Books" asp-action="ComingSoon">Новинки</a></li>
+                    </ul>
+                </li>
+                <li><a asp-controller="Home" asp-action="NewBooks">Новинки</a></li>
+                <li><a asp-controller="Home" asp-action="Popular">Популярное</a></li>
+                <li><a asp-controller="Home" asp-action="Promotions">Акции</a></li>
+                <li><a asp-controller="Home" asp-action="Contact">Контакты</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <main>
+        @RenderBody()
+    </main>
+
+    @if (ViewData["HideFooter"] == null || !(bool)ViewData["HideFooter"])
+    {
+        <!-- FEATURES BAR -->
+        <div class="features-bar">
+            <div class="container features-inner">
+                <div class="feature">
+                    <i class="fas fa-book-open"></i>
+                    <div>
+                        <strong>Широкий ассортимент</strong>
+                        <span>Тысячи книг на любой вкус</span>
+                    </div>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-truck"></i>
+                    <div>
+                        <strong>Быстрая доставка</strong>
+                        <span>Доставка по всей России</span>
+                    </div>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <strong>Гарантия качества</strong>
+                        <span>Только оригинальные книги</span>
+                    </div>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-tag"></i>
+                    <div>
+                        <strong>Скидки и акции</strong>
+                        <span>Выгодные предложения</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="site-footer">
+            <div class="container footer-inner">
+                <div class="footer-logo">
+                    <img src="~/images/logo.png" alt="Книжный Рай" />
+                    <div>
+                        <h3>Книжный Рай</h3>
+                        <span>— Thiên đường sách —</span>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Каталог</h4>
+                    <ul>
+                        <li><a asp-controller="Books" asp-action="Index">Все книги</a></li>
+                        <li><a asp-controller="Books" asp-action="Index">Категории</a></li>
+                        <li><a asp-controller="Home" asp-action="NewBooks">Новинки</a></li>
+                        <li><a asp-controller="Home" asp-action="Popular">Популярное</a></li>
+                        <li><a asp-controller="Home" asp-action="Promotions">Акции</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Покупателям</h4>
+                    <ul>
+                        <li><a href="#">Доставка и оплата</a></li>
+                        <li><a href="#">Возврат</a></li>
+                        <li><a href="#">Помощь</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact">Контакты</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Контакты</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 0946029615</li>
+                        <li><i class="fas fa-envelope"></i> Русские-книги@gmail.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> ул. Мясницкая, д. 6/3, стр. 1, Москва, Россия, 101000</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Книжный Рай. Все права защищены.</p>
+            </div>
+        </footer>
+    }
+
+    <script src="~/js/site.js"></script>
+
+    <!-- Google Translate Script -->
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+        function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+        pageLanguage: 'ru',
+        includedLanguages: 'en,vi,de,ru',
+        autoDisplay: false
+        }, 'google_translate_element');
+        }
+
+        function doTranslate(lang) {
+        const langNames = { 'en': '🇬🇧 EN', 'vi': '🇻🇳 VI', 'de': '🇩🇪 DE', 'ru': '🇷🇺 RU' };
+        document.querySelector('.lang-current').innerHTML =
+        '<i class="fas fa-globe"></i> ' + langNames[lang] + ' ▾';
+        const select = document.querySelector('.goog-te-combo');
+        if (select) {
+        select.value = lang;
+        select.dispatchEvent(new Event('change'));
+        }
+        }
+
+        function toggleMobileMenu() {
+        const menu = document.getElementById('main-menu');
+        const icon = document.getElementById('menu-icon');
+        menu.classList.toggle('open');
+        icon.className = menu.classList.contains('open')
+        ? 'fas fa-times'
+        : 'fas fa-bars';
+        }
+
+        function toggleDropdown(e, el) {
+        if (window.innerWidth <= 768) {
+        e.preventDefault();
+        el.parentElement.classList.toggle('open');
+        }
+        }
+
+        // Đóng menu khi click ra ngoài
+        document.addEventListener('click', function(e) {
+        const nav = document.querySelector('.main-nav');
+        if (!nav.contains(e.target)) {
+        document.getElementById('main-menu').classList.remove('open');
+        document.getElementById('menu-icon').className = 'fas fa-bars';
+        }
+        });
+    </script>
+
+</body>
+</html>
