@@ -51,8 +51,11 @@
             </div>
 
             <div class="search-box">
-                <input type="text" placeholder="Поиск книг..." />
-                <button><i class="fas fa-search"></i></button>
+                <form asp-controller="Books" asp-action="Search" method="get" style="display:flex;width:100%">
+                    <input type="text" name="q" placeholder="Поиск книг..."
+                           value="@ViewBag.SearchQuery" autocomplete="off" />
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
             </div>
 
             <div class="header-actions">
@@ -194,6 +197,53 @@
         </footer>
     }
 
+    @if (TempData["ToastSuccess"] != null)
+    {
+        <div id="toast-success">
+            <i class="fas fa-check-circle"></i> @TempData["ToastSuccess"]
+        </div>
+    }
+
+    <style>
+            #toast-success {
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #2e7d32;
+                color: #fff;
+                padding: 14px 28px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                z-index: 9999;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+                white-space: nowrap;
+                animation: fadeInOut 3s forwards;
+            }
+
+            @@keyframes fadeInOut {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(20px);
+                }
+
+                15% {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+
+                75% {
+                    opacity: 1;
+                }
+
+                100% {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(20px);
+                }
+            }
+    </style>
+
     <script src="~/js/site.js"></script>
 
     <!-- Google Translate Script -->
@@ -234,7 +284,6 @@
         }
         }
 
-        // Đóng menu khi click ra ngoài
         document.addEventListener('click', function(e) {
         const nav = document.querySelector('.main-nav');
         if (!nav.contains(e.target)) {

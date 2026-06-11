@@ -52,7 +52,6 @@ namespace QuanLySach.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // Nếu đã đăng nhập rồi thì về trang chủ luôn
             if (HttpContext.Session.GetInt32("UserId") != null)
                 return RedirectToAction("Index", "Home");
 
@@ -74,12 +73,11 @@ namespace QuanLySach.Controllers
                 return View(model);
             }
 
-            // Lưu session
             HttpContext.Session.SetInt32("UserId", user.Id);
             HttpContext.Session.SetString("UserName", user.Name);
             HttpContext.Session.SetString("UserEmail", user.Email);
+            TempData["ToastSuccess"] = "Вы успешно вошли в систему! 👋";
 
-            // Nếu chọn "Запомнить меня" → lưu cookie 30 ngày
             if (model.RememberMe)
             {
                 var cookieOptions = new CookieOptions
@@ -101,9 +99,9 @@ namespace QuanLySach.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            // Xóa cookie "Запомнить меня"
             Response.Cookies.Delete("RememberUserId");
             Response.Cookies.Delete("RememberUserName");
+            TempData["ToastSuccess"] = "Вы успешно вышли из системы!";
             return RedirectToAction("Index", "Home");
         }
 
@@ -134,7 +132,6 @@ namespace QuanLySach.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        // ===== PROFILE =====
         [HttpGet]
         public IActionResult Profile()
         {
@@ -168,7 +165,6 @@ namespace QuanLySach.Controllers
             return RedirectToAction("Profile");
         }
 
-        // ===== МОИ ЗАКАЗЫ =====
         [HttpGet]
         public IActionResult Orders()
         {
@@ -183,7 +179,6 @@ namespace QuanLySach.Controllers
             return View(orders);
         }
 
-        // ===== ИЗБРАННОЕ =====
         [HttpGet]
         public IActionResult Wishlist()
         {
@@ -223,7 +218,6 @@ namespace QuanLySach.Controllers
             }
         }
 
-        // ===== АДРЕСА ДОСТАВКИ =====
         [HttpGet]
         public IActionResult Addresses()
         {
@@ -232,7 +226,6 @@ namespace QuanLySach.Controllers
             return View();
         }
 
-        // ===== СПОСОБЫ ОПЛАТЫ =====
         [HttpGet]
         public IActionResult Payment()
         {
@@ -293,7 +286,6 @@ namespace QuanLySach.Controllers
             return RedirectToAction("Payment");
         }
 
-        // ===== НАСТРОЙКИ =====
         [HttpGet]
         public IActionResult Settings()
         {

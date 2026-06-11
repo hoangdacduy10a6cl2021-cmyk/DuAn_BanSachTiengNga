@@ -6,7 +6,20 @@
 
 <div class="books-page">
     <div class="container">
-        <h1 class="books-page-title">Все книги</h1>
+
+        @if (ViewBag.SearchQuery != null)
+        {
+            <h1 class="books-page-title">
+                Результаты поиска: «@ViewBag.SearchQuery»
+            </h1>
+            <p style="color:#888; margin-bottom:20px; font-size:14px;">
+                Найдено: @Model.Count книг
+            </p>
+        }
+        else
+        {
+            <h1 class="books-page-title">Все книги</h1>
+        }
 
         <div class="books-page-layout">
 
@@ -68,21 +81,35 @@
                             </div>
                         </div>
                     }
+
+                    @if (!Model.Any())
+                    {
+                        <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#888;">
+                            <i class="fas fa-search" style="font-size:48px; color:#ddd; display:block; margin-bottom:16px;"></i>
+                            <p style="font-size:1.1rem;">Книги не найдены по запросу «@ViewBag.SearchQuery»</p>
+                            <a asp-action="Index" style="color:#b8860b; margin-top:12px; display:inline-block;">
+                                ← Вернуться ко всем книгам
+                            </a>
+                        </div>
+                    }
                 </div>
 
                 <!-- PAGINATION -->
-                <div class="pagination">
-                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
-                    {
-                        <a href="?sort=@ViewBag.Sort&page=@i&categoryId=@ViewBag.CurrentCategory"
-                           class="page-btn @(ViewBag.Page == i ? "active" : "")">@i</a>
-                    }
-                    @if (ViewBag.Page < ViewBag.TotalPages)
-                    {
-                        <a href="?sort=@ViewBag.Sort&page=@(ViewBag.Page + 1)&categoryId=@ViewBag.CurrentCategory"
-                           class="page-btn">›</a>
-                    }
-                </div>
+                @if (ViewBag.SearchQuery == null)
+                {
+                    <div class="pagination">
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <a href="?sort=@ViewBag.Sort&page=@i&categoryId=@ViewBag.CurrentCategory"
+                               class="page-btn @(ViewBag.Page == i ? "active" : "")">@i</a>
+                        }
+                        @if (ViewBag.Page < ViewBag.TotalPages)
+                        {
+                            <a href="?sort=@ViewBag.Sort&page=@(ViewBag.Page + 1)&categoryId=@ViewBag.CurrentCategory"
+                               class="page-btn">›</a>
+                        }
+                    </div>
+                }
 
             </div>
         </div>
