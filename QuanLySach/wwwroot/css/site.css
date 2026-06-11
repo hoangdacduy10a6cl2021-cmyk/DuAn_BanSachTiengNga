@@ -1674,6 +1674,8 @@ body {
     /* NAV */
     .mobile-menu-btn {
         display: block;
+        width: 100%;
+        text-align: right;
     }
 
     .main-nav > div > ul {
@@ -2000,3 +2002,390 @@ body {
         font-size: 22px;
     }
 }
+/* ===== RESPONSIVE MOBILE ===== */
+
+/* HAMBURGER MENU */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 14px 16px;
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+
+    /* TOP BAR */
+    .top-bar {
+        display: none;
+    }
+
+    /* HEADER */
+    .header-inner {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 16px;
+    }
+
+    .logo {
+        min-width: unset;
+        flex: 1;
+    }
+
+        .logo img {
+            width: 60px;
+            height: 60px;
+        }
+
+    .logo-text h1 {
+        font-size: 18px;
+    }
+
+    .logo-text span {
+        font-size: 11px;
+    }
+
+    .search-box {
+        order: 3;
+        width: 100%;
+        flex: unset;
+    }
+
+    .header-actions {
+        gap: 12px;
+    }
+
+    .action-btn span {
+        display: none;
+    }
+
+    .action-btn i {
+        font-size: 24px;
+    }
+
+    /* NAV - HAMBURGER */
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .main-nav > div {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        width: 100%;
+    }
+
+        .main-nav > div > ul {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+        }
+
+            .main-nav > div > ul.open {
+                display: flex;
+            }
+
+            .main-nav > div > ul > li > a {
+                padding: 12px 16px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+    .has-dropdown > ul.dropdown {
+        position: static;
+        display: none;
+        box-shadow: none;
+        background: rgba(0,0,0,0.2);
+        min-width: unset;
+    }
+
+    .has-dropdown.open > ul.dropdown {
+        display: block;
+    }
+
+    .has-dropdown > ul.dropdown > li > a {
+        padding-left: 32px;
+    }
+
+    /* HERO */
+    .hero-banner {
+        min-height: 240px;
+    }
+
+    .hero-content {
+        margin: 16px;
+        padding: 20px 24px;
+        max-width: 100%;
+    }
+
+    .hero-title {
+        font-size: 26px;
+    }
+
+    .hero-sub {
+        font-size: 14px;
+    }
+
+    .hero-desc {
+        font-size: 13px;
+        margin-bottom: 14px;
+    }
+
+    .btn-hero {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+
+    /* POPULAR SECTION */
+    .popular-section {
+        padding: 24px 0;
+    }
+
+    .section-title {
+        font-size: 22px;
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    /* FEATURES BAR */
+    .features-inner {
+        flex-wrap: wrap;
+        gap: 14px;
+        justify-content: flex-start;
+        padding: 0 16px;
+    }
+
+    .feature {
+        width: calc(50% - 8px);
+    }
+
+        .feature i {
+            font-size: 24px;
+        }
+
+        .feature strong {
+            font-size: 12px;
+        }
+
+    /* FOOTER */
+    .footer-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .footer-logo {
+        grid-column: 1 / -1;
+    }
+
+    /* BOOKS PAGE */
+    .books-page-title {
+        font-size: 22px;
+    }
+
+    .books-page-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .books-sidebar {
+        overflow-x: auto;
+        padding: 8px 0;
+    }
+
+        .books-sidebar h3 {
+            display: none;
+        }
+
+        .books-sidebar ul {
+            display: flex;
+            flex-direction: row;
+            white-space: nowrap;
+            overflow-x: auto;
+            padding: 0 10px;
+            width: 100%;
+        }
+
+            .books-sidebar ul li a {
+                padding: 8px 14px;
+                border-radius: 20px;
+                font-size: 12px;
+                white-space: nowrap;
+                display: inline-block;
+            }
+
+            .books-sidebar ul li.active a {
+                background: var(--gold);
+                color: #fff;
+            }
+
+    .books-grid-page {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .book-cover img {
+        height: 160px;
+    }
+
+    .book-info h4 {
+        font-size: 12px;
+    }
+
+    .book-info .price {
+        font-size: 13px;
+    }
+
+    .books-sort-bar {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .books-count {
+        margin-left: 0;
+    }
+
+    /* PROFILE */
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-sidebar ul {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+        .profile-sidebar ul li a {
+            padding: 12px 14px;
+            border-bottom: none;
+            border-right: 1px solid #f0e8d8;
+            font-size: 12px;
+        }
+
+            .profile-sidebar ul li a i {
+                display: none;
+            }
+
+    .profile-content {
+        padding: 20px;
+    }
+
+    /* CONTACT */
+    .contact-wrapper {
+        flex-direction: column;
+    }
+
+    .contact-info, .contact-form {
+        padding: 24px;
+    }
+
+    /* PROMO */
+    .promo-banner {
+        flex-direction: column;
+        padding: 24px;
+        text-align: center;
+        gap: 16px;
+    }
+
+        .promo-banner h1 {
+            font-size: 24px;
+        }
+
+    .promo-banner-icon {
+        font-size: 48px;
+    }
+
+    .promo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .promo-newsletter {
+        flex-direction: column;
+        padding: 24px;
+        gap: 20px;
+    }
+
+    .promo-newsletter-form {
+        flex-direction: column;
+        max-width: 100%;
+    }
+
+    /* SETTINGS */
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* ORDERS TABLE */
+    .orders-table thead {
+        display: none;
+    }
+
+    .orders-table tr {
+        display: block;
+        border: 1px solid #f0e8d8;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        padding: 12px;
+    }
+
+    .orders-table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px solid #f9f4ec;
+        font-size: 13px;
+    }
+
+        .orders-table td:last-child {
+            border-bottom: none;
+        }
+
+    /* QR MODAL */
+    .qr-modal-box {
+        padding: 24px;
+    }
+
+    .qr-modal-img {
+        width: 160px;
+        height: 160px;
+    }
+
+    /* PAYMENT */
+    .card-info {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .payment-card-item {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .feature {
+        width: 100%;
+    }
+
+    .hero-title {
+        font-size: 20px;
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .books-grid-page {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
+

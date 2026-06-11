@@ -25,10 +25,13 @@
                         <div class="cart-item-info">
                             <h4>@item.Book?.Title</h4>
                             <p>@item.Book?.Author</p>
+                            <p class="cart-item-price-mobile">@item.Book?.Price.ToString("0.00") ₽ × @item.Quantity = <strong>@((item.Book!.Price * item.Quantity).ToString("0.00")) ₽</strong></p>
                         </div>
-                        <div class="cart-item-price">@item.Book?.Price.ToString("0.00") ₽</div>
-                        <div class="cart-item-qty">× @item.Quantity</div>
-                        <div class="cart-item-total">@((item.Book!.Price * item.Quantity).ToString("0.00")) ₽</div>
+                        <div class="cart-item-right">
+                            <div class="cart-item-price">@item.Book?.Price.ToString("0.00") ₽</div>
+                            <div class="cart-item-qty">× @item.Quantity</div>
+                            <div class="cart-item-total">@((item.Book!.Price * item.Quantity).ToString("0.00")) ₽</div>
+                        </div>
                         <form asp-action="Remove" method="post">
                             <input type="hidden" name="id" value="@item.Id" />
                             <button type="submit" class="cart-remove">✕</button>
@@ -36,10 +39,25 @@
                     </div>
                 }
             </div>
+
             <div class="cart-summary">
-                <h3>Итого</h3>
-                <div class="cart-total">@Model.Sum(i => i.Book!.Price * i.Quantity).ToString("0.00") ₽</div>
-                <a asp-action="Checkout" class="btn-checkout">Оформить заказ</a>
+                <h3>Тотальный счёт</h3>
+                @foreach (var item in Model)
+                {
+                    <div class="summary-line">
+                        <span class="summary-book-title">@item.Book?.Title</span>
+                        <span>@item.Book?.Price.ToString("0.00") ₽ × @item.Quantity</span>
+                    </div>
+                }
+                <div class="summary-delivery">
+                    <span>Доставка:</span>
+                    <span style="color:#2e7d32">Бесплатно</span>
+                </div>
+                <div class="cart-total-row">
+                    <span>Итого:</span>
+                    <span class="cart-total">@Model.Sum(i => i.Book!.Price * i.Quantity).ToString("0.00") ₽</span>
+                </div>
+                <a asp-action="Checkout" class="btn-checkout">Đặt hàng</a>
             </div>
         </div>
     }
@@ -48,20 +66,20 @@
 <style>
     .cart-page {
         max-width: 1100px;
-        margin: 40px auto;
-        padding: 0 20px;
+        margin: 24px auto;
+        padding: 0 16px;
     }
 
     .cart-title {
         font-family: Georgia, serif;
-        font-size: 2rem;
+        font-size: 1.8rem;
         color: #b8860b;
-        margin-bottom: 30px;
+        margin-bottom: 24px;
     }
 
     .cart-empty {
         text-align: center;
-        padding: 60px;
+        padding: 60px 20px;
         color: #888;
     }
 
@@ -72,42 +90,48 @@
             display: block;
         }
 
+    /* LAYOUT */
     .cart-layout {
         display: grid;
-        grid-template-columns: 1fr 280px;
-        gap: 30px;
+        grid-template-columns: 1fr 300px;
+        gap: 24px;
+        align-items: start;
     }
 
+    /* CART ITEMS */
     .cart-items {
         background: #fff;
         border-radius: 8px;
-        padding: 20px;
+        padding: 16px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .cart-item {
         display: flex;
         align-items: center;
-        gap: 16px;
-        padding: 16px 0;
+        gap: 12px;
+        padding: 14px 0;
         border-bottom: 1px solid #f0e8d8;
     }
 
         .cart-item img {
-            width: 60px;
-            height: 80px;
+            width: 56px;
+            height: 76px;
             object-fit: cover;
             border-radius: 4px;
+            flex-shrink: 0;
         }
 
     .cart-item-info {
         flex: 1;
+        min-width: 0;
     }
 
         .cart-item-info h4 {
-            font-size: 14px;
+            font-size: 13px;
             color: #333;
             margin-bottom: 4px;
+            line-height: 1.3;
         }
 
         .cart-item-info p {
@@ -115,12 +139,26 @@
             color: #888;
         }
 
+    /* Desktop: hiện cột giá */
+    .cart-item-right {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
     .cart-item-price, .cart-item-qty, .cart-item-total {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
         color: #333;
-        min-width: 70px;
-        text-align: right;
+        white-space: nowrap;
+    }
+
+    /* Mobile: ẩn cột giá desktop, hiện giá inline */
+    .cart-item-price-mobile {
+        display: none;
+        font-size: 12px;
+        color: #555;
+        margin-top: 4px;
     }
 
     .cart-remove {
@@ -129,31 +167,69 @@
         color: #ccc;
         font-size: 16px;
         cursor: pointer;
+        padding: 4px;
+        flex-shrink: 0;
     }
 
         .cart-remove:hover {
             color: #e53935;
         }
 
+    /* SUMMARY */
     .cart-summary {
         background: #fff;
         border-radius: 8px;
-        padding: 24px;
+        padding: 20px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        height: fit-content;
+        position: sticky;
+        top: 20px;
     }
 
         .cart-summary h3 {
             font-family: Georgia, serif;
             color: #4a2c00;
             margin-bottom: 16px;
+            font-size: 1rem;
         }
 
+    .summary-line {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+        gap: 8px;
+    }
+
+    .summary-book-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 140px;
+    }
+
+    .summary-delivery {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: #555;
+        margin: 12px 0;
+        padding-top: 8px;
+        border-top: 1px solid #f0e8d8;
+    }
+
+    .cart-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 12px 0 20px;
+        font-weight: bold;
+    }
+
     .cart-total {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         font-weight: bold;
         color: #b8860b;
-        margin-bottom: 20px;
     }
 
     .btn-checkout {
@@ -165,10 +241,12 @@
         border-radius: 8px;
         text-decoration: none;
         font-weight: bold;
+        font-size: 15px;
     }
 
         .btn-checkout:hover {
             background: #9a6f00;
+            color: #fff;
         }
 
     .btn-back {
@@ -179,5 +257,29 @@
         border-radius: 8px;
         text-decoration: none;
         margin-top: 16px;
+    }
+
+    /* MOBILE */
+    @@media (max-width: 640px) {
+        .cart-layout {
+            grid-template-columns: 1fr;
+        }
+        /* Đảo summary lên trên items */
+        .cart-summary {
+            order: -1;
+            position: static;
+        }
+
+        .cart-item-right {
+            display: none;
+        }
+
+        .cart-item-price-mobile {
+            display: block;
+        }
+
+        .cart-title {
+            font-size: 1.4rem;
+        }
     }
 </style>
