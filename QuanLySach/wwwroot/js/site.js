@@ -148,3 +148,55 @@ function formatExpiry(input) {
     if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
     input.value = val;
 }
+
+// ===== LIVE SEARCH =====
+let searchTimer;
+function liveSearch(query) {
+    clearTimeout(searchTimer);
+    const dropdown = document.getElementById('searchDropdown');
+    if (!dropdown) return;
+
+    if (query.trim().length < 2) {
+        dropdown.classList.remove('open');
+        dropdown.innerHTML = '';
+        return;
+    }
+
+    searchTimer = setTimeout(() => {
+        fetch('/Home/Search?q=' + encodeURIComponent(query))
+            .then(res => res.json())
+            .then(data => {
+                if (data.length === 0) {
+                    dropdown.innerHTML = '<div class="search-no-result">Книги не найдены</div>';
+                } else {
+                    dropdown.innerHTML = data.map(book => `
+                        <a class="search-item" href="/Books/Detail/${book.id}">
+                            <img src="${book.image}" alt="${book.title}"
+                                 onerror="this.src='/images/no-cover.png'" />
+                            <div class="search-item-info">
+                                <div class="search-item-title">${book.title}</div>
+                                <div class="search-item-author">${book.author}</div>
+                            </div>
+                            <div class="search-item-price">${book.price} ₽</div>
+                        </a>
+                    `).join('');
+                }
+                dropdown.classList.add('open');
+            });
+    }, 300);
+}
+
+function goSearch() {
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+    const q = input.value;
+    if (q.trim()) window.location.href = '/Books/Index?search=' + encodeURIComponent(q);
+}
+
+// Đóng dropdown khi click ra ngoài
+document.addEventListener('click', function (e) {
+    if (!e.target.closest('.search-box')) {
+        const dropdown = document.getElementById('searchDropdown');
+        if (dropdown) dropdown.classList.remove('open');
+    }
+});
