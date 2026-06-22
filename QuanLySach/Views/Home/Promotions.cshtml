@@ -1,6 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Акции";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 
 <div class="promo-page">
     <div class="container">
@@ -12,7 +14,7 @@
                 <h1>Акции и скидки</h1>
                 <p>Выгодные предложения для любителей книг</p>
             </div>
-            <div class="promo-banner-icon">🎉</div>
+            <div class="promo-banner-icon"><i class="fa-solid fa-gift"></i></div>
         </div>
 
         <!-- PROMO CARDS -->
@@ -20,7 +22,7 @@
 
             <div class="promo-card featured">
                 <div class="promo-badge">-30%</div>
-                <div class="promo-card-icon">📚</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-book"></i></div>
                 <h3>Классика со скидкой</h3>
                 <p>Скидка 30% на все книги из раздела «Художественная литература»</p>
                 <div class="promo-period"><i class="fas fa-calendar"></i> До 30 июня 2026</div>
@@ -29,7 +31,7 @@
 
             <div class="promo-card">
                 <div class="promo-badge">2+1</div>
-                <div class="promo-card-icon">🎁</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-gift"></i></div>
                 <h3>Три по цене двух</h3>
                 <p>При покупке 2 книг — третья в подарок. Акция распространяется на весь каталог</p>
                 <div class="promo-period"><i class="fas fa-calendar"></i> До 15 июля 2026</div>
@@ -38,7 +40,7 @@
 
             <div class="promo-card">
                 <div class="promo-badge">-20%</div>
-                <div class="promo-card-icon">🚀</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-rocket"></i></div>
                 <h3>Фантастика месяца</h3>
                 <p>Скидка 20% на все книги в жанре фантастики. Отличный повод открыть новые миры!</p>
                 <div class="promo-period"><i class="fas fa-calendar"></i> До 31 июля 2026</div>
@@ -47,7 +49,7 @@
 
             <div class="promo-card">
                 <div class="promo-badge">Бесплатно</div>
-                <div class="promo-card-icon">🚚</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-truck"></i></div>
                 <h3>Бесплатная доставка</h3>
                 <p>Бесплатная доставка при заказе от 1500 ₽. Доставляем по всей России</p>
                 <div class="promo-period"><i class="fas fa-calendar"></i> Постоянная акция</div>
@@ -56,7 +58,7 @@
 
             <div class="promo-card">
                 <div class="promo-badge">-15%</div>
-                <div class="promo-card-icon">🧒</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-child"></i></div>
                 <h3>Детские книги</h3>
                 <p>Скидка 15% на детскую литературу. Подарите ребёнку радость чтения!</p>
                 <div class="promo-period"><i class="fas fa-calendar"></i> До 1 сентября 2026</div>
@@ -65,7 +67,7 @@
 
             <div class="promo-card">
                 <div class="promo-badge">Подарок</div>
-                <div class="promo-card-icon">💌</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-gift"></i></div>
                 <h3>Подарочная упаковка</h3>
                 <p>Бесплатная подарочная упаковка для любого заказа в июне. Порадуйте близких!</p>
                 <div class="promo-period"><i class="fas fa-calendar"></i> Весь июнь 2026</div>
@@ -106,6 +108,9 @@
         margin-bottom: 48px;
         color: white;
     }
+    .promo-banner-icon i {
+    color: rgb(205, 178, 81);
+}
 
     .promo-tag {
         background: rgba(255,255,255,0.25);
