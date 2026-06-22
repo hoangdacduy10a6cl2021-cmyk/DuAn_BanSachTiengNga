@@ -1,9 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Новинки";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="coming-soon-box">
-    <div class="coming-soon-icon">📚</div>
+     <div class="coming-soon-icon">
+    <i class="fas fa-box"></i>
+  </div>
     <h2>В разработке...</h2>
     <p class="coming-soon-title">Этот раздел скоро появится</p>
     <p class="coming-soon-desc">Мы работаем над тем, чтобы предложить вам лучшие новинки книжного мира</p>
@@ -19,6 +22,10 @@
         max-width: 600px;
         margin: 60px auto;
     }
+        .coming-soon-icon i {
+  font-size: 48px;
+  color: #yourcolor;
+}
 
     .coming-soon-icon {
         font-size: 72px;
