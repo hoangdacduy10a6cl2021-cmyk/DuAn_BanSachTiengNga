@@ -4,6 +4,7 @@
     ViewData["Title"] = "Способы оплаты";
     ViewData["ActiveMenu"] = "Payment";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="profile-page">
     <div class="container">
@@ -29,7 +30,7 @@
                     </div>
                     <div id="qr-vcb" class="qr-inline" style="display:none">
                         <div class="qr-inline-box">
-                            <div class="qr-bank-header vcb">🏦 Ngân hàng Vietcombank</div>
+                            <div class="qr-bank-header vcb"><i class="fas fa-bank"></i> Ngân hàng Vietcombank</div>
                             <img src="https://img.vietqr.io/image/vietcombank-1035382800-compact2.jpg"
                                  alt="QR Vietcombank" class="qr-inline-img" />
                             <div class="qr-info">
@@ -48,7 +49,7 @@
                     </div>
                     <div id="qr-zalo" class="qr-inline" style="display:none">
                         <div class="qr-inline-box">
-                            <div class="qr-bank-header zalo">💚 ZaloPay</div>
+                           <div class="qr-bank-header zalopay"><i class="fas fa-wallet"></i> ZaloPay</div>
                             <img src="/images/zalopay-qr.png"
                                  alt="QR ZaloPay" class="qr-inline-img" />
                             <div class="qr-info">
@@ -130,6 +131,10 @@
     .payment-section {
         margin-bottom: 30px;
     }
+    .qr-bank-header i {
+    margin-right: 8px;
+    color: #1F3061;
+}
 
         .payment-section h3 {
             font-family: Georgia, serif;
