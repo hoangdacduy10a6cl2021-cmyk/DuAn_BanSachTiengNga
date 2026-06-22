@@ -290,3 +290,63 @@
                 background: #9a6f00;
             }
 </style>
+<style>
+    @@media (max-width: 768px) {
+        .promo-page {
+            padding: 20px 0 40px;
+        }
+
+        .promo-banner {
+            flex-direction: column;
+            padding: 24px 16px;
+            text-align: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+        }
+
+            .promo-banner h1 {
+                font-size: 26px;
+            }
+
+            .promo-banner p {
+                font-size: 14px;
+            }
+
+        .promo-banner-icon {
+            font-size: 50px;
+        }
+
+        .promo-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .promo-card {
+            padding: 20px 16px;
+        }
+
+        .promo-newsletter {
+            flex-direction: column;
+            padding: 24px 16px;
+            gap: 16px;
+            border-radius: 12px;
+        }
+
+        .promo-newsletter-text h3 {
+            font-size: 20px;
+        }
+
+        .promo-newsletter-form {
+            flex-direction: column;
+            max-width: 100%;
+            width: 100%;
+        }
+
+            .promo-newsletter-form input,
+            .promo-newsletter-form button {
+                width: 100%;
+            }
+    }
+</style>

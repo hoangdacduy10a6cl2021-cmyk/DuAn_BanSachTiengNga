@@ -2470,4 +2470,179 @@ body {
     color: var(--text-mid);
     font-size: 14px;
 }
+/* ===== FIX MOBILE OVERFLOW ===== */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+* {
+    max-width: 100%;
+}
+
+/* Fix promo page mobile */
+@media (max-width: 768px) {
+    .promo-banner {
+        flex-direction: column;
+        padding: 24px 16px;
+        text-align: center;
+        gap: 16px;
+        margin: 0 0 24px;
+    }
+
+        .promo-banner h1 {
+            font-size: 28px;
+            word-break: break-word;
+        }
+
+    .promo-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .promo-card {
+        padding: 20px 16px;
+    }
+
+    .promo-newsletter {
+        flex-direction: column;
+        padding: 24px 16px;
+        gap: 16px;
+        border-radius: 12px;
+    }
+
+    .promo-newsletter-text h3 {
+        font-size: 20px;
+    }
+
+    .promo-newsletter-form {
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+    }
+
+        .promo-newsletter-form input,
+        .promo-newsletter-form button {
+            width: 100%;
+        }
+
+    /* Fix footer mobile */
+    .footer-inner {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .footer-logo {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .footer-logo img {
+            width: 70px;
+            height: 70px;
+        }
+
+    /* Fix container */
+    .container {
+        padding: 0 16px;
+        width: 100%;
+    }
+}
+/* ===== FIX MOBILE LAYOUT OVERFLOW ===== */
+@media (max-width: 768px) {
+
+    /* Fix toàn bộ trang không bị tràn ngang */
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    /* Fix features-bar không bị co lại */
+    .features-bar {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .features-inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .feature {
+        width: 100%;
+    }
+
+    /* Fix footer không bị co lại */
+    .site-footer {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .footer-inner {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 16px;
+    }
+
+    .footer-logo {
+        grid-column: unset;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Fix main content không bị lệch */
+    main {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Fix container */
+    .container {
+        width: 100%;
+        padding: 0 16px;
+        box-sizing: border-box;
+    }
+
+    /* Fix promo page */
+    .promo-page {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .promo-banner {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0 0 24px;
+    }
+
+    .promo-grid {
+        width: 100%;
+    }
+
+    .promo-newsletter {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Fix book detail */
+    .book-detail-layout {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 480px) {
+    .features-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-inner {
+        grid-template-columns: 1fr;
+    }
+}
 
