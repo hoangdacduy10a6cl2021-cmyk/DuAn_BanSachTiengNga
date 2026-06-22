@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Заказ №" + Model.Id;
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="detail-page">
 
@@ -36,7 +37,7 @@
                         }
                         else
                         {
-                            <div class="no-cover">📚</div>
+                            <div class="no-cover"><i class="fas fa-box"></i></div>
                         }
                     </div>
                     <div class="book-info">
@@ -106,7 +107,10 @@
         padding: 0 20px;
         font-family: Georgia, serif;
     }
-
+    .no-cover i {
+    font-size: 48px;
+    color: #999;
+}
     /* Хлебные крошки */
     .breadcrumb {
         font-size: 13px;
