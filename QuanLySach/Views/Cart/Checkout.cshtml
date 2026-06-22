@@ -3,7 +3,7 @@
     ViewData["Title"] = "Оформление заказа";
     var total = Model.Sum(i => i.Book!.Price * i.Quantity);
 }
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <div class="checkout-page">
     <h2 class="checkout-title">Оформление заказа</h2>
 
@@ -40,15 +40,16 @@
 
                     <h3 style="margin-top:20px">Способ оплаты</h3>
 
-                    <!-- RADIO CHỌN -->
-                    <label class="delivery-option" onclick="selectPayment('cash')">
-                        <input type="radio" name="paymentChoice" value="cash" checked />
-                        <span>💵 Наличными при получении — <strong style="color:#2e7d32">Бесплатно</strong></span>
-                    </label>
-                    <label class="delivery-option" onclick="selectPayment('qr')">
-                        <input type="radio" name="paymentChoice" value="qr" />
-                        <span>📱 Оплата по QR-коду (Vietcombank / ZaloPay)</span>
-                    </label>
+                   <!-- RADIO CHON -->
+<label class="delivery-option" onclick="selectPayment('cash')">
+    <input type="radio" name="paymentChoice" value="cash" checked />
+    <span><i class="fas fa-money-bill"></i> Наличными при получении – <strong style="color:#2e7d32">Бесплатно</strong></span>
+</label>
+
+<label class="delivery-option" onclick="selectPayment('qr')">
+    <input type="radio" name="paymentChoice" value="qr" />
+    <span><i class="fas fa-qrcode"></i> Оплата по QR-коду (Vietcombank / ZaloPay)</span>
+</label>
 
                     <!-- ===== CASH INFO (MỚI ĐẸP HƠN) ===== -->
                     <div id="cash-info" class="cash-info-box">
@@ -101,7 +102,7 @@
                             <span>Доступно только для доставки по России. Дополнительная комиссия не взимается.</span>
                         </div>
 
-                        <span class="badge-free">✓ Бесплатно</span>
+                       <span class="badge-free"><i class="fas fa-check"></i> Бесплатно</span>
                     </div>
 
                 </div>
@@ -170,15 +171,13 @@
         <p class="qr-modal-sub">Отсканируйте код в приложении банка</p>
 
         <div class="qr-tabs">
-            <button class="qr-tab active" onclick="switchQR('vcb', this)">🏦 Vietcombank</button>
-            <button class="qr-tab" onclick="switchQR('zalo', this)">💚 ZaloPay</button>
+             <button class="qr-tab active" onclick="switchQR('vcb', this)"><i class="fas fa-bank"></i> Vietcombank</button>
+           <button class="qr-tab" onclick="switchQR('zalo', this)"><i class="fas fa-wallet"></i> ZaloPay</button>
         </div>
 
         <!-- VCB -->
         <div id="qr-vcb" class="qr-content">
-            <div class="qr-bank-header vcb">
-                <span>🏦 Ngân hàng Vietcombank</span>
-            </div>
+            <button class="qr-tab active" onclick="switchQR('vcb', this)"><i class="fas fa-bank"></i> Vietcombank</button>
             <img src="https://img.vietqr.io/image/vietcombank-1035382800-compact2.jpg?amount=@((int)total)&addInfo=ThanhToanDonHang&accountName=PHAM+DUC+HOA"
                  alt="QR Vietcombank" class="qr-image" />
             <div class="qr-info">
@@ -199,9 +198,8 @@
 
         <!-- ZALOPAY -->
         <div id="qr-zalo" class="qr-content" style="display:none">
-            <div class="qr-bank-header zalo">
-                <span>💚 ZaloPay — PHAM DUC HOA</span>
-            </div>
+            <button class="qr-tab" onclick="switchQR('zalo', this)"><i class="fas fa-wallet"></i> ZaloPay</button>
+
             <img src="/images/zalopay-qr.png" alt="QR ZaloPay" class="qr-image" />
             <div class="qr-info">
                 <div class="qr-info-row">
@@ -215,12 +213,12 @@
             </div>
         </div>
 
-        <p class="qr-guide">
-            📌 После оплаты нажмите кнопку ниже для подтверждения
-        </p>
-        <button class="btn-paid" onclick="confirmQRPayment()">
-            ✅ Я оплатил — Подтвердить заказ
-        </button>
+       <p class="qr-guide">
+    <i class="fas fa-times"></i> Nolse онлаты наймите кнопку ниже для подтверждения
+</p>
+<button class="btn-paid" onclick="confirmQRPayment()">
+    <i class="fas fa-check-square"></i> Я оплатил – Подтвердить заказ
+</button>
     </div>
 </div>
 <div id="qr-overlay" class="qr-overlay" style="display:none" onclick="closeQR()"></div>
@@ -231,7 +229,24 @@
         margin: 40px auto;
         padding: 0 20px;
     }
+    .qr-guide i {
+    margin-right: 6px;
+    color: #ff6b6b;
+}
 
+.btn-paid i {
+    margin-right: 8px;
+    color: #28a745;
+}
+.badge-free i {
+    margin-right: 6px;
+    color: #28a745;
+}
+.delivery-option i {
+    margin-right: 8px;
+    font-size: 18px;
+    color: #333;
+}
     .checkout-title {
         font-family: Georgia, serif;
         font-size: 2rem;
