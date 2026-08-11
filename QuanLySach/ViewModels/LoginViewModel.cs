@@ -4,8 +4,7 @@ namespace QuanLySach.ViewModels
 {
     public class LoginViewModel
     {
-        [Required(ErrorMessage = "Введите e-mail")]
-        [EmailAddress(ErrorMessage = "Некорректный формат e-mail")]
+        [Required(ErrorMessage = "Введите e-mail или логин")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Введите пароль")]

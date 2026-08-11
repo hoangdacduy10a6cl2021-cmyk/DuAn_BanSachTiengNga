@@ -49,9 +49,12 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
-app.Run();
+
+// ← Phải migrate TRƯỚC app.Run(), vì app.Run() chặn luồng và không bao giờ return
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.Migrate(); // Tự động tạo bảng và cập nhật database lên hosting
 }
+
+app.Run();
