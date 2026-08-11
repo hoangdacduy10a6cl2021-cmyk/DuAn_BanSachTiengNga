@@ -1,0 +1,23 @@
+﻿@using QuanLySach.Models
+@model Role
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Sửa vai trò";
+}
+
+<div class="admin-panel">
+    <form asp-action="RoleEdit" asp-route-id="@Model.Id" method="post" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label>Tên vai trò</label>
+            <input type="text" asp-for="Name" required />
+        </div>
+        <div class="form-group">
+            <label>Mô tả</label>
+            <textarea asp-for="Description" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold">Cập nhật</button>
+        <a asp-action="Roles" class="btn btn-outline">Hủy</a>
+    </form>
+</div>

@@ -52,6 +52,8 @@ namespace QuanLySach.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (HttpContext.Session.GetInt32("AdminId") != null)
+                return RedirectToAction("Index", "QuanTri");
             if (HttpContext.Session.GetInt32("UserId") != null)
                 return RedirectToAction("Index", "Home");
 
@@ -60,10 +62,21 @@ namespace QuanLySach.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
+
+            // Kiểm tra xem có phải tài khoản Admin không — nếu đúng, chuyển thẳng vào trang quản trị
+            var admin = await _db.Admins.Include(a => a.Role).FirstOrDefaultAsync(a => a.Username == model.Email);
+            if (admin != null && admin.PasswordHash == HashPassword(model.Password))
+            {
+                HttpContext.Session.SetInt32("AdminId", admin.Id);
+                HttpContext.Session.SetString("AdminName", admin.FullName);
+                HttpContext.Session.SetString("AdminRole", admin.Role?.Name ?? "");
+                TempData["ToastSuccess"] = "Добро пожаловать, администратор!";
+                return RedirectToAction("Index", "QuanTri");
+            }
 
             var user = _db.Users.FirstOrDefault(u => u.Email == model.Email);
 

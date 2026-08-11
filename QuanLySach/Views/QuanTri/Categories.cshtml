@@ -1,0 +1,38 @@
+﻿@using QuanLySach.Models
+@model List<Category>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Quản lý danh mục";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Danh mục (@Model.Count)</h2>
+        <a asp-action="CategoryCreate" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Thêm danh mục</a>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Tên danh mục</th>
+                <th>Số lượng sách</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cat in Model)
+            {
+                <tr>
+                    <td>@cat.Name</td>
+                    <td>@cat.Books.Count</td>
+                    <td>
+                        <a asp-action="CategoryEdit" asp-route-id="@cat.Id" class="btn btn-outline btn-sm">Sửa</a>
+                        <form asp-action="CategoryDelete" asp-route-id="@cat.Id" method="post" style="display:inline" onsubmit="return confirm('Xóa danh mục này?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

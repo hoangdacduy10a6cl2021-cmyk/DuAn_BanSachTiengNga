@@ -18,6 +18,10 @@ namespace QuanLySach.Models
 
         public DbSet<PaymentCard> PaymentCards { get; set; }
 
+        public DbSet<Admin> Admins { get; set; }
+
+        public DbSet<Role> Roles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>().HasData(
@@ -76,6 +80,19 @@ namespace QuanLySach.Models
                 new Book { Id = 39, Title = "О дивный новый мир", Author = "Олдос Хаксли", Price = 520, CoverImageUrl = "https://covers.openlibrary.org/b/isbn/9780060850524-L.jpg", CategoryId = 3, IsPopular = false },
                 new Book { Id = 40, Title = "451 градус по Фаренгейту", Author = "Рэй Брэдбери", Price = 490, CoverImageUrl = "https://covers.openlibrary.org/b/isbn/9781451673319-L.jpg", CategoryId = 3, IsPopular = false }
             );
+            // Tài khoản admin mặc định — username: admin / mật khẩu: Admin@123
+            modelBuilder.Entity<Admin>().HasData(
+                new Admin
+                {
+                    Id = 1,
+                    Username = "admin",
+                    PasswordHash = "rdR9hYaiWTE0Fnf032xkoZDG3BRpiIjdtjWgwypnuYE=",
+                    FullName = "Quản trị viên",
+                    RoleId = 1
+                }
+            );
         }
     }
 }
+        
+    

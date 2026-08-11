@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - Admin | Книжный Рай</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+<body class="admin-body">
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar">
+            <div class="sidebar-brand">
+                Книжный Рай
+                <span>Trang quản trị</span>
+            </div>
+            <nav>
+                <a asp-controller="QuanTri" asp-action="Index" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                    <i class="fas fa-gauge"></i> Tổng quan
+                </a>
+                <a asp-controller="QuanTri" asp-action="Books" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Book") == true ? "active" : "")">
+                    <i class="fas fa-book"></i> Quản lý sách
+                </a>
+                <a asp-controller="QuanTri" asp-action="Categories" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Category") == true ? "active" : "")">
+                    <i class="fas fa-tags"></i> Danh mục
+                </a>
+                <a asp-controller="QuanTri" asp-action="Orders" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Order") == true ? "active" : "")">
+                    <i class="fas fa-receipt"></i> Đơn hàng
+                </a>
+                <a asp-controller="QuanTri" asp-action="Users" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("User") == true ? "active" : "")">
+                    <i class="fas fa-users"></i> Người dùng
+                </a>
+                <div style="padding:14px 20px 6px; font-size:0.7rem; letter-spacing:0.05em; color:rgba(255,255,255,0.4); text-transform:uppercase;">Quản lý truy cập</div>
+                <a asp-controller="QuanTri" asp-action="AdminAccounts" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("AdminAccount") == true ? "active" : "")">
+                    <i class="fas fa-user-shield"></i> Tài khoản Admin
+                </a>
+                <a asp-controller="QuanTri" asp-action="Roles" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Role") == true ? "active" : "")">
+                    <i class="fas fa-key"></i> Vai trò &amp; phân quyền
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a asp-controller="Home" asp-action="Index"><i class="fas fa-arrow-left"></i> Về trang chủ</a>
+                <a asp-controller="Account" asp-action="Logout"><i class="fas fa-right-from-bracket"></i> Đăng xuất</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <div class="admin-topbar">
+                <h1>@ViewBag.Title</h1>
+                <div style="display:flex; align-items:center; gap:20px;">
+                    <form asp-controller="QuanTri" asp-action="Books" method="get" style="display:flex;">
+                        <input type="text" name="searchTerm" placeholder="Tìm sách, tác giả..." style="width:220px; padding:8px 12px; border:1px solid #ddd; border-radius:6px 0 0 6px; font-size:0.85rem; outline:none;" />
+                        <button type="submit" style="padding:8px 14px; border:none; background:#b8860b; color:#fff; border-radius:0 6px 6px 0; cursor:pointer;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                    <a asp-controller="QuanTri" asp-action="Orders" style="position:relative; color:#8b6508; font-size:1.15rem; text-decoration:none;">
+                        <i class="fas fa-bell"></i>
+                        @if ((int)(ViewBag.NewOrdersCount ?? 0) > 0)
+                        {
+                            <span style="position:absolute; top:-8px; right:-10px; background:#c0392b; color:#fff; font-size:0.65rem; font-weight:700; border-radius:50%; width:18px; height:18px; display:flex; align-items:center; justify-content:center;">@ViewBag.NewOrdersCount</span>
+                        }
+                    </a>
+                    <div class="admin-profile">
+                        <div class="admin-profile-text">
+                            <div class="name">@Context.Session.GetString("AdminName")</div>
+                            <div class="role">@Context.Session.GetString("AdminRole")</div>
+                        </div>
+                        <div class="admin-avatar">@(Context.Session.GetString("AdminName")?.Substring(0, 1).ToUpper() ?? "A")</div>
+                    </div>
+                </div>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-error">@TempData["Error"]</div>
+            }
+
+            @RenderBody()
+        </main>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

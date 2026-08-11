@@ -1,0 +1,48 @@
+﻿@using QuanLySach.Models
+@model List<Role>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Vai trò & phân quyền";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Vai trò (@Model.Count)</h2>
+        <a asp-action="RoleCreate" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Thêm vai trò</a>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Tên vai trò</th>
+                <th>Mô tả</th>
+                <th>Số tài khoản</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var role in Model)
+            {
+                <tr>
+                    <td>@role.Name</td>
+                    <td>@role.Description</td>
+                    <td>@role.Admins.Count</td>
+                    <td>
+                        <a asp-action="RoleEdit" asp-route-id="@role.Id" class="btn btn-outline btn-sm">Sửa</a>
+                        <form asp-action="RoleDelete" asp-route-id="@role.Id" method="post" style="display:inline" onsubmit="return confirm('Xóa vai trò này?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Tài khoản Admin</h2>
+        <a asp-action="AdminAccounts" class="btn btn-outline btn-sm">Quản lý tài khoản →</a>
+    </div>
+    <p style="color:var(--text-mid); font-size:0.9rem;">Gán vai trò cho từng tài khoản admin ở trang Quản lý tài khoản.</p>
+</div>

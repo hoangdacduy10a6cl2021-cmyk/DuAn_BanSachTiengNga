@@ -1,0 +1,71 @@
+﻿@using QuanLySach.Models
+@model List<Book>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Quản lý sách";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Danh sách sách (@Model.Count)</h2>
+        <div style="display:flex; gap:10px;">
+            <form method="get" style="display:flex;">
+                <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Tìm theo tên/tác giả..." style="padding:7px 10px; border:1px solid #ddd; border-radius:6px 0 0 6px; font-size:0.85rem;" />
+                <button type="submit" style="padding:7px 12px; border:none; background:#f5e6c8; color:#4a2c17; border-radius:0 6px 6px 0; cursor:pointer;"><i class="fas fa-search"></i></button>
+            </form>
+            <a asp-action="BookCreate" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Thêm sách mới</a>
+        </div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace((string)ViewBag.SearchTerm))
+    {
+        <p style="color:var(--text-mid); font-size:0.85rem; margin-top:-8px; margin-bottom:14px;">
+            Kết quả tìm kiếm cho "<strong>@ViewBag.SearchTerm</strong>" — <a asp-action="Books" style="color:#b8860b;">Xóa bộ lọc</a>
+        </p>
+    }
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Ảnh bìa</th>
+                <th>Tên sách</th>
+                <th>Tác giả</th>
+                <th>Danh mục</th>
+                <th>Giá</th>
+                <th>Nổi bật</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td><img src="@book.CoverImageUrl" alt="" style="width:40px;height:56px;object-fit:cover;border-radius:4px;display:block;" onerror="this.style.visibility='hidden'" /></td>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@(book.Category?.Name ?? "—")</td>
+                    <td>@book.Price.ToString("N0") ₽</td>
+                    <td>
+                        @if (book.IsPopular)
+                        {
+                            <span class="badge">Nổi bật</span>
+                        }
+                        @if (book.IsNew)
+                        {
+                            <span class="badge">Mới</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="BookEdit" asp-route-id="@book.Id" class="btn btn-outline btn-sm">Sửa</a>
+                        <form asp-action="BookDelete" asp-route-id="@book.Id" method="post" style="display:inline" onsubmit="return confirm('Xóa sách này?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="7">Chưa có sách nào.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

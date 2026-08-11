@@ -383,12 +383,12 @@
                 }
 
                 <div class="reg-group">
-                    <label class="reg-label" for="Email">Электронная почта</label>
+                    <label class="reg-label" for="Email">Электронная почта или логин</label>
                     <input class="reg-input @(ViewData.ModelState["Email"]?.Errors.Count > 0 ? "input-error" : "")"
-                           type="email" id="Email" name="Email"
+                           type="text" id="Email" name="Email"
                            value="@(Model?.Email)"
-                           placeholder="Введите ваш e-mail"
-                           autocomplete="email" />
+                           placeholder="Введите ваш e-mail или логин администратора"
+                           autocomplete="username" />
                     <span class="reg-error">
                         @(ViewData.ModelState["Email"]?.Errors.FirstOrDefault()?.ErrorMessage)
                     </span>

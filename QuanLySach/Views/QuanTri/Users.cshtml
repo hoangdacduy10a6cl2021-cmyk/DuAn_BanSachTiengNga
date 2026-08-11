@@ -1,0 +1,44 @@
+﻿@using QuanLySach.Models
+@model List<User>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Quản lý người dùng";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Người dùng (@Model.Count)</h2>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Điện thoại</th>
+                <th>Ngày đăng ký</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.Name</td>
+                    <td>@u.Email</td>
+                    <td>@u.Phone</td>
+                    <td>@u.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <form asp-action="UserDelete" asp-route-id="@u.Id" method="post" style="display:inline" onsubmit="return confirm('Xóa tài khoản này?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="5">Chưa có người dùng nào.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

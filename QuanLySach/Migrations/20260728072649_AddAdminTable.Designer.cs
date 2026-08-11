@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLySach.Models;
 
@@ -11,9 +12,11 @@ using QuanLySach.Models;
 namespace QuanLySach.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260728072649_AddAdminTable")]
+    partial class AddAdminTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +33,9 @@ namespace QuanLySach.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -38,16 +44,11 @@ namespace QuanLySach.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Admins");
 
@@ -55,9 +56,9 @@ namespace QuanLySach.Migrations
                         new
                         {
                             Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FullName = "Quản trị viên",
                             PasswordHash = "rdR9hYaiWTE0Fnf032xkoZDG3BRpiIjdtjWgwypnuYE=",
-                            RoleId = 1,
                             Username = "admin"
                         });
                 });
@@ -806,27 +807,6 @@ namespace QuanLySach.Migrations
                     b.ToTable("PaymentCards");
                 });
 
-            modelBuilder.Entity("QuanLySach.Models.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("QuanLySach.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -911,17 +891,6 @@ namespace QuanLySach.Migrations
                     b.ToTable("Wishlists");
                 });
 
-            modelBuilder.Entity("QuanLySach.Models.Admin", b =>
-                {
-                    b.HasOne("QuanLySach.Models.Role", "Role")
-                        .WithMany("Admins")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("QuanLySach.Models.Book", b =>
                 {
                     b.HasOne("QuanLySach.Models.Category", "Category")
@@ -993,11 +962,6 @@ namespace QuanLySach.Migrations
             modelBuilder.Entity("QuanLySach.Models.Order", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("QuanLySach.Models.Role", b =>
-                {
-                    b.Navigation("Admins");
                 });
 #pragma warning restore 612, 618
         }
