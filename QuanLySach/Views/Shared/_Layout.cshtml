@@ -2,10 +2,10 @@
 @using QuanLySach.Models
 @inject AppDbContext Db
 <!DOCTYPE html>
-<!DOCTYPE html>
-<html lang="ru" >
+<html lang="ru" translate="no">
 <head>
     <meta charset="utf-8" />
+    <meta name="google" content="notranslate" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/css/site.css?v=4" />
     <title>Книжный Рай — Книжный рай </title>
@@ -100,26 +100,22 @@
                 <span><i class="fas fa-envelope"></i> Русские-книги@gmail.com</span>
             </div>
             <div class="top-links">
-                <a href="#">Доставка и оплата</a>
-                <a asp-controller="Home" asp-action="About">О нас</a>
-                <a href="#">Контакты</a>
+                <a href="#" data-i18n="shipping_info">Доставка и оплата</a>
+                <a asp-controller="Home" asp-action="About" data-i18n="about_us">О нас</a>
+                <a href="#" data-i18n="contact">Контакты</a>
                 <div class="lang-selector">
-                    <span class="lang-current">
+                    <span class="lang-current" id="lang-current-label">
                         <i class="fas fa-globe"></i> RU ▾
                     </span>
                     <ul class="lang-dropdown">
-                        <li onclick="doTranslate('en')">🇬🇧 English</li>
-                        <li onclick="doTranslate('vi')">🇻🇳 Tiếng Việt</li>
-                        <li onclick="doTranslate('de')">🇩🇪 Deutsch</li>
-                        <li onclick="doTranslate('ru')">🇷🇺 Русский</li>
+                        <li onclick="setLang('en')">🇬🇧 English</li>
+                        <li onclick="setLang('vi')">🇻🇳 Tiếng Việt</li>
+                        <li onclick="setLang('ru')">🇷🇺 Русский</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Google Translate Element ẩn -->
-    <div id="google_translate_element" style="display:none"></div>
 
     <!-- HEADER -->
     <header class="site-header">
@@ -128,12 +124,13 @@
                 <img src="~/images/logo.png" alt="Книжный Рай" />
                 <div class="logo-text">
                     <h1>Книжный Рай</h1>
-                    <span>— Книжный рай —</span>
+                    <span data-i18n="tagline">— Книжный рай —</span>
                 </div>
             </div>
 
             <div class="search-box" style="position:relative">
                 <input type="text" id="searchInput" placeholder="Поиск книг..."
+                       data-i18n-placeholder="search_placeholder"
                        autocomplete="off"
                        value="@ViewBag.SearchQuery"
                        oninput="liveSearch(this.value)"
@@ -155,7 +152,7 @@
                 {
                     <a asp-controller="Account" asp-action="Login" class="action-btn">
                         <i class="fas fa-user"></i>
-                        <span>Войти<br />Аккаунт</span>
+                        <span><span data-i18n="login">Войти</span><br /><span data-i18n="account">Аккаунт</span></span>
                     </a>
                 }
                 <a asp-controller="Cart" asp-action="Index" class="action-btn">
@@ -166,7 +163,7 @@
                             .Include(c => c.Book)
                             .Sum(c => c.Book != null ? c.Book.Price * c.Quantity : 0);
                     }
-                    <span>Корзина<br /><span id="cart-total-text">@cartTotal.ToString("N0") ₽</span></span>
+                    <span><span data-i18n="cart">Корзина</span><br /><span id="cart-total-text">@cartTotal.ToString("N0") ₽</span></span>
                 </a>
             </div>
         </div>
@@ -179,18 +176,18 @@
                 <i class="fas fa-bars" id="menu-icon"></i>
             </button>
             <ul id="main-menu">
-                <li><a asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> <span data-i18n="home">Главная</span></a></li>
                 <li class="has-dropdown">
-                    <a href="#" onclick="toggleDropdown(event, this)">Книги <i class="fas fa-chevron-down"></i></a>
+                    <a href="#" onclick="toggleDropdown(event, this)"><span data-i18n="books">Книги</span> <i class="fas fa-chevron-down"></i></a>
                     <ul class="dropdown">
-                        <li><a asp-controller="Books" asp-action="Index">Все книги</a></li>
-                        <li><a asp-controller="Books" asp-action="ComingSoon">Новинки</a></li>
+                        <li><a asp-controller="Books" asp-action="Index" data-i18n="all_books">Все книги</a></li>
+                        <li><a asp-controller="Books" asp-action="ComingSoon" data-i18n="new_arrivals">Новинки</a></li>
                     </ul>
                 </li>
-                <li><a asp-controller="Home" asp-action="NewBooks">Новинки</a></li>
-                <li><a asp-controller="Home" asp-action="Popular">Популярное</a></li>
-                <li><a asp-controller="Home" asp-action="Promotions">Акции</a></li>
-                <li><a asp-controller="Home" asp-action="Contact">Контакты</a></li>
+                <li><a asp-controller="Home" asp-action="NewBooks" data-i18n="new_arrivals">Новинки</a></li>
+                <li><a asp-controller="Home" asp-action="Popular" data-i18n="popular">Популярное</a></li>
+                <li><a asp-controller="Home" asp-action="Promotions" data-i18n="promotions">Акции</a></li>
+                <li><a asp-controller="Home" asp-action="Contact" data-i18n="contact">Контакты</a></li>
             </ul>
         </div>
     </nav>
@@ -208,29 +205,29 @@
                 <div class="feature">
                     <i class="fas fa-book-open"></i>
                     <div>
-                        <strong>Широкий ассортимент</strong>
-                        <span>Тысячи книг на любой вкус</span>
+                        <strong data-i18n="feature1_title">Широкий ассортимент</strong>
+                        <span data-i18n="feature1_desc">Тысячи книг на любой вкус</span>
                     </div>
                 </div>
                 <div class="feature">
                     <i class="fas fa-truck"></i>
                     <div>
-                        <strong>Быстрая доставка</strong>
-                        <span>Доставка по всей России</span>
+                        <strong data-i18n="feature2_title">Быстрая доставка</strong>
+                        <span data-i18n="feature2_desc">Доставка по всей России</span>
                     </div>
                 </div>
                 <div class="feature">
                     <i class="fas fa-shield-alt"></i>
                     <div>
-                        <strong>Гарантия качества</strong>
-                        <span>Только оригинальные книги</span>
+                        <strong data-i18n="feature3_title">Гарантия качества</strong>
+                        <span data-i18n="feature3_desc">Только оригинальные книги</span>
                     </div>
                 </div>
                 <div class="feature">
                     <i class="fas fa-tag"></i>
                     <div>
-                        <strong>Скидки и акции</strong>
-                        <span>Выгодные предложения</span>
+                        <strong data-i18n="feature4_title">Скидки и акции</strong>
+                        <span data-i18n="feature4_desc">Выгодные предложения</span>
                     </div>
                 </div>
             </div>
@@ -243,7 +240,7 @@
                     <img src="~/images/logo.png" alt="Книжный Рай" />
                     <div>
                         <h3>Книжный Рай</h3>
-                        <span>— Книжный рай —</span>
+                        <span data-i18n="tagline">— Книжный рай —</span>
                     </div>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-vk"></i></a>
@@ -253,37 +250,37 @@
                 </div>
 
                 <div class="footer-col">
-                    <h4>Каталог</h4>
+                    <h4 data-i18n="catalog">Каталог</h4>
                     <ul>
-                        <li><a asp-controller="Books" asp-action="Index">Все книги</a></li>
-                        <li><a asp-controller="Books" asp-action="Index">Категории</a></li>
-                        <li><a asp-controller="Home" asp-action="NewBooks">Новинки</a></li>
-                        <li><a asp-controller="Home" asp-action="Popular">Популярное</a></li>
-                        <li><a asp-controller="Home" asp-action="Promotions">Акции</a></li>
+                        <li><a asp-controller="Books" asp-action="Index" data-i18n="all_books">Все книги</a></li>
+                        <li><a asp-controller="Books" asp-action="Index" data-i18n="categories">Категории</a></li>
+                        <li><a asp-controller="Home" asp-action="NewBooks" data-i18n="new_arrivals">Новинки</a></li>
+                        <li><a asp-controller="Home" asp-action="Popular" data-i18n="popular">Популярное</a></li>
+                        <li><a asp-controller="Home" asp-action="Promotions" data-i18n="promotions">Акции</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Покупателям</h4>
+                    <h4 data-i18n="for_buyers">Покупателям</h4>
                     <ul>
-                        <li><a href="#">Доставка и оплата</a></li>
-                        <li><a href="#">Возврат</a></li>
-                        <li><a href="#">Помощь</a></li>
-                        <li><a asp-controller="Home" asp-action="Contact">Контакты</a></li>
+                        <li><a href="#" data-i18n="shipping_info">Доставка и оплата</a></li>
+                        <li><a href="#" data-i18n="returns">Возврат</a></li>
+                        <li><a href="#" data-i18n="help">Помощь</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact" data-i18n="contact">Контакты</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Контакты</h4>
+                    <h4 data-i18n="contact">Контакты</h4>
                     <ul>
                         <li><i class="fas fa-phone"></i> 0946029615</li>
                         <li><i class="fas fa-envelope"></i> Русские-книги@gmail.com</li>
-                        <li><i class="fas fa-map-marker-alt"></i> ул. Мясницкая, д. 6/3, стр. 1, Москва, Россия, 101000</li>
+                        <li><i class="fas fa-map-marker-alt"></i> <span data-i18n="address">ул. Мясницкая, д. 6/3, стр. 1, Москва, Россия, 101000</span></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 Книжный Рай. Все права защищены.</p>
+                <p data-i18n="copyright">© 2026 Книжный Рай. Все права защищены.</p>
             </div>
         </footer>
     }
@@ -336,118 +333,97 @@
     </style>
 
     <script src="~/js/site.js?v=2"></script>
-
-    <!-- Google Translate Script -->
-    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="~/js/i18n.js?v=1"></script>
     <script>
-        function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-        pageLanguage: 'ru',
-        includedLanguages: 'en,vi,de,ru',
-        autoDisplay: false
-        }, 'google_translate_element');
-        }
+            function toggleMobileMenu() {
+                const menu = document.getElementById('main-menu');
+                const icon = document.getElementById('menu-icon');
+                menu.classList.toggle('open');
+                icon.className = menu.classList.contains('open')
+                    ? 'fas fa-times'
+                    : 'fas fa-bars';
+            }
 
-        function doTranslate(lang) {
-        const langNames = { 'en': '🇬🇧 EN', 'vi': '🇻🇳 VI', 'de': '🇩🇪 DE', 'ru': '🇷🇺 RU' };
-        document.querySelector('.lang-current').innerHTML =
-        '<i class="fas fa-globe"></i> ' + langNames[lang] + ' ▾';
-        const select = document.querySelector('.goog-te-combo');
-        if (select) {
-        select.value = lang;
-        select.dispatchEvent(new Event('change'));
-        }
-        }
+            function toggleDropdown(e, el) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    el.parentElement.classList.toggle('open');
+                }
+            }
 
-        function toggleMobileMenu() {
-        const menu = document.getElementById('main-menu');
-        const icon = document.getElementById('menu-icon');
-        menu.classList.toggle('open');
-        icon.className = menu.classList.contains('open')
-        ? 'fas fa-times'
-        : 'fas fa-bars';
-        }
+            document.addEventListener('click', function (e) {
+                const nav = document.querySelector('.main-nav');
+                if (!nav.contains(e.target)) {
+                    document.getElementById('main-menu').classList.remove('open');
+                    document.getElementById('menu-icon').className = 'fas fa-bars';
+                }
+            });
 
-        function toggleDropdown(e, el) {
-        if (window.innerWidth <= 768) {
-        e.preventDefault();
-        el.parentElement.classList.toggle('open');
-        }
-        }
+            // ===== LIVE SEARCH =====
+            let searchDebounceTimer = null;
 
-        document.addEventListener('click', function (e) {
-        const nav = document.querySelector('.main-nav');
-        if (!nav.contains(e.target)) {
-        document.getElementById('main-menu').classList.remove('open');
-        document.getElementById('menu-icon').className = 'fas fa-bars';
-        }
-        });
+            function liveSearch(value) {
+                clearTimeout(searchDebounceTimer);
+                const dropdown = document.getElementById('searchDropdown');
 
-        // ===== LIVE SEARCH =====
-        let searchDebounceTimer = null;
+                if (!value || value.trim().length === 0) {
+                    dropdown.classList.remove('show');
+                    dropdown.innerHTML = '';
+                    return;
+                }
 
-        function liveSearch(value) {
-        clearTimeout(searchDebounceTimer);
-        const dropdown = document.getElementById('searchDropdown');
+                searchDebounceTimer = setTimeout(async () => {
+                    try {
+                        const res = await fetch('/Books/LiveSearch?q=' + encodeURIComponent(value.trim()));
+                        const data = await res.json();
+                        renderSearchDropdown(data);
+                    } catch (err) {
+                        console.error('Search error:', err);
+                    }
+                }, 300);
+            }
 
-        if (!value || value.trim().length === 0) {
-        dropdown.classList.remove('show');
-        dropdown.innerHTML = '';
-        return;
-        }
+            function renderSearchDropdown(items) {
+                const dropdown = document.getElementById('searchDropdown');
 
-        searchDebounceTimer = setTimeout(async () => {
-        try {
-        const res = await fetch('/Books/LiveSearch?q=' + encodeURIComponent(value.trim()));
-        const data = await res.json();
-        renderSearchDropdown(data);
-        } catch (err) {
-        console.error('Search error:', err);
-        }
-        }, 300);
-        }
+                if (!items || items.length === 0) {
+                    dropdown.innerHTML = '<div class="search-dropdown-empty">Не найдено</div>';
+                    dropdown.classList.add('show');
+                    return;
+                }
 
-        function renderSearchDropdown(items) {
-        const dropdown = document.getElementById('searchDropdown');
+                dropdown.innerHTML = items.map(item => `
+                    <a class="search-dropdown-item" href="/Books/Detail/${item.id}">
+                    <img src="${item.image || '/images/no-image.png'}" alt="${item.title}" />
+                    <div class="info">
+                    <span class="title">${item.title}</span>
+                    <span class="author">${item.author || ''}</span>
+                    <span class="price">${formatPrice(item.price)}</span>
+                    </div>
+                    </a>
+                    `).join('');
 
-        if (!items || items.length === 0) {
-        dropdown.innerHTML = '<div class="search-dropdown-empty">Не найдено</div>';
-        dropdown.classList.add('show');
-        return;
-        }
+                dropdown.classList.add('show');
+            }
 
-        dropdown.innerHTML = items.map(item => `
-        <a class="search-dropdown-item" href="/Books/Detail/${item.id}">
-        <img src="${item.image || '/images/no-image.png'}" alt="${item.title}" />
-        <div class="info">
-        <span class="title">${item.title}</span>
-        <span class="author">${item.author || ''}</span>
-        <span class="price">${formatPrice(item.price)}</span>
-        </div>
-        </a>
-        `).join('');
+            function formatPrice(price) {
+                if (price == null) return '';
+                return Number(price).toLocaleString('ru-RU') + ' ₽';
+            }
 
-        dropdown.classList.add('show');
-        }
+            function goSearch() {
+                const value = document.getElementById('searchInput').value.trim();
+                if (value.length === 0) return;
+                window.location.href = '/Books/Search?q=' + encodeURIComponent(value);
+            }
 
-        function formatPrice(price) {
-        if (price == null) return '';
-        return Number(price).toLocaleString('ru-RU') + ' ₽';
-        }
-
-        function goSearch() {
-        const value = document.getElementById('searchInput').value.trim();
-        if (value.length === 0) return;
-        window.location.href = '/Books/Search?q=' + encodeURIComponent(value);
-        }
-
-        document.addEventListener('click', function (e) {
-        const box = document.querySelector('.search-box');
-        const dropdown = document.getElementById('searchDropdown');
-        if (box && dropdown && !box.contains(e.target)) {
-        dropdown.classList.remove('show');
-        }
-        });
+            document.addEventListener('click', function (e) {
+                const box = document.querySelector('.search-box');
+                const dropdown = document.getElementById('searchDropdown');
+                if (box && dropdown && !box.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
     </script>
 
 </body>
