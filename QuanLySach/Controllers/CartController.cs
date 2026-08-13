@@ -39,7 +39,13 @@ namespace QuanLySach.Controllers
                 _db.CartItems.Add(new CartItem { BookId = bookId, Quantity = 1, SessionId = sessionId });
 
             await _db.SaveChangesAsync();
-            return Json(new { success = true });
+
+            var cartTotal = _db.CartItems
+                .Where(c => c.SessionId == sessionId)
+                .Include(c => c.Book)
+                .Sum(c => c.Book != null ? c.Book.Price * c.Quantity : 0);
+
+            return Json(new { success = true, cartTotal = cartTotal.ToString("N0") + " ₽" });
         }
 
         // Xóa item
@@ -116,6 +122,7 @@ namespace QuanLySach.Controllers
             _db.CartItems.RemoveRange(items);
             await _db.SaveChangesAsync();
 
+            TempData["ToastSuccess"] = "Заказ успешно оформлен! Спасибо за покупку 🎉";
             return RedirectToAction("OrderSuccess", new { id = order.Id });
         }
 

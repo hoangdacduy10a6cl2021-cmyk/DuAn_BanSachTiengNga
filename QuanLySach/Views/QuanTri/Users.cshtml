@@ -16,7 +16,7 @@
                 <th>Email</th>
                 <th>Điện thoại</th>
                 <th>Ngày đăng ký</th>
-                <th></th>
+                <th style="min-width:320px;"></th>
             </tr>
         </thead>
         <tbody>
@@ -28,9 +28,30 @@
                     <td>@u.Phone</td>
                     <td>@u.CreatedAt.ToString("dd/MM/yyyy")</td>
                     <td>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="toggleResetRow(@u.Id)">Cấp lại mật khẩu</button>
                         <form asp-action="UserDelete" asp-route-id="@u.Id" method="post" style="display:inline" onsubmit="return confirm('Xóa tài khoản này?');">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr id="reset-row-@u.Id" style="display:none;">
+                    <td colspan="5" style="background:#fbf8f1;">
+                        <form asp-action="UserResetPassword" asp-route-id="@u.Id" method="post"
+                              style="display:flex; align-items:center; gap:8px; padding:8px 0;"
+                              onsubmit="return confirm('Đặt mật khẩu mới cho @u.Name?');">
+                            @Html.AntiForgeryToken()
+                            <div style="position:relative; display:inline-block;">
+                                <input type="password" id="pw-@u.Id" name="newPassword" placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)"
+                                       minlength="6" required
+                                       style="padding:7px 34px 7px 10px; border:1px solid #ddd; border-radius:6px; font-size:0.85rem; width:260px;" />
+                                <span onclick="togglePwVisibility(@u.Id)" title="Xem/ẩn mật khẩu"
+                                      style="position:absolute; right:8px; top:50%; transform:translateY(-50%); cursor:pointer; color:#8b6508;">
+                                    <i class="fas fa-eye" id="eye-icon-@u.Id"></i>
+                                </span>
+                            </div>
+                            <button type="submit" class="btn btn-gold btn-sm">Lưu mật khẩu mới</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="toggleResetRow(@u.Id)">Hủy</button>
                         </form>
                     </td>
                 </tr>
@@ -42,3 +63,26 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        function toggleResetRow(id) {
+            const row = document.getElementById('reset-row-' + id);
+            row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+        }
+
+        function togglePwVisibility(id) {
+            const input = document.getElementById('pw-' + id);
+            const icon = document.getElementById('eye-icon-' + id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+}

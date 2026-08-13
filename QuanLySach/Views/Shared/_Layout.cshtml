@@ -1,5 +1,9 @@
-﻿<!DOCTYPE html>
-<html lang="ru">
+﻿@using Microsoft.EntityFrameworkCore
+@using QuanLySach.Models
+@inject AppDbContext Db
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="ru" >
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -156,7 +160,13 @@
                 }
                 <a asp-controller="Cart" asp-action="Index" class="action-btn">
                     <i class="fas fa-shopping-cart"></i>
-                    <span>Корзина<br />0 ₽</span>
+                    @{
+                        var cartTotal = Db.CartItems
+                            .Where(c => c.SessionId == Context.Session.Id)
+                            .Include(c => c.Book)
+                            .Sum(c => c.Book != null ? c.Book.Price * c.Quantity : 0);
+                    }
+                    <span>Корзина<br /><span id="cart-total-text">@cartTotal.ToString("N0") ₽</span></span>
                 </a>
             </div>
         </div>
@@ -325,7 +335,7 @@
             }
     </style>
 
-    <script src="~/js/site.js"></script>
+    <script src="~/js/site.js?v=2"></script>
 
     <!-- Google Translate Script -->
     <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>

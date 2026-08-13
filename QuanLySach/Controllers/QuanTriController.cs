@@ -376,6 +376,27 @@ namespace QuanLySach.Controllers
             }
             return RedirectToAction("Users");
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UserResetPassword(int id, string newPassword)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 6)
+            {
+                TempData["Error"] = "Mật khẩu mới phải có ít nhất 6 ký tự!";
+                return RedirectToAction("Users");
+            }
+
+            var user = await _db.Users.FindAsync(id);
+            if (user != null)
+            {
+                user.PasswordHash = HashPassword(newPassword);
+                await _db.SaveChangesAsync();
+                TempData["Success"] = $"Đã cấp lại mật khẩu cho {user.Name}!";
+            }
+            return RedirectToAction("Users");
+        }
 
         // ================= ROLES =================
         public async Task<IActionResult> Roles()

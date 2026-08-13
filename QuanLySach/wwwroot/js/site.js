@@ -9,6 +9,10 @@ function addToCart(bookId) {
         .then(data => {
             if (data.success) {
                 showNotification('Книга добавлена в корзину!');
+                const cartText = document.getElementById('cart-total-text');
+                if (cartText && data.cartTotal) {
+                    cartText.textContent = data.cartTotal;
+                }
             }
         });
 }
