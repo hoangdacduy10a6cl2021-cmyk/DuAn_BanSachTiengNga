@@ -1,17 +1,17 @@
 ﻿@using QuanLySach.Models
 @{
     Layout = "_QuanTriLayout";
-    ViewBag.Title = "Tổng quan";
+    ViewBag.Title = "Обзор";
 }
 
 @{
     var statItems = new (string Icon, string Value, string Label)[]
     {
-        ("fa-book", ViewBag.TotalBooks.ToString(), "Tổng số sách"),
-        ("fa-tags", ViewBag.TotalCategories.ToString(), "Danh mục"),
-        ("fa-receipt", ViewBag.TotalOrders.ToString(), "Đơn hàng"),
-        ("fa-users", ViewBag.TotalUsers.ToString(), "Người dùng"),
-        ("fa-ruble-sign", ((decimal)ViewBag.TotalRevenue).ToString("N0") + " ₽", "Doanh thu"),
+        ("fa-book", ViewBag.TotalBooks.ToString(), "Всего книг"),
+        ("fa-tags", ViewBag.TotalCategories.ToString(), "Категории"),
+        ("fa-receipt", ViewBag.TotalOrders.ToString(), "Заказы"),
+        ("fa-users", ViewBag.TotalUsers.ToString(), "Пользователи"),
+        ("fa-ruble-sign", ((decimal)ViewBag.TotalRevenue).ToString("N0") + " ₽", "Доход"),
     };
 }
 <div style="display:flex; gap:16px; margin-bottom:28px; flex-wrap:wrap;">
@@ -32,7 +32,7 @@
 <div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-bottom:24px;">
     <div class="admin-panel" style="flex:1.4; min-width:340px; margin-bottom:0;">
         <div class="panel-header">
-            <h2>Doanh thu theo tháng (@DateTime.Now.Year)</h2>
+            <h2>Доход по месяцам (@DateTime.Now.Year)</h2>
         </div>
         <div class="chart-wrap">
             <canvas id="revenueChart"></canvas>
@@ -41,7 +41,7 @@
 
     <div class="admin-panel" style="flex:1; min-width:260px; margin-bottom:0;">
         <div class="panel-header">
-            <h2><i class="fas fa-star" style="color:#b8860b;"></i> Top bán chạy</h2>
+            <h2><i class="fas fa-star" style="color:#b8860b;"></i> Топ продаж</h2>
         </div>
         @{
             int rank = 1;
@@ -52,22 +52,22 @@
                 <div style="width:24px; height:24px; border-radius:50%; background:@(rank == 1 ? "#b8860b" : "#f5e6c8"); color:@(rank == 1 ? "#fff" : "#8b6508"); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0;">@rank</div>
                 <div style="min-width:0; flex:1;">
                     <div style="font-weight:700; font-size:0.85rem; color:#2c1a0e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@item.Book.Title</div>
-                    <div style="font-size:0.75rem; color:#555;">Đã bán: @item.SoldQty</div>
+                    <div style="font-size:0.75rem; color:#555;">Продано: @item.SoldQty</div>
                 </div>
             </div>
             rank++;
         }
         @if (rank == 1)
         {
-            <p style="color:var(--text-mid); font-size:0.9rem;">Chưa có dữ liệu bán hàng.</p>
+            <p style="color:var(--text-mid); font-size:0.9rem;">Данных о продажах пока нет.</p>
         }
     </div>
 </div>
 
 <div class="admin-panel">
     <div class="panel-header">
-        <h2>Sách mới thêm</h2>
-        <a asp-action="Books" class="btn btn-outline btn-sm">Xem tất cả</a>
+        <h2>Недавно добавленные книги</h2>
+        <a asp-action="Books" class="btn btn-outline btn-sm">Смотреть все</a>
     </div>
     <div style="display:flex; gap:16px;">
         @foreach (var book in (List<Book>)ViewBag.RecentBooks)
@@ -81,23 +81,23 @@
     </div>
     @if (!((List<Book>)ViewBag.RecentBooks).Any())
     {
-        <p style="color:var(--text-mid); font-size:0.9rem;">Chưa có sách nào.</p>
+        <p style="color:var(--text-mid); font-size:0.9rem;">Книг пока нет.</p>
     }
 </div>
 
 <div class="admin-panel">
     <div class="panel-header">
-        <h2>Đơn hàng gần đây</h2>
-        <a asp-action="Orders" class="btn btn-outline btn-sm">Xem tất cả</a>
+        <h2>Последние заказы</h2>
+        <a asp-action="Orders" class="btn btn-outline btn-sm">Смотреть все</a>
     </div>
     <table class="admin-table">
         <thead>
             <tr>
                 <th>#</th>
-                <th>Khách hàng</th>
-                <th>Ngày đặt</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái</th>
+                <th>Клиент</th>
+                <th>Дата заказа</th>
+                <th>Сумма</th>
+                <th>Статус</th>
                 <th></th>
             </tr>
         </thead>
@@ -110,12 +110,12 @@
                     <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
                     <td>@order.TotalPrice.ToString("N0") ₽</td>
                     <td><span class="badge">@order.Status</span></td>
-                    <td><a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-outline btn-sm">Chi tiết</a></td>
+                    <td><a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-outline btn-sm">Подробнее</a></td>
                 </tr>
             }
             @if (!((List<Order>)ViewBag.RecentOrders).Any())
             {
-                <tr><td colspan="6">Chưa có đơn hàng nào.</td></tr>
+                <tr><td colspan="6">Заказов пока нет.</td></tr>
             }
         </tbody>
     </table>
@@ -130,7 +130,7 @@
             data: {
                 labels: [@Html.Raw(ViewBag.ChartLabels)],
                 datasets: [{
-                    label: 'Doanh thu (₽)',
+                    label: 'Доход (₽)',
                     data: [@Html.Raw(ViewBag.ChartValues)],
                     borderColor: '#b8860b',
                     backgroundColor: 'rgba(184,134,11,0.12)',

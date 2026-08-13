@@ -68,7 +68,6 @@ const langLabels = { ru: '🇷🇺 RU', en: '🇬🇧 EN', vi: '🇻🇳 VI' };
 
 function applyLang(lang) {
     document.querySelectorAll('[data-i18n]').forEach(el => {
-        // Lưu lại chữ tiếng Nga gốc lần đầu tiên (chỉ lưu 1 lần)
         if (!el.dataset.i18nRu) {
             el.dataset.i18nRu = el.textContent;
         }
@@ -98,15 +97,146 @@ function applyLang(lang) {
     }
 }
 
+// ===== Tự động dịch phần còn lại của trang (không có data-i18n) =====
+const AUTO_CACHE_KEY = 'i18n_auto_cache_v2';
+
+function loadAutoCache() {
+    try {
+        return JSON.parse(localStorage.getItem(AUTO_CACHE_KEY) || '{"en":{},"vi":{}}');
+    } catch {
+        return { en: {}, vi: {} };
+    }
+}
+
+function saveAutoCache(cache) {
+    try {
+        localStorage.setItem(AUTO_CACHE_KEY, JSON.stringify(cache));
+    } catch {
+        // localStorage đầy hoặc bị chặn -> bỏ qua
+    }
+}
+
+const AUTO_SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE', 'SVG']);
+
+const originalTextNodeMap = new Map();
+
+function isSkippableNode(node) {
+    let el = node.nodeType === 3 ? node.parentElement : node;
+    while (el) {
+        if (AUTO_SKIP_TAGS.has(el.tagName)) return true;
+        if (el.classList && el.classList.contains('notranslate')) return true;
+        if (el.hasAttribute && (el.hasAttribute('data-i18n') || el.hasAttribute('data-i18n-placeholder'))) return true;
+        el = el.parentElement;
+    }
+    return false;
+}
+
+function collectTextNodes(root) {
+    const walker = document.createTreeWalker(root.body, NodeFilter.SHOW_TEXT, null);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+        const text = node.nodeValue.trim();
+        if (!text || text.length > 400) continue;
+        if (/^[\d\s.,%+\-:/()₫$€]*$/.test(text)) continue;
+        if (isSkippableNode(node)) continue;
+        nodes.push(node);
+    }
+    return nodes;
+}
+
+function collectAttrElements(root) {
+    const result = [];
+    root.querySelectorAll('[placeholder]:not([data-i18n-placeholder])').forEach(el => result.push({ el, attr: 'placeholder' }));
+    root.querySelectorAll('[title]').forEach(el => result.push({ el, attr: 'title' }));
+    root.querySelectorAll('input[type="submit"], input[type="button"]').forEach(el => result.push({ el, attr: 'value' }));
+    return result;
+}
+
+async function callTranslateBatch(texts, targetLang) {
+    const resp = await fetch('/Translate/Batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts, targetLang })
+    });
+    if (!resp.ok) throw new Error('Translate API error: ' + resp.status);
+    const data = await resp.json();
+    return data.results || texts;
+}
+
+async function autoTranslatePage(lang) {
+    if (lang === 'ru') {
+        restoreOriginalText();
+        return;
+    }
+
+    const cache = loadAutoCache();
+    const langCache = cache[lang] || (cache[lang] = {});
+
+    const textNodes = collectTextNodes(document);
+    const attrEntries = collectAttrElements(document);
+
+    textNodes.forEach(node => {
+        if (!originalTextNodeMap.has(node)) originalTextNodeMap.set(node, node.nodeValue);
+    });
+    attrEntries.forEach(({ el, attr }) => {
+        const key = 'i18nAutoRu_' + attr;
+        if (!el.dataset[key]) el.dataset[key] = el.getAttribute(attr) || '';
+    });
+
+    const pending = new Set();
+    textNodes.forEach(node => {
+        const original = originalTextNodeMap.get(node).trim();
+        if (original && !(original in langCache)) pending.add(original);
+    });
+    attrEntries.forEach(({ el, attr }) => {
+        const original = el.dataset['i18nAutoRu_' + attr];
+        if (original && original.trim() && !(original.trim() in langCache)) pending.add(original.trim());
+    });
+
+    if (pending.size > 0) {
+        try {
+            const texts = Array.from(pending);
+            const translated = await callTranslateBatch(texts, lang);
+            texts.forEach((t, i) => { langCache[t] = translated[i] ?? t; });
+            saveAutoCache(cache);
+        } catch (e) {
+            console.warn('Không dịch được (kiểm tra kết nối mạng / endpoint dịch):', e);
+        }
+    }
+
+    textNodes.forEach(node => {
+        const original = originalTextNodeMap.get(node).trim();
+        if (original && langCache[original]) node.nodeValue = langCache[original];
+    });
+    attrEntries.forEach(({ el, attr }) => {
+        const original = (el.dataset['i18nAutoRu_' + attr] || '').trim();
+        if (original && langCache[original]) el.setAttribute(attr, langCache[original]);
+    });
+}
+
+function restoreOriginalText() {
+    originalTextNodeMap.forEach((originalText, node) => {
+        node.nodeValue = originalText;
+    });
+    document.querySelectorAll('*').forEach(el => {
+        ['placeholder', 'title', 'value'].forEach(attr => {
+            const key = 'i18nAutoRu_' + attr;
+            if (el.dataset[key] !== undefined) el.setAttribute(attr, el.dataset[key]);
+        });
+    });
+}
+
 function setLang(lang) {
     localStorage.setItem('siteLang', lang);
     applyLang(lang);
+    autoTranslatePage(lang);
 }
 
-// Tự áp dụng ngôn ngữ đã lưu (nếu có) khi tải trang
 document.addEventListener('DOMContentLoaded', function () {
     const saved = localStorage.getItem('siteLang');
     if (saved && saved !== 'ru') {
         applyLang(saved);
+        autoTranslatePage(saved);
     }
 });
