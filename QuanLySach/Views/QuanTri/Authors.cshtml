@@ -1,0 +1,54 @@
+﻿@using QuanLySach.Models
+@model List<Author>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Управление авторами";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Авторы (@Model.Count)</h2>
+        <div style="display:flex; gap:10px;">
+            <form method="get" style="display:flex;">
+                <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Поиск по имени..." style="padding:7px 10px; border:1px solid #ddd; border-radius:6px 0 0 6px; font-size:0.85rem;" />
+                <button type="submit" style="padding:7px 12px; border:none; background:#f5e6c8; color:#4a2c17; border-radius:0 6px 6px 0; cursor:pointer;"><i class="fas fa-search"></i></button>
+            </form>
+            <a asp-action="AuthorCreate" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Добавить автора</a>
+        </div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace((string)ViewBag.SearchTerm))
+    {
+        <p style="color:var(--text-mid); font-size:0.85rem; margin-top:-8px; margin-bottom:14px;">
+            Результаты поиска по запросу "<strong>@ViewBag.SearchTerm</strong>" — <a asp-action="Authors" style="color:#b8860b;">Сбросить фильтр</a>
+        </p>
+    }
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Имя автора</th>
+                <th>Биография</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var author in Model)
+            {
+                <tr>
+                    <td>@author.Name</td>
+                    <td style="max-width:420px; color:#555;">@(string.IsNullOrWhiteSpace(author.Bio) ? "—" : author.Bio)</td>
+                    <td>
+                        <a asp-action="AuthorEdit" asp-route-id="@author.Id" class="btn btn-outline btn-sm">Изменить</a>
+                        <form asp-action="AuthorDelete" asp-route-id="@author.Id" method="post" style="display:inline" onsubmit="return confirm('Удалить этого автора?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="3">Авторов пока нет.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

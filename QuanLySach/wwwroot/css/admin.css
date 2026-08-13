@@ -374,6 +374,7 @@ body.admin-body {
 .admin-form input[type=text],
 .admin-form input[type=number],
 .admin-form input[type=password],
+.admin-form input[type=date],
 .admin-form select,
 .admin-form textarea {
     width: 100%;

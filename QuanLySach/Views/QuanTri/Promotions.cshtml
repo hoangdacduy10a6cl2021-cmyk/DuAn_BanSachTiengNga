@@ -1,0 +1,59 @@
+﻿@using QuanLySach.Models
+@model List<Promotion>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Управление промоакциями";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Промоакции (@Model.Count)</h2>
+        <a asp-action="PromotionCreate" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Добавить промоакцию</a>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Код</th>
+                <th>Описание</th>
+                <th>Скидка</th>
+                <th>Период действия</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var promo in Model)
+            {
+                <tr>
+                    <td><strong>@promo.Code</strong></td>
+                    <td style="max-width:280px; color:#555;">@(string.IsNullOrWhiteSpace(promo.Description) ? "—" : promo.Description)</td>
+                    <td>@promo.DiscountPercent%</td>
+                    <td>@promo.StartDate.ToString("dd/MM/yyyy") — @promo.EndDate.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @{
+                            var badgeColor = promo.ComputedStatus switch
+                            {
+                                "Активна" => "background:#e6f4ea; color:#276b3d;",
+                                "Скоро начнётся" => "background:#fdf3e0; color:#8b6508;",
+                                "Истекло" => "background:#f1ece0; color:#8a8072;",
+                                _ => "background:#fdecea; color:#a02f24;"
+                            };
+                        }
+                        <span class="badge" style="@badgeColor">@promo.ComputedStatus</span>
+                    </td>
+                    <td>
+                        <a asp-action="PromotionEdit" asp-route-id="@promo.Id" class="btn btn-outline btn-sm">Изменить</a>
+                        <form asp-action="PromotionDelete" asp-route-id="@promo.Id" method="post" style="display:inline" onsubmit="return confirm('Удалить эту промоакцию?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="6">Промоакций пока нет.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

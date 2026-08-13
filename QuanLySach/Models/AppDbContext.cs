@@ -22,6 +22,10 @@ namespace QuanLySach.Models
 
         public DbSet<Role> Roles { get; set; }
 
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<Publisher> Publishers { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>().HasData(
@@ -80,6 +84,25 @@ namespace QuanLySach.Models
                 new Book { Id = 39, Title = "О дивный новый мир", Author = "Олдос Хаксли", Price = 520, CoverImageUrl = "https://covers.openlibrary.org/b/isbn/9780060850524-L.jpg", CategoryId = 3, IsPopular = false },
                 new Book { Id = 40, Title = "451 градус по Фаренгейту", Author = "Рэй Брэдбери", Price = 490, CoverImageUrl = "https://covers.openlibrary.org/b/isbn/9781451673319-L.jpg", CategoryId = 3, IsPopular = false }
             );
+
+            modelBuilder.Entity<Author>().HasData(
+                new Author { Id = 1, Name = "Антуан де Сент-Экзюпери", Bio = "Французский писатель и лётчик." },
+                new Author { Id = 2, Name = "Джордж Оруэлл", Bio = "Английский писатель и публицист." },
+                new Author { Id = 3, Name = "Лев Толстой", Bio = "Русский писатель, классик мировой литературы." },
+                new Author { Id = 4, Name = "Фёдор Достоевский", Bio = "Русский писатель, мыслитель, философ." }
+            );
+
+            modelBuilder.Entity<Publisher>().HasData(
+                new Publisher { Id = 1, Name = "Эксмо", Address = "Москва, Россия" },
+                new Publisher { Id = 2, Name = "АСТ", Address = "Москва, Россия" },
+                new Publisher { Id = 3, Name = "Азбука", Address = "Санкт-Петербург, Россия" }
+            );
+
+            modelBuilder.Entity<Promotion>().HasData(
+                new Promotion { Id = 1, Code = "WELCOME10", Description = "Скидка для новых покупателей", DiscountPercent = 10, StartDate = new DateTime(2026, 1, 1), EndDate = new DateTime(2026, 12, 31), IsActive = true },
+                new Promotion { Id = 2, Code = "SUMMER25", Description = "Летняя распродажа", DiscountPercent = 25, StartDate = new DateTime(2026, 6, 1), EndDate = new DateTime(2026, 8, 31), IsActive = true }
+            );
+
             // Tài khoản admin mặc định — username: admin / mật khẩu: Admin@123
             modelBuilder.Entity<Admin>().HasData(
                 new Admin
@@ -94,5 +117,3 @@ namespace QuanLySach.Models
         }
     }
 }
-        
-    

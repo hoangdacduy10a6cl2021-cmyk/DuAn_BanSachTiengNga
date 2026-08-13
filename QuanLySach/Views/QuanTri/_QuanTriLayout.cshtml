@@ -25,11 +25,21 @@
                 <a asp-controller="QuanTri" asp-action="Categories" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Category") == true ? "active" : "")">
                     <i class="fas fa-tags"></i> Категории
                 </a>
+                <a asp-controller="QuanTri" asp-action="Authors" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Author") == true ? "active" : "")">
+                    <i class="fas fa-feather"></i> Авторы
+                </a>
+                <a asp-controller="QuanTri" asp-action="Publishers" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Publisher") == true ? "active" : "")">
+                    <i class="fas fa-building"></i> Издательства
+                </a>
                 <a asp-controller="QuanTri" asp-action="Orders" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Order") == true ? "active" : "")">
                     <i class="fas fa-receipt"></i> Заказы
                 </a>
                 <a asp-controller="QuanTri" asp-action="Users" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("User") == true ? "active" : "")">
                     <i class="fas fa-users"></i> Пользователи
+                </a>
+                <a asp-controller="QuanTri" asp-action="Promotions" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Promotion") == true ? "active" : "")">
+                    <i class="fas fa-percent"></i> Промоакции
+                </a>
                 </a>
                 <div style="padding:14px 20px 6px; font-size:0.7rem; letter-spacing:0.05em; color:rgba(255,255,255,0.4); text-transform:uppercase;">Управление доступом</div>
                 <a asp-controller="QuanTri" asp-action="AdminAccounts" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("AdminAccount") == true ? "active" : "")">

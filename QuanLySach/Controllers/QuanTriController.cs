@@ -313,6 +313,242 @@ namespace QuanLySach.Controllers
             }
             return RedirectToAction("Categories");
         }
+        // ================= AUTHORS =================
+        public async Task<IActionResult> Authors(string? searchTerm)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            var query = _db.Authors.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(a => a.Name.Contains(searchTerm));
+            }
+
+            var authors = await query.OrderBy(a => a.Name).ToListAsync();
+            ViewBag.SearchTerm = searchTerm;
+            return View(authors);
+        }
+
+        [HttpGet]
+        public IActionResult AuthorCreate()
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+            return View(new Author());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AuthorCreate(Author model)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            if (!ModelState.IsValid) return View(model);
+
+            _db.Authors.Add(model);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Đã thêm tác giả mới!";
+            return RedirectToAction("Authors");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AuthorEdit(int id)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            var author = await _db.Authors.FindAsync(id);
+            if (author == null) return NotFound();
+            return View(author);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AuthorEdit(int id, Author model)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            if (id != model.Id) return NotFound();
+            if (!ModelState.IsValid) return View(model);
+
+            _db.Authors.Update(model);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Đã cập nhật tác giả!";
+            return RedirectToAction("Authors");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AuthorDelete(int id)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            var author = await _db.Authors.FindAsync(id);
+            if (author != null)
+            {
+                _db.Authors.Remove(author);
+                await _db.SaveChangesAsync();
+                TempData["Success"] = "Đã xóa tác giả!";
+            }
+            return RedirectToAction("Authors");
+        }
+
+        // ================= PUBLISHERS =================
+        public async Task<IActionResult> Publishers(string? searchTerm)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            var query = _db.Publishers.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(p => p.Name.Contains(searchTerm));
+            }
+
+            var publishers = await query.OrderBy(p => p.Name).ToListAsync();
+            ViewBag.SearchTerm = searchTerm;
+            return View(publishers);
+        }
+
+        [HttpGet]
+        public IActionResult PublisherCreate()
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+            return View(new Publisher());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PublisherCreate(Publisher model)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            if (!ModelState.IsValid) return View(model);
+
+            _db.Publishers.Add(model);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Đã thêm nhà xuất bản mới!";
+            return RedirectToAction("Publishers");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PublisherEdit(int id)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            var publisher = await _db.Publishers.FindAsync(id);
+            if (publisher == null) return NotFound();
+            return View(publisher);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PublisherEdit(int id, Publisher model)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            if (id != model.Id) return NotFound();
+            if (!ModelState.IsValid) return View(model);
+
+            _db.Publishers.Update(model);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Đã cập nhật nhà xuất bản!";
+            return RedirectToAction("Publishers");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PublisherDelete(int id)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            var publisher = await _db.Publishers.FindAsync(id);
+            if (publisher != null)
+            {
+                _db.Publishers.Remove(publisher);
+                await _db.SaveChangesAsync();
+                TempData["Success"] = "Đã xóa nhà xuất bản!";
+            }
+            return RedirectToAction("Publishers");
+        }
+
+        // ================= PROMOTIONS =================
+        public async Task<IActionResult> Promotions()
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            var promotions = await _db.Promotions.OrderByDescending(p => p.StartDate).ToListAsync();
+            return View(promotions);
+        }
+
+        [HttpGet]
+        public IActionResult PromotionCreate()
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+            return View(new Promotion());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PromotionCreate(Promotion model)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            if (!ModelState.IsValid) return View(model);
+            if (model.EndDate < model.StartDate)
+            {
+                ModelState.AddModelError("", "Ngày kết thúc phải sau ngày bắt đầu!");
+                return View(model);
+            }
+
+            _db.Promotions.Add(model);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Đã thêm khuyến mãi mới!";
+            return RedirectToAction("Promotions");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PromotionEdit(int id)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            var promotion = await _db.Promotions.FindAsync(id);
+            if (promotion == null) return NotFound();
+            return View(promotion);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PromotionEdit(int id, Promotion model)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            if (id != model.Id) return NotFound();
+            if (!ModelState.IsValid) return View(model);
+            if (model.EndDate < model.StartDate)
+            {
+                ModelState.AddModelError("", "Ngày kết thúc phải sau ngày bắt đầu!");
+                return View(model);
+            }
+
+            _db.Promotions.Update(model);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Đã cập nhật khuyến mãi!";
+            return RedirectToAction("Promotions");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PromotionDelete(int id)
+        {
+            if (RequireAdmin() is IActionResult redirect) return redirect;
+
+            var promotion = await _db.Promotions.FindAsync(id);
+            if (promotion != null)
+            {
+                _db.Promotions.Remove(promotion);
+                await _db.SaveChangesAsync();
+                TempData["Success"] = "Đã xóa khuyến mãi!";
+            }
+            return RedirectToAction("Promotions");
+        }
 
         // ================= ORDERS =================
         public async Task<IActionResult> Orders()
