@@ -29,9 +29,19 @@ namespace QuanLySach.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> AddToCart(int bookId)
         {
+            var book = await _db.Books.FindAsync(bookId);
+            if (book == null)
+                return Json(new { success = false, message = "Книга не найдена." });
+
             var sessionId = HttpContext.Session.Id;
             var existing = _db.CartItems
                 .FirstOrDefault(c => c.BookId == bookId && c.SessionId == sessionId);
+
+            int currentQtyInCart = existing?.Quantity ?? 0;
+            if (currentQtyInCart + 1 > book.Stock)
+            {
+                return Json(new { success = false, message = "Извините, этой книги больше нет в наличии в нужном количестве." });
+            }
 
             if (existing != null)
                 existing.Quantity++;
@@ -91,6 +101,14 @@ namespace QuanLySach.Controllers
             if (!items.Any())
                 return RedirectToAction("Index");
 
+            // Kiểm tra lại tồn kho trước khi chốt đơn (phòng trường hợp hết hàng giữa chừng)
+            var outOfStockItems = items.Where(i => i.Book == null || i.Quantity > i.Book.Stock).ToList();
+            if (outOfStockItems.Any())
+            {
+                TempData["ToastError"] = "Некоторых книг в вашей корзине больше нет в достаточном количестве. Пожалуйста, проверьте корзину.";
+                return RedirectToAction("Index");
+            }
+
             var order = new Order
             {
                 UserId = HttpContext.Session.GetInt32("UserId"),
@@ -119,6 +137,14 @@ namespace QuanLySach.Controllers
             }).ToList();
 
             _db.OrderItems.AddRange(orderItems);
+
+            // Trừ tồn kho tương ứng với số lượng đã mua
+            foreach (var item in items)
+            {
+                item.Book!.Stock -= item.Quantity;
+                if (item.Book.Stock < 0) item.Book.Stock = 0;
+            }
+
             _db.CartItems.RemoveRange(items);
             await _db.SaveChangesAsync();
 

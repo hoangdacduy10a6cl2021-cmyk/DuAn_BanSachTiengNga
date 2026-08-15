@@ -58,16 +58,32 @@
                 </div>
                 <div class="meta-row">
                     <span class="meta-label">Статус</span>
-                    <span style="color:#2e7d32; font-weight:600;">✓ В наличии</span>
+                    @if (Model.Stock > 0)
+                    {
+                        <span style="color:#2e7d32; font-weight:600;">✓ В наличии (@Model.Stock шт.)</span>
+                    }
+                    else
+                    {
+                        <span style="color:#c0392b; font-weight:600;">✗ Нет в наличии</span>
+                    }
                 </div>
             </div>
 
             <div class="book-detail-price">@Model.Price.ToString("0.00") ₽</div>
 
             <div class="book-detail-actions">
-                <button class="btn-cart-detail" onclick="addToCart(@Model.Id)">
-                    <i class="fas fa-shopping-cart"></i> В корзину
-                </button>
+                @if (Model.Stock > 0)
+                {
+                    <button class="btn-cart-detail" onclick="addToCart(@Model.Id)">
+                        <i class="fas fa-shopping-cart"></i> В корзину
+                    </button>
+                }
+                else
+                {
+                    <button class="btn-cart-detail" disabled style="opacity:0.5; cursor:not-allowed;">
+                        <i class="fas fa-ban"></i> Нет в наличии
+                    </button>
+                }
                 <button class="wishlist-btn-detail @(ViewBag.IsWishlisted ? "active" : "")"
                         onclick="toggleWishlist(@Model.Id, this)">
                     <i class="fas fa-heart"></i>
@@ -98,9 +114,18 @@
                             </div>
                         </a>
                         <div style="padding: 0 14px 14px">
-                            <button class="btn-cart" onclick="addToCart(@book.Id)">
-                                <i class="fas fa-shopping-cart"></i> В корзину
-                            </button>
+                            @if (book.Stock > 0)
+                            {
+                                <button class="btn-cart" onclick="addToCart(@book.Id)">
+                                    <i class="fas fa-shopping-cart"></i> В корзину
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn-cart" disabled style="opacity:0.5; cursor:not-allowed;">
+                                    <i class="fas fa-ban"></i> Нет в наличии
+                                </button>
+                            }
                         </div>
                     </div>
                 }

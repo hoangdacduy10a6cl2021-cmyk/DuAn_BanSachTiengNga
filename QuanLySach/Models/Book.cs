@@ -12,5 +12,6 @@
         public bool IsNew { get; set; }
         public bool IsPopular { get; set; }
         public string? Description { get; set; }
+        public int Stock { get; set; } = 0;
     }
 }

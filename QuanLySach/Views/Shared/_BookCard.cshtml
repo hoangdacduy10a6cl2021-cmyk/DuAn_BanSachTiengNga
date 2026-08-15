@@ -3,6 +3,10 @@
 <div class="book-card">
     <div class="book-cover">
         <img src="@Model.CoverImageUrl" alt="@Model.Title" />
+        @if (Model.Stock <= 0)
+        {
+            <span style="position:absolute; top:8px; left:8px; background:#c0392b; color:#fff; font-size:0.7rem; font-weight:700; padding:3px 8px; border-radius:4px;">Нет в наличии</span>
+        }
         <button class="wishlist-btn" onclick="toggleWishlist(@Model.Id, this)">
             <i class="fas fa-heart"></i>
         </button>
@@ -11,10 +15,19 @@
         <h4>@Model.Title</h4>
         <p class="author">@Model.Author</p>
         <p class="price">@Model.Price ₽</p>
-        <button class="btn-cart"
-                data-book-id="@Model.Id"
-                onclick="addToCart(@Model.Id)">
-            <i class="fas fa-shopping-cart"></i> В корзину
-        </button>
+        @if (Model.Stock <= 0)
+        {
+            <button class="btn-cart" disabled style="opacity:0.5; cursor:not-allowed;">
+                <i class="fas fa-ban"></i> Нет в наличии
+            </button>
+        }
+        else
+        {
+            <button class="btn-cart"
+                    data-book-id="@Model.Id"
+                    onclick="addToCart(@Model.Id)">
+                <i class="fas fa-shopping-cart"></i> В корзину
+            </button>
+        }
     </div>
 </div>

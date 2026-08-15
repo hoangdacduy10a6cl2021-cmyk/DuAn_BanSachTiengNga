@@ -30,6 +30,8 @@
                 <th>Автор</th>
                 <th>Категория</th>
                 <th>Цена</th>
+                <th>Запас</th>
+                <th>Статус</th>
                 <th>Метки</th>
                 <th></th>
             </tr>
@@ -43,6 +45,21 @@
                     <td>@book.Author</td>
                     <td>@(book.Category?.Name ?? "—")</td>
                     <td>@book.Price.ToString("N0") ₽</td>
+                    <td>@book.Stock</td>
+                    <td>
+                        @if (book.Stock <= 0)
+                        {
+                            <span class="badge" style="background:#fdecea; color:#a02f24;">Нет в наличии</span>
+                        }
+                        else if (book.Stock <= 5)
+                        {
+                            <span class="badge" style="background:#fdf3e0; color:#8b6508;">Мало (@book.Stock)</span>
+                        }
+                        else
+                        {
+                            <span class="badge" style="background:#e6f4ea; color:#276b3d;">В наличии</span>
+                        }
+                    </td>
                     <td>
                         @if (book.IsPopular)
                         {
@@ -64,7 +81,7 @@
             }
             @if (!Model.Any())
             {
-                <tr><td colspan="7">Книг пока нет.</td></tr>
+                <tr><td colspan="9">Книг пока нет.</td></tr>
             }
         </tbody>
     </table>

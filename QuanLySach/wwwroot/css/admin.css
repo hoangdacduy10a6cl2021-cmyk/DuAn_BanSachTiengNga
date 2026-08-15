@@ -123,6 +123,59 @@ body.admin-body {
         color: var(--brown-dark);
     }
 
+/* ===== LANGUAGE SELECTOR (Admin) ===== */
+.lang-selector {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.lang-current {
+    color: var(--brown-mid);
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+    .lang-current:hover {
+        color: var(--gold-dark);
+        border-color: var(--gold);
+    }
+
+.lang-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border: 1px solid #eadfc5;
+    border-radius: 6px;
+    list-style: none;
+    padding: 6px 0;
+    margin: 4px 0 0;
+    min-width: 150px;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+    .lang-dropdown li {
+        padding: 8px 16px;
+        color: var(--brown-mid);
+        font-size: 0.85rem;
+        cursor: pointer;
+    }
+
+        .lang-dropdown li:hover {
+            background: var(--gold);
+            color: #fff;
+        }
+
+.lang-selector:hover .lang-dropdown {
+    display: block;
+}
+
 .admin-profile {
     display: flex;
     align-items: center;
