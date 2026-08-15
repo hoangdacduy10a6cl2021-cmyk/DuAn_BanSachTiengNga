@@ -26,6 +26,10 @@ namespace QuanLySach.Models
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
 
+        public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<ActivityLog> ActivityLogs { get; set; }
+        public DbSet<SiteSetting> SiteSettings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>().HasData(
@@ -101,6 +105,32 @@ namespace QuanLySach.Models
             modelBuilder.Entity<Promotion>().HasData(
                 new Promotion { Id = 1, Code = "WELCOME10", Description = "Скидка для новых покупателей", DiscountPercent = 10, StartDate = new DateTime(2026, 1, 1), EndDate = new DateTime(2026, 12, 31), IsActive = true },
                 new Promotion { Id = 2, Code = "SUMMER25", Description = "Летняя распродажа", DiscountPercent = 25, StartDate = new DateTime(2026, 6, 1), EndDate = new DateTime(2026, 8, 31), IsActive = true }
+            );
+
+            // Vai trò siêu quản trị mặc định — luôn có toàn quyền trên mọi module
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Name = "Администратор", Description = "Vai trò siêu quản trị — toàn quyền trên mọi module", IsSuperAdmin = true }
+            );
+
+            // Cài đặt hệ thống mặc định (bản ghi đơn, Id = 1)
+            modelBuilder.Entity<SiteSetting>().HasData(
+                new SiteSetting
+                {
+                    Id = 1,
+                    StoreName = "Книжный Рай",
+                    StoreEmail = "info@knizhnyray.com",
+                    StorePhone = "",
+                    StoreAddress = "",
+                    FooterText = "© 2026 Книжный Рай. Tất cả các quyền được bảo lưu.",
+                    DefaultCurrency = "RUB",
+                    ItemsPerPage = 12,
+                    MaintenanceMode = false,
+                    MaintenanceMessage = "Trang web đang bảo trì, vui lòng quay lại sau.",
+                    FacebookUrl = "",
+                    InstagramUrl = "",
+                    TelegramUrl = "",
+                    UpdatedAt = new DateTime(2026, 1, 1)
+                }
             );
 
             // Tài khoản admin mặc định — username: admin / mật khẩu: Admin@123

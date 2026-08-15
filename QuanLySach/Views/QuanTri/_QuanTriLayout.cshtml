@@ -22,7 +22,7 @@
                 <a asp-controller="QuanTri" asp-action="Books" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Book") == true ? "active" : "")">
                     <i class="fas fa-book"></i> Управление книгами
                 </a>
-                <a asp-controller="QuanTri" asp-action="Categories" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Category") == true ? "active" : "")">
+                <a asp-controller="QuanTri" asp-action="Categories" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Categor") == true ? "active" : "")">
                     <i class="fas fa-tags"></i> Категории
                 </a>
                 <a asp-controller="QuanTri" asp-action="Authors" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Author") == true ? "active" : "")">
@@ -37,15 +37,30 @@
                 <a asp-controller="QuanTri" asp-action="Users" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("User") == true ? "active" : "")">
                     <i class="fas fa-users"></i> Пользователи
                 </a>
+                <a asp-controller="QuanTri" asp-action="Customers" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Customer") == true ? "active" : "")">
+                    <i class="fas fa-user-group"></i> Клиенты
+                </a>
                 <a asp-controller="QuanTri" asp-action="Promotions" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Promotion") == true ? "active" : "")">
                     <i class="fas fa-percent"></i> Промоакции
+                </a>
+                <a asp-controller="QuanTri" asp-action="Statistics" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Statistics" ? "active" : "")">
+                    <i class="fas fa-chart-line"></i> Статистика
+                </a>
+                <a asp-controller="QuanTri" asp-action="Settings" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")">
+                    <i class="fas fa-gear"></i> Настройки
                 </a>
                 <div style="padding:14px 20px 6px; font-size:0.7rem; letter-spacing:0.05em; color:rgba(255,255,255,0.4); text-transform:uppercase;">Управление доступом</div>
                 <a asp-controller="QuanTri" asp-action="AdminAccounts" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("AdminAccount") == true ? "active" : "")">
                     <i class="fas fa-user-shield"></i> Аккаунты администратора
                 </a>
                 <a asp-controller="QuanTri" asp-action="Roles" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Role") == true ? "active" : "")">
-                    <i class="fas fa-key"></i> Роли и права доступа
+                    <i class="fas fa-key"></i> Роли
+                </a>
+                <a asp-controller="QuanTri" asp-action="Permissions" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.StartsWith("Permission") == true ? "active" : "")">
+                    <i class="fas fa-lock"></i> Права доступа
+                </a>
+                <a asp-controller="QuanTri" asp-action="ActivityLog" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "ActivityLog" ? "active" : "")">
+                    <i class="fas fa-clock-rotate-left"></i> Журнал действий
                 </a>
             </nav>
             <div class="sidebar-footer">

@@ -74,6 +74,7 @@ namespace QuanLySach.Controllers
                 HttpContext.Session.SetInt32("AdminId", admin.Id);
                 HttpContext.Session.SetString("AdminName", admin.FullName);
                 HttpContext.Session.SetString("AdminRole", admin.Role?.Name ?? "");
+                HttpContext.Session.SetInt32("AdminRoleId", admin.RoleId);
                 TempData["ToastSuccess"] = "Добро пожаловать, администратор!";
                 return RedirectToAction("Index", "QuanTri");
             }
