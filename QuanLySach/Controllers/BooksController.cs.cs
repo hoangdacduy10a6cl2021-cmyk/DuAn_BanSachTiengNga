@@ -13,18 +13,21 @@ namespace QuanLySach.Controllers
             _db = db;
         }
 
-        public async Task<IActionResult> Index(int? categoryId, string sort = "popular", int page = 1, int pageSize = 8)
+        public async Task<IActionResult> Index(int? categoryId, string sort = "popular", int page = 1, int pageSize = 8, bool isNew = false)
         {
             var query = _db.Books.Include(b => b.Category).AsQueryable();
 
             if (categoryId.HasValue)
                 query = query.Where(b => b.CategoryId == categoryId);
 
+            if (isNew)
+                query = query.Where(b => b.IsNew);
+
             query = sort switch
             {
                 "price_asc" => query.OrderBy(b => b.Price),
                 "price_desc" => query.OrderByDescending(b => b.Price),
-                "new" => query.OrderByDescending(b => b.Id),
+                "new" => query.OrderByDescending(b => b.CreatedDate),
                 _ => query.OrderByDescending(b => b.IsPopular)
             };
 
@@ -38,21 +41,12 @@ namespace QuanLySach.Controllers
             ViewBag.Page = page;
             ViewBag.PageSize = pageSize;
             ViewBag.TotalPages = (int)Math.Ceiling((double)total / pageSize);
+            ViewBag.IsNewFilter = isNew;
 
-            // Wishlist IDs cho user đang đăng nhập
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId != null)
-            {
-                var wishlistIds = _db.Wishlists
-                    .Where(w => w.UserId == userId)
-                    .Select(w => w.BookId)
-                    .ToList();
-                ViewBag.WishlistIds = wishlistIds;
-            }
-            else
-            {
-                ViewBag.WishlistIds = new List<int>();
-            }
+            ViewBag.WishlistIds = userId != null
+                ? _db.Wishlists.Where(w => w.UserId == userId).Select(w => w.BookId).ToList()
+                : new List<int>();
 
             return View(books);
         }

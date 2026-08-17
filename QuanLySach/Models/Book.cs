@@ -13,5 +13,7 @@
         public bool IsPopular { get; set; }
         public string? Description { get; set; }
         public int Stock { get; set; } = 0;
+
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }

@@ -28,9 +28,34 @@ namespace QuanLySach.Controllers
                 .ToList();
             return View(popularBooks);
         }
-        public IActionResult NewBooks()
+        public async Task<IActionResult> NewBooks(int page = 1, string sortOrder = "newest")
         {
-            return View();
+            int pageSize = 12;
+
+            var query = _db.Books
+                .Where(b => b.IsNew)
+                .Include(b => b.Category)
+                .AsQueryable();
+
+            query = sortOrder switch
+            {
+                "priceAsc" => query.OrderBy(b => b.Price),
+                "priceDesc" => query.OrderByDescending(b => b.Price),
+                "nameAsc" => query.OrderBy(b => b.Title),
+                _ => query.OrderByDescending(b => b.CreatedDate)
+            };
+
+            var totalItems = await query.CountAsync();
+            var books = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            ViewBag.SortOrder = sortOrder;
+
+            return View(books);
         }
         public IActionResult About()
         {

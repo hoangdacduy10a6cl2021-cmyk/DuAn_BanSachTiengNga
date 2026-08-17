@@ -1,72 +1,255 @@
-﻿@{
-    ViewData["Title"] = "Новинки";
-}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+﻿@model IEnumerable<QuanLySach.Models.Book>
 
-<div class="coming-soon-box">
-     <div class="coming-soon-icon">
-   <i class="fa-solid fa-book-open"></i>
-  </div>
-    <h2>В разработке...</h2>
-    <p class="coming-soon-title">Этот раздел скоро появится</p>
-    <p class="coming-soon-desc">Мы работаем над тем, чтобы предложить вам лучшие новинки книжного мира</p>
-    <a asp-controller="Books" asp-action="Index" class="back-btn">← Вернуться к книгам</a>
+@{
+    ViewData["Title"] = "Sách mới";
+}
+
+<div class="popular-page">
+    <h2 class="popular-title">Sách mới</h2>
+    <p class="popular-subtitle">Những cuốn sách mới nhất vừa được cập nhật</p>
+
+    <div class="new-books-toolbar">
+        <form method="get" asp-action="NewBooks">
+            <label for="sortOrder">Sắp xếp:</label>
+            <select name="sortOrder" id="sortOrder" onchange="this.form.submit()">
+                <option value="newest" selected="@(ViewBag.SortOrder == "newest")">Mới nhất</option>
+                <option value="priceAsc" selected="@(ViewBag.SortOrder == "priceAsc")">Giá tăng dần</option>
+                <option value="priceDesc" selected="@(ViewBag.SortOrder == "priceDesc")">Giá giảm dần</option>
+                <option value="nameAsc" selected="@(ViewBag.SortOrder == "nameAsc")">Tên A-Z</option>
+            </select>
+        </form>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <p class="no-books-msg">Hiện chưa có sách mới nào.</p>
+    }
+    else
+    {
+        <div class="books-grid">
+            @foreach (var book in Model)
+            {
+                <div class="book-card">
+                    <div class="book-cover">
+                        @if (!string.IsNullOrEmpty(book.CoverImageUrl))
+                        {
+                            <img src="@book.CoverImageUrl" alt="@book.Title" />
+                        }
+                        else
+                        {
+                            <div class="no-cover">Không có ảnh bìa</div>
+                        }
+                        <span class="badge-new">MỚI</span>
+                        <button class="wishlist-btn" onclick="toggleWishlist(@book.Id, this)">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title">@book.Title</h3>
+                        <p class="book-author">@book.Author</p>
+                        <p class="book-price">@book.Price.ToString("0.00") ₽</p>
+                        <button class="add-to-cart-btn btn-cart" onclick="addToCart(@book.Id)">
+                            <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if ((int)ViewBag.TotalPages > 1)
+        {
+            <nav class="pagination">
+                @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                {
+                    <a asp-action="NewBooks"
+                       asp-route-page="@i"
+                       asp-route-sortOrder="@ViewBag.SortOrder"
+                       class="page-link @(i == (int)ViewBag.CurrentPage ? "active" : "")">@i</a>
+                }
+            </nav>
+        }
+    }
 </div>
 
 <style>
-    .coming-soon-box {
+    .popular-page {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .popular-title {
+        font-size: 2rem;
+        color: #b8860b;
+        font-family: Georgia, serif;
         text-align: center;
-        padding: 80px 20px;
-        background: #fdf8f0;
-        border-radius: 16px;
-        max-width: 600px;
-        margin: 60px auto;
-    }
-        .coming-soon-icon i {
-  font-size: 70px;
-  color: rgb(205, 178, 81);
-}
-
-    .coming-soon-icon {
-        font-size: 72px;
-        margin-bottom: 24px;
-    }
-
-    .coming-soon-box {
-        text-align: center;
-        padding: 80px 20px;
-        background: transparent;
-        border-radius: 0;
-        max-width: 600px;
-        margin: 60px auto;
-    }
-
-    .coming-soon-title {
-        font-size: 1.1rem;
-        color: #555;
         margin-bottom: 8px;
     }
 
-    .coming-soon-desc {
-        font-size: 0.95rem;
+    .popular-subtitle {
+        text-align: center;
         color: #888;
-        margin-bottom: 32px;
+        margin-bottom: 24px;
     }
 
-    .back-btn {
-        display: inline-block;
-        background: #b8860b;
-        color: white;
-        padding: 14px 40px;
+    .new-books-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 24px;
+    }
+
+        .new-books-toolbar select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+    .no-books-msg {
+        text-align: center;
+        color: #888;
+        padding: 40px 0;
+    }
+
+    .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 24px;
+    }
+
+    .book-card {
+        background: #fff;
         border-radius: 8px;
-        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 16px;
+        text-align: center;
+        transition: transform 0.2s;
+    }
+
+        .book-card:hover {
+            transform: translateY(-4px);
+        }
+
+    .book-cover {
+        position: relative;
+        margin-bottom: 12px;
+    }
+
+        .book-cover img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+    .no-cover {
+        width: 100%;
+        height: 220px;
+        background: #f0e6d3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        color: #999;
+    }
+
+    .badge-new {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: #e53935;
+        color: white;
+        font-size: 0.7rem;
+        font-weight: bold;
+        padding: 3px 8px;
+        border-radius: 4px;
+    }
+
+    .wishlist-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(255,255,255,0.9);
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ccc;
+        transition: color 0.2s;
+    }
+
+        .wishlist-btn:hover {
+            color: #e53935;
+        }
+
+        .wishlist-btn.active i {
+            color: #e53935;
+        }
+
+    .book-title {
+        font-size: 0.95rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
+    .book-author {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .book-price {
         font-size: 1rem;
         font-weight: bold;
+        color: #333;
+        margin-bottom: 12px;
+    }
+
+    .add-to-cart-btn {
+        background: #b8860b;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 0.9rem;
         transition: background 0.2s;
     }
 
-        .back-btn:hover {
+        .add-to-cart-btn:hover {
             background: #9a6f00;
+        }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 32px;
+    }
+
+    .page-link {
+        padding: 8px 14px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        color: #333;
+        text-decoration: none;
+    }
+
+        .page-link.active {
+            background: #b8860b;
             color: white;
+            border-color: #b8860b;
+        }
+
+        .page-link:hover {
+            background: #f0e6d3;
         }
 </style>

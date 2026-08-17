@@ -54,7 +54,7 @@
             <input type="checkbox" asp-for="IsPopular" />
             <label style="margin:0">Популярная книга</label>
         </div>
-
+        <input type="hidden" asp-for="CreatedDate" />
         <button type="submit" class="btn btn-gold">Обновить</button>
         <a asp-action="Books" class="btn btn-outline">Отмена</a>
     </form>
