@@ -1,0 +1,19 @@
+﻿@using QuanLySach.Models
+@model Category
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Редактировать категорию";
+}
+
+<div class="admin-panel">
+    <form asp-action="CategoryEdit" asp-route-id="@Model.Id" method="post" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label>Название категории</label>
+            <input type="text" asp-for="Name" required />
+        </div>
+        <button type="submit" class="btn btn-gold">Обновить</button>
+        <a asp-action="Categories" class="btn btn-outline">Отмена</a>
+    </form>
+</div>

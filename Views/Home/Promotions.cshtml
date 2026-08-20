@@ -1,0 +1,554 @@
+﻿@{
+    ViewData["Title"] = "Акции";
+    string? appliedPromoCode = ViewBag.PromoCode;
+    int appliedPromoPercent = ViewBag.DiscountPercent ?? 0;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+<div class="promo-page">
+    <div class="container">
+
+        <!-- BANNER -->
+        <div class="promo-banner">
+            <div class="promo-banner-text">
+                <span class="promo-tag">Специальные предложения</span>
+                <h1>Акции и скидки</h1>
+                <p>Выгодные предложения для любителей книг</p>
+            </div>
+            <div class="promo-banner-icon"><i class="fa-solid fa-gift"></i></div>
+        </div>
+
+        <!-- NHẬP MÃ GIẢM GIÁ -->
+        <div class="promo-code-section">
+            <div class="promo-code-box">
+                <div class="promo-code-icon"><i class="fa-solid fa-ticket"></i></div>
+                <div class="promo-code-text">
+                    <h3>Bạn có mã giảm giá?</h3>
+                    <p>Nhập mã bên dưới để áp dụng giảm giá cho tất cả sách trong đơn hàng của bạn</p>
+                </div>
+                <div class="promo-code-form">
+                    <div id="promo-input-row" class="promo-code-input-row" style="display:@(string.IsNullOrEmpty(appliedPromoCode) ? "flex" : "none")">
+                        <input type="text" id="promoCodeInput" placeholder="Nhập mã giảm giá, ví dụ: SUMMER25" maxlength="30" />
+                        <button type="button" id="promoApplyBtn" onclick="applyPromoCode()">Áp dụng</button>
+                    </div>
+                    <div id="promo-applied-row" class="promo-code-applied-row" style="display:@(string.IsNullOrEmpty(appliedPromoCode) ? "none" : "flex")">
+                        <span><i class="fas fa-check-circle"></i> Đang áp dụng mã <strong id="promo-code-label">@appliedPromoCode</strong> (giảm <span id="promo-percent-label">@appliedPromoPercent</span>%)</span>
+                        <button type="button" class="promo-remove-btn" onclick="removePromoCode()">Gỡ mã</button>
+                    </div>
+                    <div id="promo-message" class="promo-code-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROMO CARDS -->
+        <div class="promo-grid">
+
+            <div class="promo-card featured">
+                <div class="promo-badge">-30%</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-book"></i></div>
+                <h3>Классика со скидкой</h3>
+                <p>Скидка 30% на все книги из раздела «Художественная литература»</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> До 30 июня 2026</div>
+                <a asp-controller="Books" asp-action="Index" asp-route-categoryId="1" class="promo-btn">Перейти к книгам</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">2+1</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-gift"></i></div>
+                <h3>Три по цене двух</h3>
+                <p>При покупке 2 книг — третья в подарок. Акция распространяется на весь каталог</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> До 15 июля 2026</div>
+                <a asp-controller="Books" asp-action="Index" class="promo-btn">Перейти к каталогу</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">-20%</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-rocket"></i></div>
+                <h3>Фантастика месяца</h3>
+                <p>Скидка 20% на все книги в жанре фантастики. Отличный повод открыть новые миры!</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> До 31 июля 2026</div>
+                <a asp-controller="Books" asp-action="Index" asp-route-categoryId="3" class="promo-btn">Смотреть фантастику</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">Бесплатно</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-truck"></i></div>
+                <h3>Бесплатная доставка</h3>
+                <p>Бесплатная доставка при заказе от 1500 ₽. Доставляем по всей России</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> Постоянная акция</div>
+                <a asp-controller="Books" asp-action="Index" class="promo-btn">Сделать заказ</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">-15%</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-child"></i></div>
+                <h3>Детские книги</h3>
+                <p>Скидка 15% на детскую литературу. Подарите ребёнку радость чтения!</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> До 1 сентября 2026</div>
+                <a asp-controller="Books" asp-action="Index" asp-route-categoryId="5" class="promo-btn">Детская литература</a>
+            </div>
+
+            <div class="promo-card">
+                <div class="promo-badge">Подарок</div>
+                <div class="promo-card-icon"><i class="fa-solid fa-gift"></i></div>
+                <h3>Подарочная упаковка</h3>
+                <p>Бесплатная подарочная упаковка для любого заказа в июне. Порадуйте близких!</p>
+                <div class="promo-period"><i class="fas fa-calendar"></i> Весь июнь 2026</div>
+                <a asp-controller="Books" asp-action="Index" class="promo-btn">Выбрать подарок</a>
+            </div>
+
+        </div>
+
+        <!-- NEWSLETTER -->
+        <div class="promo-newsletter">
+            <div class="promo-newsletter-text">
+                <h3>Подпишитесь на рассылку</h3>
+                <p>Получайте информацию о новых акциях и скидках первыми</p>
+            </div>
+            <div class="promo-newsletter-form">
+                <input type="email" placeholder="Введите ваш e-mail" />
+                <button>Подписаться</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .promo-page {
+        padding: 40px 0 60px;
+        background: #fdf8f0;
+    }
+
+    /* BANNER */
+    .promo-banner {
+        background: linear-gradient(135deg, #b8860b, #d4a017);
+        border-radius: 16px;
+        padding: 50px 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 48px;
+        color: white;
+    }
+
+    .promo-banner-icon i {
+        color: rgb(205, 178, 81);
+    }
+
+    .promo-tag {
+        background: rgba(255,255,255,0.25);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 14px;
+        letter-spacing: 0.5px;
+    }
+
+    .promo-banner h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 42px;
+        margin: 0 0 10px;
+        color: white;
+    }
+
+    .promo-banner p {
+        font-size: 16px;
+        opacity: 0.9;
+        margin: 0;
+    }
+
+    .promo-banner-icon {
+        font-size: 90px;
+        line-height: 1;
+    }
+
+    /* NHẬP MÃ GIẢM GIÁ */
+    .promo-code-section {
+        margin-bottom: 40px;
+    }
+
+    .promo-code-box {
+        background: #fff;
+        border: 2px dashed #d4a017;
+        border-radius: 14px;
+        padding: 28px 32px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .promo-code-icon {
+        font-size: 40px;
+        color: #b8860b;
+        flex-shrink: 0;
+    }
+
+    .promo-code-text {
+        flex: 1;
+        min-width: 220px;
+    }
+
+        .promo-code-text h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 19px;
+            color: #333;
+            margin: 0 0 4px;
+        }
+
+        .promo-code-text p {
+            font-size: 13px;
+            color: #777;
+            margin: 0;
+        }
+
+    .promo-code-form {
+        flex: 1;
+        min-width: 280px;
+    }
+
+    .promo-code-input-row {
+        display: flex;
+        gap: 10px;
+    }
+
+        .promo-code-input-row input {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 16px;
+            border: 1.5px solid #ddc590;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            box-sizing: border-box;
+            text-transform: uppercase;
+        }
+
+            .promo-code-input-row input:focus {
+                border-color: #b8860b;
+            }
+
+        .promo-code-input-row button {
+            background: #b8860b;
+            color: #fff;
+            border: none;
+            padding: 0 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+            .promo-code-input-row button:hover {
+                background: #9a6f00;
+            }
+
+            .promo-code-input-row button:disabled {
+                opacity: 0.6;
+                cursor: default;
+            }
+
+    .promo-code-applied-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        background: #e8f5e9;
+        border: 1px solid #a5d6a7;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 13.5px;
+        color: #1b5e20;
+        flex-wrap: wrap;
+    }
+
+    .promo-remove-btn {
+        background: none;
+        border: none;
+        color: #c62828;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .promo-code-message {
+        font-size: 13px;
+        margin-top: 8px;
+        min-height: 16px;
+    }
+
+        .promo-code-message.error {
+            color: #c62828;
+        }
+
+        .promo-code-message.success {
+            color: #2e7d32;
+        }
+
+    /* GRID */
+    .promo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-bottom: 48px;
+    }
+
+    .promo-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 32px 28px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .promo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .promo-card.featured {
+            border: 2px solid #b8860b;
+        }
+
+    .promo-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #b8860b;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .promo-card-icon {
+        font-size: 44px;
+        line-height: 1;
+    }
+
+    .promo-card h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        color: #333;
+        margin: 0;
+    }
+
+    .promo-card p {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+        flex: 1;
+    }
+
+    .promo-period {
+        font-size: 13px;
+        color: #999;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .promo-period i {
+            color: #b8860b;
+        }
+
+    .promo-btn {
+        display: inline-block;
+        background: #b8860b;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        text-align: center;
+        transition: background 0.2s;
+        margin-top: 4px;
+    }
+
+        .promo-btn:hover {
+            background: #9a6f00;
+            color: white;
+        }
+
+    /* NEWSLETTER */
+    .promo-newsletter {
+        background: #333;
+        border-radius: 12px;
+        padding: 40px 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .promo-newsletter-text h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 24px;
+        color: white;
+        margin: 0 0 8px;
+    }
+
+    .promo-newsletter-text p {
+        color: #aaa;
+        margin: 0;
+        font-size: 15px;
+    }
+
+    .promo-newsletter-form {
+        display: flex;
+        gap: 12px;
+        flex: 1;
+        max-width: 440px;
+    }
+
+        .promo-newsletter-form input {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .promo-newsletter-form button {
+            padding: 12px 24px;
+            background: #b8860b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+            .promo-newsletter-form button:hover {
+                background: #9a6f00;
+            }
+</style>
+<style>
+    @@media (max-width: 768px) {
+        .promo-page {
+            padding: 20px 0 40px;
+        }
+
+        .promo-banner {
+            flex-direction: column;
+            padding: 24px 16px;
+            text-align: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+        }
+
+            .promo-banner h1 {
+                font-size: 26px;
+            }
+
+            .promo-banner p {
+                font-size: 14px;
+            }
+
+        .promo-banner-icon {
+            font-size: 50px;
+        }
+
+        .promo-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .promo-card {
+            padding: 20px 16px;
+        }
+
+        .promo-newsletter {
+            flex-direction: column;
+            padding: 24px 16px;
+            gap: 16px;
+            border-radius: 12px;
+        }
+
+        .promo-newsletter-text h3 {
+            font-size: 20px;
+        }
+
+        .promo-newsletter-form {
+            flex-direction: column;
+            max-width: 100%;
+            width: 100%;
+        }
+
+            .promo-newsletter-form input,
+            .promo-newsletter-form button {
+                width: 100%;
+            }
+    }
+</style>
+
+<script>
+    function applyPromoCode() {
+        const input = document.getElementById('promoCodeInput');
+        const btn = document.getElementById('promoApplyBtn');
+        const msg = document.getElementById('promo-message');
+        const code = input.value.trim();
+
+        if (!code) {
+            msg.textContent = 'Vui lòng nhập mã giảm giá.';
+            msg.className = 'promo-code-message error';
+            return;
+        }
+
+        btn.disabled = true;
+        const formData = new FormData();
+        formData.append('code', code);
+
+        fetch('@Url.Action("ApplyPromo", "Cart")', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                if (data.success) {
+                    msg.textContent = data.message;
+                    msg.className = 'promo-code-message success';
+                    document.getElementById('promo-code-label').textContent = data.code;
+                    document.getElementById('promo-percent-label').textContent = data.discountPercent;
+                    document.getElementById('promo-input-row').style.display = 'none';
+                    document.getElementById('promo-applied-row').style.display = 'flex';
+                } else {
+                    msg.textContent = data.message;
+                    msg.className = 'promo-code-message error';
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                msg.textContent = 'Có lỗi xảy ra, vui lòng thử lại.';
+                msg.className = 'promo-code-message error';
+            });
+    }
+
+    function removePromoCode() {
+        fetch('@Url.Action("RemovePromo", "Cart")', { method: 'POST' })
+            .then(r => r.json())
+            .then(() => {
+                document.getElementById('promo-message').textContent = '';
+                document.getElementById('promoCodeInput').value = '';
+                document.getElementById('promo-input-row').style.display = 'flex';
+                document.getElementById('promo-applied-row').style.display = 'none';
+            });
+    }
+</script>

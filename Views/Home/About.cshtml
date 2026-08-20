@@ -1,0 +1,129 @@
+﻿@{
+    ViewData["Title"] = "О нас";
+}
+
+<div class="about-page">
+    <!-- SECTION GIỚI THIỆU -->
+    <div class="about-hero">
+        <div class="about-text">
+            <h2>Книжный Рай</h2>
+            <p>Мы — интернет-магазин для всех, кто любит книги.</p>
+            <p>Наша миссия — сделать хорошие книги доступными каждому.</p>
+            <p>В нашем магазине вы найдёте широкий ассортимент книг на любой вкус, быструю доставку и качественный сервис.</p>
+        </div>
+        <div class="about-image">
+            <img src="/images/hero1.png" alt="Книжный Рай" />
+        </div>
+    </div>
+
+    <!-- 4 FEATURES -->
+    <div class="about-features">
+        <div class="about-feature">
+            <i class="fas fa-book-open"></i>
+            <span>Широкий ассортимент</span>
+        </div>
+        <div class="about-feature">
+            <i class="fas fa-truck"></i>
+            <span>Быстрая доставка</span>
+        </div>
+        <div class="about-feature">
+            <i class="fas fa-shield-alt"></i>
+            <span>Гарантия качества</span>
+        </div>
+        <div class="about-feature">
+            <i class="fas fa-headset"></i>
+            <span>Поддержка 24/7</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .about-page {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .about-hero {
+        display: flex;
+        gap: 40px;
+        align-items: center;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+
+    .about-text {
+        flex: 1;
+        padding: 40px;
+    }
+
+        .about-text h2 {
+            font-family: Georgia, serif;
+            font-size: 2rem;
+            color: #4a2c00;
+            margin-bottom: 20px;
+        }
+
+        .about-text p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+    .about-image {
+        flex: 1;
+        min-height: 320px;
+        overflow: hidden;
+    }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+    /* FEATURES */
+    .about-features {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .about-feature {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .about-feature i {
+            font-size: 40px;
+            color: #b8860b;
+        }
+
+        .about-feature span {
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: 600;
+        }
+
+    @@media (max-width: 768px) {
+        .about-hero {
+            flex-direction: column;
+        }
+
+        .about-features {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>

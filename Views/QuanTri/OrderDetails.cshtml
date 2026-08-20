@@ -1,0 +1,80 @@
+﻿@using QuanLySach.Models
+@model Order
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = $"Заказ #{Model.Id}";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Информация о клиенте</h2>
+    </div>
+    <p><strong>ФИО:</strong> @Model.Name</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Телефон:</strong> @Model.Phone</p>
+    <p><strong>Адрес:</strong> @Model.City, @Model.Street @Model.House @Model.Apartment, @Model.PostalCode</p>
+    <p><strong>Способ доставки:</strong> @Model.DeliveryMethod (@Model.DeliveryPrice.ToString("N0") ₽)</p>
+    <p><strong>Дата заказа:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+
+    <form asp-action="OrderUpdateStatus" asp-route-id="@Model.Id" method="post" class="admin-form" style="max-width:320px; margin-top:16px;">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label>Статус заказа</label>
+            <select name="status">
+                @foreach (var s in new[] { "Новый", "Обрабатывается", "Доставляется", "Выполнен", "Отменён" })
+                {
+                    if (s == Model.Status)
+                    {
+                        <option value="@s" selected>@s</option>
+                    }
+                    else
+                    {
+                        <option value="@s">@s</option>
+                    }
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-gold btn-sm">Обновить статус</button>
+    </form>
+</div>
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Товары в заказе</h2>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Книга</th>
+                <th>Количество</th>
+                <th>Цена за шт.</th>
+                <th>Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@(item.Book?.Title ?? "(Книга удалена)")</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price.ToString("N0") ₽</td>
+                    <td>@((item.Price * item.Quantity).ToString("N0")) ₽</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p style="text-align:right; margin-top:12px;">
+        Подытог: @Model.SubTotal.ToString("N0") ₽
+    </p>
+    @if (!string.IsNullOrEmpty(Model.PromoCode))
+    {
+        <p style="text-align:right; color:#2e7d32;">
+            Промокод «@Model.PromoCode» (-@Model.DiscountPercent%): -@Model.DiscountAmount.ToString("N0") ₽
+        </p>
+    }
+    <p style="text-align:right; margin-top:4px; font-weight:700;">
+        Итого: @Model.TotalPrice.ToString("N0") ₽
+    </p>
+</div>
+
+<a asp-action="Orders" class="btn btn-outline">← Назад к списку</a>

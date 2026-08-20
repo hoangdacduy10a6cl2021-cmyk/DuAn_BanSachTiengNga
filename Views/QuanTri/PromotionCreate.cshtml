@@ -1,0 +1,49 @@
+﻿@using QuanLySach.Models
+@model Promotion
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Добавить промоакцию";
+}
+
+<div class="admin-panel">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-error">
+            @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@err.ErrorMessage</div>
+            }
+        </div>
+    }
+    <form asp-action="PromotionCreate" method="post" class="admin-form">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label>Код промоакции</label>
+            <input type="text" asp-for="Code" required autofocus placeholder="Например: SUMMER25" />
+        </div>
+        <div class="form-group">
+            <label>Описание</label>
+            <textarea asp-for="Description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Скидка (%)</label>
+            <input type="number" asp-for="DiscountPercent" min="1" max="100" required />
+        </div>
+        <div style="display:flex; gap:16px;">
+            <div class="form-group" style="flex:1;">
+                <label>Дата начала</label>
+                <input type="date" asp-for="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" required />
+            </div>
+            <div class="form-group" style="flex:1;">
+                <label>Дата окончания</label>
+                <input type="date" asp-for="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" required />
+            </div>
+        </div>
+        <div class="form-check" style="margin-bottom:16px;">
+            <input type="checkbox" asp-for="IsActive" />
+            <label style="margin:0;">Активна</label>
+        </div>
+        <button type="submit" class="btn btn-gold">Сохранить</button>
+        <a asp-action="Promotions" class="btn btn-outline">Отмена</a>
+    </form>
+</div>

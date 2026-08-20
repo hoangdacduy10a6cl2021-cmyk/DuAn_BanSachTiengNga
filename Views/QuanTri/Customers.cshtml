@@ -1,0 +1,50 @@
+﻿@using QuanLySach.ViewModels
+@model List<CustomerViewModel>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Клиенты";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Клиенты (@Model.Count)</h2>
+    </div>
+    <form method="get" style="margin-bottom:16px; display:flex; gap:8px;">
+        <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Поиск по имени, email, телефону..."
+               style="flex:1; max-width:340px; padding:8px 12px; border:1px solid #ddd; border-radius:6px; font-size:0.85rem;" />
+        <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-search"></i> Поиск</button>
+    </form>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Регистрация</th>
+                <th>Заказов</th>
+                <th>Сумма покупок</th>
+                <th>Последний заказ</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.Name</td>
+                    <td>@c.Email</td>
+                    <td>@c.Phone</td>
+                    <td>@c.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    <td><span class="badge">@c.OrderCount</span></td>
+                    <td>@c.TotalSpent.ToString("N0") ₽</td>
+                    <td>@(c.LastOrderAt != null ? c.LastOrderAt.Value.ToString("dd/MM/yyyy") : "—")</td>
+                    <td><a asp-action="CustomerDetails" asp-route-id="@c.Id" class="btn btn-outline btn-sm">Подробнее</a></td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="8">Клиентов пока нет.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,70 @@
+﻿@using QuanLySach.Models
+@model List<ActivityLog>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Журнал действий";
+    int page = (int)ViewBag.Page;
+    int totalPages = (int)ViewBag.TotalPages;
+}
+
+<div class="admin-panel">
+    <form method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <select name="module" onchange="this.form.submit()" style="padding:8px 12px; border:1px solid #ddd; border-radius:6px;">
+            <option value="">Все модули</option>
+            @foreach (var m in (List<string>)ViewBag.AllModules)
+            {
+                <option value="@m" selected="@(m == (string?)ViewBag.Module)">@m</option>
+            }
+        </select>
+        <input type="text" name="adminName" value="@ViewBag.AdminName" placeholder="Поиск по имени администратора..."
+               style="padding:8px 12px; border:1px solid #ddd; border-radius:6px; min-width:240px;" />
+        <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-search"></i> Фильтр</button>
+        <a asp-action="ActivityLog" class="btn btn-outline btn-sm">Сбросить</a>
+    </form>
+</div>
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>История действий</h2>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Время</th>
+                <th>Администратор</th>
+                <th>Модуль</th>
+                <th>Действие</th>
+                <th>Описание</th>
+                <th>IP</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td style="white-space:nowrap;">@log.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    <td>@log.AdminName</td>
+                    <td><span class="badge">@log.Module</span></td>
+                    <td>@log.Action</td>
+                    <td>@log.Description</td>
+                    <td style="color:var(--text-mid); font-size:0.78rem;">@log.IpAddress</td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="6">Записей пока нет.</td></tr>
+            }
+        </tbody>
+    </table>
+
+    @if (totalPages > 1)
+    {
+        <div style="display:flex; gap:6px; margin-top:16px; justify-content:center; flex-wrap:wrap;">
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <a asp-action="ActivityLog" asp-route-page="@i" asp-route-module="@ViewBag.Module" asp-route-adminName="@ViewBag.AdminName"
+                   class="btn btn-sm @(i == page ? "btn-gold" : "btn-outline")">@i</a>
+            }
+        </div>
+    }
+</div>

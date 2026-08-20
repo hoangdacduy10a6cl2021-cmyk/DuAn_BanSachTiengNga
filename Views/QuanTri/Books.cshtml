@@ -1,0 +1,88 @@
+﻿@using QuanLySach.Models
+@model List<Book>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Управление книгами";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Список книг (@Model.Count)</h2>
+        <div style="display:flex; gap:10px;">
+            <form method="get" style="display:flex;">
+                <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Поиск по названию/автору..." style="padding:7px 10px; border:1px solid #ddd; border-radius:6px 0 0 6px; font-size:0.85rem;" />
+                <button type="submit" style="padding:7px 12px; border:none; background:#f5e6c8; color:#4a2c17; border-radius:0 6px 6px 0; cursor:pointer;"><i class="fas fa-search"></i></button>
+            </form>
+            <a asp-action="BookCreate" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Добавить книгу</a>
+        </div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace((string)ViewBag.SearchTerm))
+    {
+        <p style="color:var(--text-mid); font-size:0.85rem; margin-top:-8px; margin-bottom:14px;">
+            Результаты поиска по запросу "<strong>@ViewBag.SearchTerm</strong>" — <a asp-action="Books" style="color:#b8860b;">Сбросить фильтр</a>
+        </p>
+    }
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Обложка</th>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Категория</th>
+                <th>Цена</th>
+                <th>Запас</th>
+                <th>Статус</th>
+                <th>Метки</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td><img src="@book.CoverImageUrl" alt="" style="width:40px;height:56px;object-fit:cover;border-radius:4px;display:block;" onerror="this.style.visibility='hidden'" /></td>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@(book.Category?.Name ?? "—")</td>
+                    <td>@book.Price.ToString("N0") ₽</td>
+                    <td>@book.Stock</td>
+                    <td>
+                        @if (book.Stock <= 0)
+                        {
+                            <span class="badge" style="background:#fdecea; color:#a02f24;">Нет в наличии</span>
+                        }
+                        else if (book.Stock <= 5)
+                        {
+                            <span class="badge" style="background:#fdf3e0; color:#8b6508;">Мало (@book.Stock)</span>
+                        }
+                        else
+                        {
+                            <span class="badge" style="background:#e6f4ea; color:#276b3d;">В наличии</span>
+                        }
+                    </td>
+                    <td>
+                        @if (book.IsPopular)
+                        {
+                            <span class="badge">Популярная</span>
+                        }
+                        @if (book.IsNew)
+                        {
+                            <span class="badge">Новинка</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="BookEdit" asp-route-id="@book.Id" class="btn btn-outline btn-sm">Изменить</a>
+                        <form asp-action="BookDelete" asp-route-id="@book.Id" method="post" style="display:inline" onsubmit="return confirm('Удалить эту книгу?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="9">Книг пока нет.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

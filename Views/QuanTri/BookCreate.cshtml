@@ -1,0 +1,62 @@
+﻿@using QuanLySach.Models
+@model Book
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Добавить новую книгу";
+}
+
+<div class="admin-panel">
+    <form asp-action="BookCreate" method="post" class="admin-form">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label>Название книги</label>
+            <input type="text" asp-for="Title" required />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Автор</label>
+            <input type="text" asp-for="Author" required />
+        </div>
+
+        <div class="form-group">
+            <label>Категория</label>
+            <select asp-for="CategoryId" required>
+                <option value="">-- Выберите категорию --</option>
+                @foreach (var cat in (List<Category>)ViewBag.Categories)
+                {
+                    <option value="@cat.Id">@cat.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Цена (₽)</label>
+            <input type="number" step="0.01" asp-for="Price" required />
+        </div>
+
+        <div class="form-group">
+            <label>Количество на складе (Запас)</label>
+            <input type="number" step="1" min="0" asp-for="Stock" value="0" required />
+        </div>
+
+        <div class="form-group">
+            <label>Ссылка на обложку</label>
+            <input type="text" asp-for="CoverImageUrl" placeholder="https://..." />
+        </div>
+
+        <div class="form-group form-check">
+            <input type="checkbox" asp-for="IsNew" />
+            <label style="margin:0">Новинка</label>
+        </div>
+
+        <div class="form-group form-check">
+            <input type="checkbox" asp-for="IsPopular" />
+            <label style="margin:0">Популярная книга</label>
+        </div>
+
+        <button type="submit" class="btn btn-gold">Сохранить книгу</button>
+        <a asp-action="Books" class="btn btn-outline">Отмена</a>
+    </form>
+</div>

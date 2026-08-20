@@ -1,0 +1,38 @@
+﻿@using QuanLySach.Models
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Добавить аккаунт администратора";
+}
+
+<div class="admin-panel">
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-error">@ViewBag.Error</div>
+    }
+    <form asp-action="AdminAccountCreate" method="post" class="admin-form">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label>Имя пользователя</label>
+            <input type="text" name="username" required autofocus />
+        </div>
+        <div class="form-group">
+            <label>Пароль</label>
+            <input type="password" name="password" required />
+        </div>
+        <div class="form-group">
+            <label>ФИО</label>
+            <input type="text" name="fullName" required />
+        </div>
+        <div class="form-group">
+            <label>Роль</label>
+            <select name="roleId" required>
+                @foreach (var role in (List<Role>)ViewBag.Roles)
+                {
+                    <option value="@role.Id">@role.Name</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-gold">Сохранить</button>
+        <a asp-action="AdminAccounts" class="btn btn-outline">Отмена</a>
+    </form>
+</div>

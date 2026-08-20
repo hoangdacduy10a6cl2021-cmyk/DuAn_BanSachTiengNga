@@ -1,0 +1,308 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace QuanLySach.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddBookDescription : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "Books",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 1,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 2,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 3,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 4,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 5,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 6,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 7,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 8,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 9,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 10,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 11,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 12,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 13,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 14,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 15,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 16,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 17,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 18,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 19,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 20,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 21,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 22,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 23,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 24,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 25,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 26,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 27,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 28,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 29,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 30,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 31,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 32,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 33,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 34,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 35,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 36,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 37,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 38,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 39,
+                column: "Description",
+                value: null);
+
+            migrationBuilder.UpdateData(
+                table: "Books",
+                keyColumn: "Id",
+                keyValue: 40,
+                column: "Description",
+                value: null);
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "Description",
+                table: "Books");
+        }
+    }
+}

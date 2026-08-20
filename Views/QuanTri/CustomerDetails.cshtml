@@ -1,0 +1,56 @@
+﻿@using QuanLySach.Models
+@model List<Order>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Клиент — " + ((User)ViewBag.Customer).Name;
+    var customer = (User)ViewBag.Customer;
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>@customer.Name</h2>
+        <a asp-action="Customers" class="btn btn-outline btn-sm">← Назад к списку</a>
+    </div>
+    <div style="display:flex; gap:32px; flex-wrap:wrap; color:var(--text-mid); font-size:0.9rem; margin-bottom:8px;">
+        <div><i class="fas fa-envelope"></i> @customer.Email</div>
+        <div><i class="fas fa-phone"></i> @(string.IsNullOrEmpty(customer.Phone) ? "—" : customer.Phone)</div>
+        <div><i class="fas fa-calendar"></i> Регистрация: @customer.CreatedAt.ToString("dd/MM/yyyy")</div>
+        <div><i class="fas fa-receipt"></i> Всего заказов: @Model.Count</div>
+        <div><i class="fas fa-coins"></i> Сумма покупок: @Model.Sum(o => o.TotalPrice).ToString("N0") ₽</div>
+    </div>
+</div>
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>История заказов</h2>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Дата</th>
+                <th>Товаров</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>#@order.Id</td>
+                    <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@order.Items.Sum(i => i.Quantity)</td>
+                    <td>@order.TotalPrice.ToString("N0") ₽</td>
+                    <td><span class="badge">@order.Status</span></td>
+                    <td><a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-outline btn-sm">Подробнее</a></td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="6">У этого клиента пока нет заказов.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

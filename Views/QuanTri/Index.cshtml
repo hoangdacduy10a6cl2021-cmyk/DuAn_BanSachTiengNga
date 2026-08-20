@@ -1,0 +1,152 @@
+﻿@using QuanLySach.Models
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Обзор";
+}
+
+@{
+    var statItems = new (string Icon, string Value, string Label)[]
+    {
+        ("fa-book", ViewBag.TotalBooks.ToString(), "Всего книг"),
+        ("fa-tags", ViewBag.TotalCategories.ToString(), "Категории"),
+        ("fa-receipt", ViewBag.TotalOrders.ToString(), "Заказы"),
+        ("fa-users", ViewBag.TotalUsers.ToString(), "Пользователи"),
+        ("fa-ruble-sign", ((decimal)ViewBag.TotalRevenue).ToString("N0") + " ₽", "Доход"),
+    };
+}
+<div style="display:flex; gap:16px; margin-bottom:28px; flex-wrap:wrap;">
+    @foreach (var item in statItems)
+    {
+        <div style="flex:1; min-width:180px; background:#fff; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); display:flex; align-items:center; gap:14px;">
+            <div style="width:48px; height:48px; border-radius:50%; background:#f5e6c8; color:#8b6508; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">
+                <i class="fas @item.Icon"></i>
+            </div>
+            <div style="min-width:0;">
+                <div style="font-size:1.4rem; font-weight:700; color:#2c1a0e; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@item.Value</div>
+                <div style="color:#555; font-size:0.8rem; margin-top:2px;">@item.Label</div>
+            </div>
+        </div>
+    }
+</div>
+
+<div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-bottom:24px;">
+    <div class="admin-panel" style="flex:1.4; min-width:340px; margin-bottom:0;">
+        <div class="panel-header">
+            <h2>Доход по месяцам (@DateTime.Now.Year)</h2>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+
+    <div class="admin-panel" style="flex:1; min-width:260px; margin-bottom:0;">
+        <div class="panel-header">
+            <h2><i class="fas fa-star" style="color:#b8860b;"></i> Топ продаж</h2>
+        </div>
+        @{
+            int rank = 1;
+        }
+        @foreach (var item in ViewBag.TopSellingBooks)
+        {
+            <div style="display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #f1ece0;">
+                <div style="width:24px; height:24px; border-radius:50%; background:@(rank == 1 ? "#b8860b" : "#f5e6c8"); color:@(rank == 1 ? "#fff" : "#8b6508"); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0;">@rank</div>
+                <div style="min-width:0; flex:1;">
+                    <div style="font-weight:700; font-size:0.85rem; color:#2c1a0e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@item.Book.Title</div>
+                    <div style="font-size:0.75rem; color:#555;">Продано: @item.SoldQty</div>
+                </div>
+            </div>
+            rank++;
+        }
+        @if (rank == 1)
+        {
+            <p style="color:var(--text-mid); font-size:0.9rem;">Данных о продажах пока нет.</p>
+        }
+    </div>
+</div>
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Недавно добавленные книги</h2>
+        <a asp-action="Books" class="btn btn-outline btn-sm">Смотреть все</a>
+    </div>
+    <div style="display:flex; gap:16px;">
+        @foreach (var book in (List<Book>)ViewBag.RecentBooks)
+        {
+            <div style="flex:1; min-width:0;">
+                <img src="@book.CoverImageUrl" alt="" style="width:100%;height:190px;object-fit:cover;border-radius:6px;display:block;box-shadow:0 2px 6px rgba(0,0,0,0.15);" onerror="this.style.visibility='hidden'" />
+                <div style="font-weight:700; font-size:0.85rem; color:#2c1a0e; margin-top:8px; line-height:1.3;">@book.Title</div>
+                <div style="font-size:0.78rem; color:#555; margin-top:2px;">@book.Price.ToString("N0") ₽</div>
+            </div>
+        }
+    </div>
+    @if (!((List<Book>)ViewBag.RecentBooks).Any())
+    {
+        <p style="color:var(--text-mid); font-size:0.9rem;">Книг пока нет.</p>
+    }
+</div>
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Последние заказы</h2>
+        <a asp-action="Orders" class="btn btn-outline btn-sm">Смотреть все</a>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Клиент</th>
+                <th>Дата заказа</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in (List<Order>)ViewBag.RecentOrders)
+            {
+                <tr>
+                    <td>#@order.Id</td>
+                    <td>@order.Name</td>
+                    <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@order.TotalPrice.ToString("N0") ₽</td>
+                    <td><span class="badge">@order.Status</span></td>
+                    <td><a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-outline btn-sm">Подробнее</a></td>
+                </tr>
+            }
+            @if (!((List<Order>)ViewBag.RecentOrders).Any())
+            {
+                <tr><td colspan="6">Заказов пока нет.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script>
+        const ctx = document.getElementById('revenueChart');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [@Html.Raw(ViewBag.ChartLabels)],
+                datasets: [{
+                    label: 'Доход (₽)',
+                    data: [@Html.Raw(ViewBag.ChartValues)],
+                    borderColor: '#b8860b',
+                    backgroundColor: 'rgba(184,134,11,0.12)',
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#b8860b'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('ru-RU') } }
+                }
+            }
+        });
+    </script>
+}

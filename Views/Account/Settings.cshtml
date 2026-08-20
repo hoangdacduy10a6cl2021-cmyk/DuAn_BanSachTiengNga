@@ -1,0 +1,377 @@
+﻿@{
+    ViewData["Title"] = "Настройки";
+    ViewData["ActiveMenu"] = "Settings";
+}
+
+<div class="profile-page">
+    <div class="container">
+        <div class="profile-layout">
+            <partial name="_ProfileSidebar" />
+
+            <div class="profile-content">
+                <div class="settings-header">
+                    <h2>Настройки моего аккаунта</h2>
+                    <i class="fas fa-cog settings-icon"></i>
+                </div>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert-success">@TempData["Success"]</div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert-error">@TempData["Error"]</div>
+                }
+
+                <!-- TOAST THÔNG BÁO -->
+                <div id="save-toast" class="save-toast" style="display:none">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="toast-msg">Изменения успешно сохранены!</span>
+                </div>
+
+                <div class="settings-grid">
+                    <!-- CỘT TRÁI -->
+                    <div class="settings-col">
+                        <h3>Настройки отображения русских книг</h3>
+                        <div class="settings-toggle-row">
+                            <span>Отображать скрипт книг Кириллица</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="showCyrillic" onchange="autoSave()" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-row">
+                            <span>Отображать транслитерацию и Transliteracija</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="showTransliteration" onchange="autoSave()" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <h3 style="margin-top:24px;">Управление уведомлениями</h3>
+                        <div class="settings-toggle-row">
+                            <span>Email уведомления</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="emailNotifications" onchange="autoSave()" checked />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-row">
+                            <span>SMS уведомления</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="smsNotifications" onchange="autoSave()" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <button type="button" class="btn-save" id="saveBtn" style="margin-top:24px;" onclick="saveSettings()">
+                            Сохранить изменения
+                        </button>
+                    </div>
+
+                    <!-- CỘT PHẢI -->
+                    <div class="settings-col">
+                        <h3>Настройки языка и валюты</h3>
+                        <div class="settings-select-row">
+                            <label>Язык и доставка</label>
+                            <div class="settings-select-group">
+                                <select id="language" onchange="autoSave()">
+                                    <option>Вьетнам</option>
+                                    <option>Россия</option>
+                                </select>
+                                <span class="select-note">Русские Книги</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-select-row" style="margin-top:16px;">
+                            <label>Предпочтительная валюта:</label>
+                            <div class="settings-select-group">
+                                <select id="currency1" onchange="autoSave()">
+                                    <option>VND</option>
+                                    <option>USD</option>
+                                    <option>RUB</option>
+                                </select>
+                                <select id="currency2" onchange="autoSave()">
+                                    <option>RUB</option>
+                                    <option>USD</option>
+                                    <option>VND</option>
+                                </select>
+                                <select id="currency3" onchange="autoSave()">
+                                    <option>USD</option>
+                                    <option>RUB</option>
+                                    <option>VND</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top:24px;">Настройки безопасности</h3>
+                        <form method="post" asp-action="Settings" class="password-form" onsubmit="return validatePasswordForm()">
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-group password-field">
+                                <label>Текущий пароль</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" name="currentPassword" id="currentPassword" placeholder="Введите текущий пароль" required />
+                                    <i class="fas fa-eye password-eye" onclick="togglePasswordVisibility('currentPassword', this)"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group password-field">
+                                <label>Новый пароль</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" name="newPassword" id="newPassword" placeholder="Не менее 6 символов" required minlength="6" />
+                                    <i class="fas fa-eye password-eye" onclick="togglePasswordVisibility('newPassword', this)"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group password-field">
+                                <label>Подтвердите новый пароль</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" id="confirmPassword" placeholder="Повторите новый пароль" required minlength="6" />
+                                    <i class="fas fa-eye password-eye" onclick="togglePasswordVisibility('confirmPassword', this)"></i>
+                                </div>
+                                <span id="passwordMismatchError" class="field-error" style="display:none">Пароли не совпадают</span>
+                            </div>
+
+                            <button type="submit" class="btn-save" style="margin-top:16px;">
+                                <i class="fas fa-key"></i> Изменить пароль
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .save-toast {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #e8f5e9;
+        border: 1.5px solid #a5d6a7;
+        border-radius: 8px;
+        padding: 12px 18px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: #2e7d32;
+        font-weight: 600;
+        animation: fadeIn 0.3s ease;
+    }
+
+        .save-toast i {
+            font-size: 18px;
+            color: #2e7d32;
+        }
+
+        .save-toast.error {
+            background: #ffebee;
+            border-color: #ef9a9a;
+            color: #c62828;
+        }
+
+            .save-toast.error i {
+                color: #c62828;
+            }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* FORM ĐỔI MẬT KHẨU */
+    .password-form .form-group {
+        margin-bottom: 16px;
+    }
+
+    .password-form label {
+        display: block;
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 6px;
+        font-weight: 600;
+    }
+
+    .password-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+        .password-input-wrapper input {
+            width: 100%;
+            padding: 10px 40px 10px 12px;
+            border: 1.5px solid #f0e8d8;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+            .password-input-wrapper input:focus {
+                border-color: #b8860b;
+            }
+
+    .password-eye {
+        position: absolute;
+        right: 14px;
+        color: #999;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .password-eye:hover {
+            color: #b8860b;
+        }
+
+    .field-error {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: #c0392b;
+    }
+</style>
+
+<script>
+    // Load settings từ DB khi vào trang
+    window.addEventListener('DOMContentLoaded', function() {
+        fetch('/Account/GetSettings')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) return;
+                setVal('showCyrillic', data.showCyrillic);
+                setVal('showTransliteration', data.showTransliteration);
+                setVal('emailNotifications', data.emailNotifications);
+                setVal('smsNotifications', data.smsNotifications);
+                setSelect('language', data.language);
+                setSelect('currency1', data.currency1);
+                setSelect('currency2', data.currency2);
+                setSelect('currency3', data.currency3);
+            });
+    });
+
+    function setVal(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.checked = val;
+    }
+
+    function setSelect(id, val) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        for (let i = 0; i < el.options.length; i++) {
+            if (el.options[i].value === val || el.options[i].text === val) {
+                el.selectedIndex = i;
+                break;
+            }
+        }
+    }
+
+    function getPayload() {
+        return {
+            showCyrillic: document.getElementById('showCyrillic').checked,
+            showTransliteration: document.getElementById('showTransliteration').checked,
+            emailNotifications: document.getElementById('emailNotifications').checked,
+            smsNotifications: document.getElementById('smsNotifications').checked,
+            language: document.getElementById('language').value,
+            currency1: document.getElementById('currency1').value,
+            currency2: document.getElementById('currency2').value,
+            currency3: document.getElementById('currency3').value,
+        };
+    }
+
+    // Auto save khi toggle thay đổi
+    let autoSaveTimer = null;
+    function autoSave() {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(function() {
+            doSave(true); // true = auto (không disable nút)
+        }, 500);
+    }
+
+    // Bấm nút Сохранить
+    function saveSettings() {
+        doSave(false);
+    }
+
+    function doSave(isAuto) {
+        const btn = document.getElementById('saveBtn');
+        if (!isAuto) {
+            btn.disabled = true;
+            btn.textContent = 'Сохранение...';
+        }
+
+        fetch('/Account/SaveSettings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(getPayload())
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (!isAuto) {
+                    btn.disabled = false;
+                    btn.textContent = 'Сохранить изменения';
+                }
+                showToast(
+                    data.success
+                        ? 'Изменения успешно сохранены!'
+                        : 'Ошибка при сохранении. Попробуйте снова.',
+                    data.success
+                );
+            })
+            .catch(function() {
+                if (!isAuto) {
+                    btn.disabled = false;
+                    btn.textContent = 'Сохранить изменения';
+                }
+                showToast('Ошибка соединения с сервером.', false);
+            });
+    }
+
+    function showToast(msg, success) {
+        const toast = document.getElementById('save-toast');
+        const icon = toast.querySelector('i');
+        document.getElementById('toast-msg').textContent = msg;
+        toast.className = 'save-toast' + (success ? '' : ' error');
+        icon.className = success ? 'fas fa-check-circle' : 'fas fa-times-circle';
+        toast.style.display = 'flex';
+        toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(function() { toast.style.display = 'none'; }, 4000);
+    }
+
+    // ĐỔI MẬT KHẨU
+    function togglePasswordVisibility(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    function validatePasswordForm() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorEl = document.getElementById('passwordMismatchError');
+
+        if (newPassword !== confirmPassword) {
+            errorEl.style.display = 'block';
+            document.getElementById('confirmPassword').focus();
+            return false;
+        }
+
+        errorEl.style.display = 'none';
+        return true;
+    }
+</script>

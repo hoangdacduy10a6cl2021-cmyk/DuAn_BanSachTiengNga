@@ -1,0 +1,52 @@
+﻿@using QuanLySach.Models
+@model List<Role>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Роли и права доступа";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Роли (@Model.Count)</h2>
+        <a asp-action="RoleCreate" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Добавить роль</a>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Название роли</th>
+                <th>Описание</th>
+                <th>Количество аккаунтов</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var role in Model)
+            {
+                <tr>
+                    <td>@role.Name @if (role.IsSuperAdmin) { <span class="badge">суперадмин</span> }</td>
+                    <td>@role.Description</td>
+                    <td>@role.Admins.Count</td>
+                    <td>
+                        <a asp-action="RoleEdit" asp-route-id="@role.Id" class="btn btn-outline btn-sm">Изменить</a>
+                        <a asp-action="Permissions" asp-route-roleId="@role.Id" class="btn btn-outline btn-sm">Права</a>
+                        @if (!role.IsSuperAdmin)
+                        {
+                            <form asp-action="RoleDelete" asp-route-id="@role.Id" method="post" style="display:inline" onsubmit="return confirm('Удалить эту роль?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Аккаунты администратора</h2>
+        <a asp-action="AdminAccounts" class="btn btn-outline btn-sm">Управление аккаунтами →</a>
+    </div>
+    <p style="color:var(--text-mid); font-size:0.9rem;">Назначайте роли аккаунтам администраторов на странице управления аккаунтами.</p>
+</div>

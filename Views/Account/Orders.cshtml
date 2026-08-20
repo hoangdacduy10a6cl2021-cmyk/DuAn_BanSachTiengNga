@@ -1,0 +1,126 @@
+﻿@model List<QuanLySach.Models.Order>
+
+@{
+    ViewData["Title"] = "Мои заказы";
+    ViewData["ActiveMenu"] = "Orders";
+}
+
+<div class="profile-page">
+    <div class="container">
+        <div class="profile-layout">
+            <partial name="_ProfileSidebar" />
+            <div class="profile-content">
+                <h2>Мои заказы</h2>
+
+                @if (Model == null || !Model.Any())
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <p>У вас пока нет заказов</p>
+                        <a asp-controller="Books" asp-action="Index" class="btn-save"
+                           style="display:inline-block;width:auto;padding:12px 30px;">
+                            Перейти в каталог
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>№ заказа</th>
+                                <th>Дата</th>
+                                <th>Сумма</th>
+                                <th>Статус</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td>@order.Id</td>
+                                    <td>@order.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                    <td><strong>@order.TotalPrice.ToString("0.00") ₽</strong></td>
+                                    <td>
+                                        <span class="status-badge status-@order.Status?.ToLower().Replace(" ", "-")">
+                                            @order.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/Cart/OrderDetail/@order.Id" class="btn-detail">Подробнее</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+        .orders-table th {
+            background: #fdf6e3;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            color: #888;
+            font-weight: 600;
+            border-bottom: 2px solid #f0e8d8;
+        }
+
+        .orders-table td {
+            padding: 16px;
+            font-size: 14px;
+            border-bottom: 1px solid #f0e8d8;
+        }
+
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-новый {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .status-в-обработке {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .status-доставлен {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status-отменён {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .btn-detail {
+        color: #b8860b;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+        .btn-detail:hover {
+            text-decoration: underline;
+        }
+</style>

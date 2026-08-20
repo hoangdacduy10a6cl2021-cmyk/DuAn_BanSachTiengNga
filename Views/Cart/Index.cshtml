@@ -1,0 +1,469 @@
+﻿@model IEnumerable<QuanLySach.Models.CartItem>
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<div class="cart-page">
+    <h2 class="cart-title">Корзина</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="cart-empty">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Корзина пуста</p>
+            <a asp-controller="Books" asp-action="Index" class="btn-back">Перейти к книгам</a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-layout">
+            <div class="cart-items">
+                @foreach (var item in Model)
+                {
+                    <div class="cart-item">
+                        <img src="@item.Book?.CoverImageUrl" alt="@item.Book?.Title" />
+                        <div class="cart-item-info">
+                            <h4>@item.Book?.Title</h4>
+                            <p>@item.Book?.Author</p>
+                            <p class="cart-item-price-mobile">@item.Book?.Price.ToString("0.00") ₽ × @item.Quantity = <strong>@((item.Book!.Price * item.Quantity).ToString("0.00")) ₽</strong></p>
+                        </div>
+                        <div class="cart-item-right">
+                            <div class="cart-item-price">@item.Book?.Price.ToString("0.00") ₽</div>
+                            <div class="cart-item-qty">× @item.Quantity</div>
+                            <div class="cart-item-total">@((item.Book!.Price * item.Quantity).ToString("0.00")) ₽</div>
+                        </div>
+                        <form asp-action="Remove" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="cart-remove">✕</button>
+                        </form>
+                    </div>
+                }
+            </div>
+
+            <div class="cart-summary">
+                <h3>Тотальный счёт</h3>
+                @foreach (var item in Model)
+                {
+                    <div class="summary-line">
+                        <span class="summary-book-title">@item.Book?.Title</span>
+                        <span>@item.Book?.Price.ToString("0.00") ₽ × @item.Quantity</span>
+                    </div>
+                }
+                <div class="summary-delivery">
+                    <span>Доставка:</span>
+                    <span style="color:#2e7d32">Бесплатно</span>
+                </div>
+
+                <!-- MÃ GIẢM GIÁ -->
+                <div class="promo-box">
+                    @{
+                        string? appliedCode = ViewBag.PromoCode;
+                    }
+                    <div id="promo-input-row" class="promo-input-row" style="display:@(string.IsNullOrEmpty(appliedCode) ? "flex" : "none")">
+                        <input type="text" id="promoCodeInput" placeholder="Nhập mã giảm giá" maxlength="30" />
+                        <button type="button" id="promoApplyBtn" onclick="applyPromo()">Áp dụng</button>
+                    </div>
+                    <div id="promo-applied-row" class="promo-applied-row" style="display:@(string.IsNullOrEmpty(appliedCode) ? "none" : "flex")">
+                        <span><i class="fas fa-tag"></i> Mã <strong id="promo-code-label">@appliedCode</strong> đã áp dụng (-<span id="promo-percent-label">@ViewBag.DiscountPercent</span>%)</span>
+                        <button type="button" class="promo-remove-btn" onclick="removePromo()">Gỡ</button>
+                    </div>
+                    <div id="promo-message" class="promo-message"></div>
+                </div>
+
+                <div class="summary-line" id="promo-subtotal-line" style="display:@(string.IsNullOrEmpty(appliedCode) ? "none" : "flex")">
+                    <span>Tạm tính:</span>
+                    <span id="promo-subtotal-value">@(((decimal)ViewBag.SubTotal).ToString("0.00")) ₽</span>
+                </div>
+                <div class="summary-line summary-discount" id="promo-discount-line" style="display:@(string.IsNullOrEmpty(appliedCode) ? "none" : "flex")">
+                    <span>Giảm giá:</span>
+                    <span id="promo-discount-value">-@(((decimal)ViewBag.DiscountAmount).ToString("0.00")) ₽</span>
+                </div>
+
+                <div class="cart-total-row">
+                    <span>Итого:</span>
+                    <span class="cart-total" id="cart-total-value">@(((decimal)ViewBag.CartTotal).ToString("0.00")) ₽</span>
+                </div>
+                <a asp-action="Checkout" class="btn-checkout">Đặt hàng</a>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .cart-page {
+        max-width: 1100px;
+        margin: 24px auto;
+        padding: 0 16px;
+    }
+
+    .cart-title {
+        font-family: Georgia, serif;
+        font-size: 1.8rem;
+        color: #b8860b;
+        margin-bottom: 24px;
+    }
+
+    .cart-empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+    }
+
+        .cart-empty i {
+            font-size: 60px;
+            color: #ddd;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+    /* LAYOUT */
+    .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    /* CART ITEMS */
+    .cart-items {
+        background: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid #f0e8d8;
+    }
+
+        .cart-item img {
+            width: 56px;
+            height: 76px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+    .cart-item-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+        .cart-item-info h4 {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .cart-item-info p {
+            font-size: 12px;
+            color: #888;
+        }
+
+    /* Desktop: hiện cột giá */
+    .cart-item-right {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .cart-item-price, .cart-item-qty, .cart-item-total {
+        font-size: 13px;
+        font-weight: bold;
+        color: #333;
+        white-space: nowrap;
+    }
+
+    /* Mobile: ẩn cột giá desktop, hiện giá inline */
+    .cart-item-price-mobile {
+        display: none;
+        font-size: 12px;
+        color: #555;
+        margin-top: 4px;
+    }
+
+    .cart-remove {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 4px;
+        flex-shrink: 0;
+    }
+
+        .cart-remove:hover {
+            color: #e53935;
+        }
+
+    /* SUMMARY */
+    .cart-summary {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        position: sticky;
+        top: 20px;
+    }
+
+        .cart-summary h3 {
+            font-family: Georgia, serif;
+            color: #4a2c00;
+            margin-bottom: 16px;
+            font-size: 1rem;
+        }
+
+    .summary-line {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+        gap: 8px;
+    }
+
+    .summary-book-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 140px;
+    }
+
+    .summary-delivery {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: #555;
+        margin: 12px 0;
+        padding-top: 8px;
+        border-top: 1px solid #f0e8d8;
+    }
+
+    .cart-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 12px 0 20px;
+        font-weight: bold;
+    }
+
+    .cart-total {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #b8860b;
+    }
+
+    .summary-discount span {
+        color: #2e7d32;
+        font-weight: 700;
+    }
+
+    /* PROMO BOX */
+    .promo-box {
+        margin: 4px 0 12px;
+    }
+
+    .promo-input-row {
+        display: flex;
+        gap: 8px;
+    }
+
+        .promo-input-row input {
+            flex: 1;
+            min-width: 0;
+            padding: 9px 12px;
+            border: 1.5px solid #ddc590;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            box-sizing: border-box;
+            text-transform: uppercase;
+        }
+
+            .promo-input-row input:focus {
+                border-color: #b8860b;
+            }
+
+        .promo-input-row button {
+            background: #b8860b;
+            color: #fff;
+            border: none;
+            padding: 0 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+            .promo-input-row button:hover {
+                background: #9a6f00;
+            }
+
+            .promo-input-row button:disabled {
+                opacity: 0.6;
+                cursor: default;
+            }
+
+    .promo-applied-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        background: #e8f5e9;
+        border: 1px solid #a5d6a7;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 12.5px;
+        color: #1b5e20;
+    }
+
+        .promo-applied-row i {
+            margin-right: 4px;
+        }
+
+    .promo-remove-btn {
+        background: none;
+        border: none;
+        color: #c62828;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: underline;
+        flex-shrink: 0;
+    }
+
+    .promo-message {
+        font-size: 12px;
+        margin-top: 6px;
+        min-height: 14px;
+    }
+
+        .promo-message.error {
+            color: #c62828;
+        }
+
+        .promo-message.success {
+            color: #2e7d32;
+        }
+
+    .btn-checkout {
+        display: block;
+        background: #b8860b;
+        color: #fff;
+        text-align: center;
+        padding: 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+        .btn-checkout:hover {
+            background: #9a6f00;
+            color: #fff;
+        }
+
+    .btn-back {
+        display: inline-block;
+        background: #b8860b;
+        color: #fff;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        margin-top: 16px;
+    }
+
+    /* MOBILE */
+    @@media (max-width: 640px) {
+        .cart-layout {
+            grid-template-columns: 1fr;
+        }
+        /* Đảo summary lên trên items */
+        .cart-summary {
+            order: -1;
+            position: static;
+        }
+
+        .cart-item-right {
+            display: none;
+        }
+
+        .cart-item-price-mobile {
+            display: block;
+        }
+
+        .cart-title {
+            font-size: 1.4rem;
+        }
+    }
+</style>
+
+<script>
+    function applyPromo() {
+        const input = document.getElementById('promoCodeInput');
+        const btn = document.getElementById('promoApplyBtn');
+        const msg = document.getElementById('promo-message');
+        const code = input.value.trim();
+
+        if (!code) {
+            msg.textContent = 'Vui lòng nhập mã giảm giá.';
+            msg.className = 'promo-message error';
+            return;
+        }
+
+        btn.disabled = true;
+        const formData = new FormData();
+        formData.append('code', code);
+
+        fetch('@Url.Action("ApplyPromo", "Cart")', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                if (data.success) {
+                    msg.textContent = data.message;
+                    msg.className = 'promo-message success';
+                    updatePromoUI(true, data.code, data.discountPercent, data.subTotal, data.discountAmount, data.total);
+                } else {
+                    msg.textContent = data.message;
+                    msg.className = 'promo-message error';
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                msg.textContent = 'Có lỗi xảy ra, vui lòng thử lại.';
+                msg.className = 'promo-message error';
+            });
+    }
+
+    function removePromo() {
+        fetch('@Url.Action("RemovePromo", "Cart")', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('promo-message').textContent = '';
+                document.getElementById('promoCodeInput').value = '';
+                updatePromoUI(false, null, 0, data.subTotal, '0.00', data.total);
+            });
+    }
+
+    function updatePromoUI(applied, code, percent, subTotal, discountAmount, total) {
+        document.getElementById('promo-input-row').style.display = applied ? 'none' : 'flex';
+        document.getElementById('promo-applied-row').style.display = applied ? 'flex' : 'none';
+        document.getElementById('promo-subtotal-line').style.display = applied ? 'flex' : 'none';
+        document.getElementById('promo-discount-line').style.display = applied ? 'flex' : 'none';
+
+        if (applied) {
+            document.getElementById('promo-code-label').textContent = code;
+            document.getElementById('promo-percent-label').textContent = percent;
+        }
+
+        document.getElementById('promo-subtotal-value').textContent = subTotal + ' ₽';
+        document.getElementById('promo-discount-value').textContent = '-' + discountAmount + ' ₽';
+        document.getElementById('cart-total-value').textContent = total + ' ₽';
+    }
+</script>

@@ -1,0 +1,166 @@
+﻿@using QuanLySach.ViewModels
+@using System.Text.Json
+@model StatisticsViewModel
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Статистика";
+
+    var dayLabels = JsonSerializer.Serialize(Model.RevenueByDay.Select(x => x.Label));
+    var dayValues = JsonSerializer.Serialize(Model.RevenueByDay.Select(x => x.Value));
+
+    var catLabels = JsonSerializer.Serialize(Model.RevenueByCategory.Select(x => x.CategoryName));
+    var catValues = JsonSerializer.Serialize(Model.RevenueByCategory.Select(x => x.Revenue));
+
+    var statusLabels = JsonSerializer.Serialize(Model.OrdersByStatus.Select(x => x.Status));
+    var statusValues = JsonSerializer.Serialize(Model.OrdersByStatus.Select(x => x.Count));
+}
+
+<div class="admin-panel">
+    <form method="get" style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+        <div>
+            <label style="display:block; font-size:0.78rem; color:var(--text-mid); margin-bottom:4px;">От</label>
+            <input type="date" name="from" value="@Model.FromDate.ToString("yyyy-MM-dd")" style="padding:7px 10px; border:1px solid #ddd; border-radius:6px;" />
+        </div>
+        <div>
+            <label style="display:block; font-size:0.78rem; color:var(--text-mid); margin-bottom:4px;">До</label>
+            <input type="date" name="to" value="@Model.ToDate.ToString("yyyy-MM-dd")" style="padding:7px 10px; border:1px solid #ddd; border-radius:6px;" />
+        </div>
+        <button type="submit" class="btn btn-gold btn-sm">Показать</button>
+    </form>
+</div>
+
+<div style="display:flex; gap:16px; margin-bottom:24px; flex-wrap:wrap;">
+    @{
+        var cards = new (string Icon, string Value, string Label)[]
+        {
+            ("fa-receipt", Model.TotalOrders.ToString(), "Заказов за период"),
+            ("fa-ruble-sign", Model.TotalRevenue.ToString("N0") + " ₽", "Доход за период"),
+            ("fa-calculator", Model.AverageOrderValue.ToString("N0") + " ₽", "Средний чек"),
+            ("fa-book", Model.TotalBooksSold.ToString(), "Книг продано"),
+            ("fa-user-plus", Model.NewCustomers.ToString(), "Новых клиентов"),
+        };
+    }
+    @foreach (var item in cards)
+    {
+        <div style="flex:1; min-width:180px; background:#fff; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); display:flex; align-items:center; gap:14px;">
+            <div style="width:48px; height:48px; border-radius:50%; background:#f5e6c8; color:#8b6508; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">
+                <i class="fas @item.Icon"></i>
+            </div>
+            <div style="min-width:0;">
+                <div style="font-size:1.3rem; font-weight:700; color:#2c1a0e; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@item.Value</div>
+                <div style="color:#555; font-size:0.8rem; margin-top:2px;">@item.Label</div>
+            </div>
+        </div>
+    }
+</div>
+
+<div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-bottom:24px;">
+    <div class="admin-panel" style="flex:1.6; min-width:340px; margin-bottom:0;">
+        <div class="panel-header">
+            <h2>Доход по дням</h2>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="revenueByDayChart"></canvas>
+        </div>
+    </div>
+    <div class="admin-panel" style="flex:1; min-width:260px; margin-bottom:0;">
+        <div class="panel-header">
+            <h2>Заказы по статусу</h2>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;">
+    <div class="admin-panel" style="flex:1; min-width:300px; margin-bottom:0;">
+        <div class="panel-header">
+            <h2>Доход по категориям</h2>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+    <div class="admin-panel" style="flex:1; min-width:300px; margin-bottom:0;">
+        <div class="panel-header">
+            <h2>Топ книг за период</h2>
+        </div>
+        <table class="admin-table">
+            <thead>
+                <tr><th>Книга</th><th>Продано</th><th>Доход</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var b in Model.TopBooks)
+                {
+                    <tr>
+                        <td>@b.BookTitle</td>
+                        <td>@b.Qty</td>
+                        <td>@b.Revenue.ToString("N0") ₽</td>
+                    </tr>
+                }
+                @if (!Model.TopBooks.Any())
+                {
+                    <tr><td colspan="3">Нет данных за выбранный период.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script>
+        new Chart(document.getElementById('revenueByDayChart'), {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(dayLabels),
+                datasets: [{
+                    label: 'Доход (₽)',
+                    data: @Html.Raw(dayValues),
+                    borderColor: '#b8860b',
+                    backgroundColor: 'rgba(184,134,11,0.12)',
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#b8860b'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('ru-RU') } } }
+            }
+        });
+
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(statusLabels),
+                datasets: [{
+                    data: @Html.Raw(statusValues),
+                    backgroundColor: ['#b8860b', '#d4a94f', '#8b6508', '#e8c874', '#5c4310', '#c0392b']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(catLabels),
+                datasets: [{
+                    label: 'Доход (₽)',
+                    data: @Html.Raw(catValues),
+                    backgroundColor: '#b8860b'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('ru-RU') } } }
+            }
+        });
+    </script>
+}

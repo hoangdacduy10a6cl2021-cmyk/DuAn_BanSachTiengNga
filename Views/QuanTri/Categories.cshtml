@@ -1,0 +1,38 @@
+﻿@using QuanLySach.Models
+@model List<Category>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Управление категориями";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Категории (@Model.Count)</h2>
+        <a asp-action="CategoryCreate" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Добавить категорию</a>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Название категории</th>
+                <th>Количество книг</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cat in Model)
+            {
+                <tr>
+                    <td>@cat.Name</td>
+                    <td>@cat.Books.Count</td>
+                    <td>
+                        <a asp-action="CategoryEdit" asp-route-id="@cat.Id" class="btn btn-outline btn-sm">Изменить</a>
+                        <form asp-action="CategoryDelete" asp-route-id="@cat.Id" method="post" style="display:inline" onsubmit="return confirm('Удалить эту категорию?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

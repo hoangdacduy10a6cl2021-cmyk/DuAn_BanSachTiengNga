@@ -1,0 +1,43 @@
+﻿@using QuanLySach.Models
+@model List<Order>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Управление заказами";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Заказы (@Model.Count)</h2>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Клиент</th>
+                <th>Телефон</th>
+                <th>Дата заказа</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>#@order.Id</td>
+                    <td>@order.Name</td>
+                    <td>@order.Phone</td>
+                    <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@order.TotalPrice.ToString("N0") ₽</td>
+                    <td><span class="badge">@order.Status</span></td>
+                    <td><a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-outline btn-sm">Подробнее</a></td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="7">Заказов пока нет.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

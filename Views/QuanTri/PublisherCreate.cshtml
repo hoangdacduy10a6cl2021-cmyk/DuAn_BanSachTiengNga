@@ -1,0 +1,26 @@
+﻿@using QuanLySach.Models
+@model Publisher
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Добавить издательство";
+}
+
+<div class="admin-panel">
+    <form asp-action="PublisherCreate" method="post" class="admin-form">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label>Название издательства</label>
+            <input type="text" asp-for="Name" required autofocus />
+        </div>
+        <div class="form-group">
+            <label>Адрес</label>
+            <input type="text" asp-for="Address" />
+        </div>
+        <div class="form-group">
+            <label>Описание</label>
+            <textarea asp-for="Description" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold">Сохранить</button>
+        <a asp-action="Publishers" class="btn btn-outline">Отмена</a>
+    </form>
+</div>

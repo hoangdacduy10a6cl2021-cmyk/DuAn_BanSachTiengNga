@@ -1,0 +1,125 @@
+﻿@model List<QuanLySach.Models.Book>
+
+@{
+    ViewData["Title"] = "Все книги";
+}
+
+<div class="books-page">
+    <div class="container">
+
+        @if (ViewBag.SearchQuery != null)
+        {
+            <h1 class="books-page-title">
+                Результаты поиска: «@ViewBag.SearchQuery»
+            </h1>
+            <p style="color:#888; margin-bottom:20px; font-size:14px;">
+                Найдено: @Model.Count книг
+            </p>
+        }
+        else
+        {
+            <h1 class="books-page-title">Все книги</h1>
+        }
+
+        <div class="books-page-layout">
+
+            <!-- SIDEBAR CATEGORIES -->
+            <aside class="books-sidebar">
+                <h3>Категории</h3>
+                <ul>
+                    <li class="@(ViewBag.CurrentCategory == null ? "active" : "")">
+                        <a asp-action="Index">Все книги</a>
+                    </li>
+                    @foreach (var cat in ViewBag.Categories as List<QuanLySach.Models.Category>)
+                    {
+                        <li class="@(ViewBag.CurrentCategory == cat.Id ? "active" : "")">
+                            <a asp-action="Index" asp-route-categoryId="@cat.Id">@cat.Name</a>
+                        </li>
+                    }
+                </ul>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <div class="books-main">
+
+                <!-- SORT BAR -->
+                <div class="books-sort-bar">
+                    <span>Сортировка:</span>
+                    <select onchange="location.href=this.value">
+                        <option value="?sort=popular" selected="@(ViewBag.Sort == "popular")">Популярные</option>
+                        <option value="?sort=new" selected="@(ViewBag.Sort == "new")">Новинки</option>
+                        <option value="?sort=price_asc" selected="@(ViewBag.Sort == "price_asc")">Цена ↑</option>
+                        <option value="?sort=price_desc" selected="@(ViewBag.Sort == "price_desc")">Цена ↓</option>
+                    </select>
+                    <span class="books-count">Показать: @ViewBag.PageSize</span>
+                </div>
+
+                <!-- BOOKS GRID -->
+                <div class="books-grid-page">
+                    @foreach (var book in Model)
+                    {
+                        <div class="book-card">
+                            <a asp-action="Detail" asp-route-id="@book.Id" class="book-card-link">
+                                <div class="book-cover">
+                                    <img src="@book.CoverImageUrl" alt="@book.Title"
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/200x300?text=No+Cover'" />
+                                    <button class="wishlist-btn"
+                                            onclick="event.preventDefault(); toggleWishlist(@book.Id, this)">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </div>
+                                <div class="book-info">
+                                    <h4>@book.Title</h4>
+                                    <p class="author">@book.Author</p>
+                                    <p class="price">@book.Price ₽</p>
+                                </div>
+                            </a>
+                            <div style="padding: 0 14px 14px">
+                                <button class="btn-cart" onclick="addToCart(@book.Id)">
+                                    <i class="fas fa-shopping-cart"></i> В корзину
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!Model.Any())
+                    {
+                        <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#888;">
+                            <i class="fas fa-search" style="font-size:48px; color:#ddd; display:block; margin-bottom:16px;"></i>
+                            <p style="font-size:1.1rem;">Книги не найдены по запросу «@ViewBag.SearchQuery»</p>
+                            <a asp-action="Index" style="color:#b8860b; margin-top:12px; display:inline-block;">
+                                ← Вернуться ко всем книгам
+                            </a>
+                        </div>
+                    }
+                </div>
+
+                <!-- PAGINATION -->
+                @if (ViewBag.SearchQuery == null)
+                {
+                    <div class="pagination">
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <a href="?sort=@ViewBag.Sort&page=@i&categoryId=@ViewBag.CurrentCategory"
+                               class="page-btn @(ViewBag.Page == i ? "active" : "")">@i</a>
+                        }
+                        @if (ViewBag.Page < ViewBag.TotalPages)
+                        {
+                            <a href="?sort=@ViewBag.Sort&page=@(ViewBag.Page + 1)&categoryId=@ViewBag.CurrentCategory"
+                               class="page-btn">›</a>
+                        }
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .book-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+</style>

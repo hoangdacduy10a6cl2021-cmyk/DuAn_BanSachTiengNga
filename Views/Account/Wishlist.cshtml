@@ -1,0 +1,86 @@
+﻿@model List<QuanLySach.Models.Wishlist>
+
+@{
+    ViewData["Title"] = "Избранное";
+    ViewData["ActiveMenu"] = "Wishlist";
+}
+
+<div class="profile-page">
+    <div class="container">
+        <div class="profile-layout">
+            <partial name="_ProfileSidebar" />
+            <div class="profile-content">
+                <h2>Избранное</h2>
+
+                @if (Model == null || !Model.Any())
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-heart"></i>
+                        <p>Вы ещё не добавили книги в избранное</p>
+                        <a asp-controller="Books" asp-action="Index" class="btn-save"
+                           style="display:inline-block;width:auto;padding:12px 30px;">
+                            Найти книги
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="wishlist-grid">
+                        @foreach (var item in Model)
+                        {
+                            <div class="book-card" id="wish-@item.BookId">
+                                <div class="book-cover">
+                                    <img src="@item.Book?.CoverImageUrl" alt="@item.Book?.Title"
+                                         onerror="this.src='https://placehold.co/200x300?text=No+Cover'" />
+                                    <button class="wishlist-btn active"
+                                            onclick="removeWishlist(@item.BookId, this)">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </div>
+                                <div class="book-info">
+                                    <h4>@item.Book?.Title</h4>
+                                    <p class="author">@item.Book?.Author</p>
+                                    <p class="price">@item.Book?.Price.ToString("0.00") ₽</p>
+                                    <button class="btn-cart" onclick="addToCart(@item.BookId)">
+                                        <i class="fas fa-shopping-cart"></i> В корзину
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .wishlist-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .wishlist-btn.active i {
+        color: #e53935;
+    }
+</style>
+
+<script>
+    function removeWishlist(bookId, btn) {
+        fetch('/Account/ToggleWishlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bookId: bookId })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && !data.added) {
+                document.getElementById('wish-' + bookId).remove();
+                // Nếu hết sách thì reload
+                if (document.querySelectorAll('.book-card').length === 0)
+                    location.reload();
+            }
+        });
+    }
+</script>

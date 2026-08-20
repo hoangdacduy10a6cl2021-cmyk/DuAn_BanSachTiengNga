@@ -1,0 +1,40 @@
+﻿@using QuanLySach.Models
+@model List<Admin>
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Аккаунты администратора";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Аккаунты администратора (@Model.Count)</h2>
+        <a asp-action="AdminAccountCreate" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Добавить аккаунт</a>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Имя пользователя</th>
+                <th>ФИО</th>
+                <th>Роль</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var acc in Model)
+            {
+                <tr>
+                    <td>@acc.Username</td>
+                    <td>@acc.FullName</td>
+                    <td><span class="badge">@(acc.Role?.Name ?? "—")</span></td>
+                    <td>
+                        <a asp-action="AdminAccountEdit" asp-route-id="@acc.Id" class="btn btn-outline btn-sm">Изменить</a>
+                        <form asp-action="AdminAccountDelete" asp-route-id="@acc.Id" method="post" style="display:inline" onsubmit="return confirm('Удалить этот аккаунт?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

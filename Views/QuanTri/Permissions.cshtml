@@ -1,0 +1,70 @@
+﻿@using QuanLySach.ViewModels
+@model PermissionsViewModel
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Права доступа";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Выберите роль</h2>
+    </div>
+    <form method="get" style="display:flex; gap:10px; align-items:center;">
+        <select name="roleId" onchange="this.form.submit()" style="padding:8px 12px; border:1px solid #ddd; border-radius:6px; min-width:240px;">
+            @foreach (var role in Model.AllRoles)
+            {
+                <option value="@role.Id" selected="@(role.Id == Model.SelectedRoleId)">@role.Name @(role.IsSuperAdmin ? "(суперадмин)" : "")</option>
+            }
+        </select>
+    </form>
+</div>
+
+
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Матрица прав — @Model.SelectedRole?.Name</h2>
+    </div>
+    <form asp-action="PermissionsSave" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="roleId" value="@Model.SelectedRoleId" />
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Модуль</th>
+                    <th style="text-align:center;">Просмотр</th>
+                    <th style="text-align:center;">Создание</th>
+                    <th style="text-align:center;">Редактирование</th>
+                    <th style="text-align:center;">Удаление</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    bool locked = Model.SelectedRole?.IsSuperAdmin ?? false;
+                }
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td>@row.DisplayName</td>
+                        <td style="text-align:center;">
+                            <input type="checkbox" name="view" value="@row.Module" checked="@(row.CanView || locked)" disabled="@locked" />
+                        </td>
+                        <td style="text-align:center;">
+                            <input type="checkbox" name="create" value="@row.Module" checked="@(row.CanCreate || locked)" disabled="@locked" />
+                        </td>
+                        <td style="text-align:center;">
+                            <input type="checkbox" name="edit" value="@row.Module" checked="@(row.CanEdit || locked)" disabled="@locked" />
+                        </td>
+                        <td style="text-align:center;">
+                            <input type="checkbox" name="delete" value="@row.Module" checked="@(row.CanDelete || locked)" disabled="@locked" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (!locked)
+        {
+            <button type="submit" class="btn btn-gold" style="margin-top:16px;"><i class="fas fa-save"></i> Сохранить права</button>
+        }
+    </form>
+</div>

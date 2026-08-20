@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "В разработке";
+    ViewData["HideFooter"] = false;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 60px 20px;
+    ">
+    <div style="font-size: 80px; margin-bottom: 20px;"><i class="fas fa-book"></i></div>
+    <h1 style="
+        font-family: 'Playfair Display', serif;
+        font-size: 48px;
+        color: #b8860b;
+        margin-bottom: 16px;
+        ">
+        В разработке...
+    </h1>
+    <p style="
+    font-size: 20px;
+    color: #666;
+    margin-bottom: 10px;
+    ">Этот раздел скоро появится</p>
+    <p style="
+    font-size: 16px;
+    color: #999;
+    margin-bottom: 40px;
+    ">Мы работаем над тем, чтобы предложить вам лучшие новинки книжного мира</p>
+    <a asp-controller="Books" asp-action="Index" style="
+    background-color: #b8860b;
+    color: white;
+    padding: 14px 36px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 16px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    ">← Вернуться к книгам</a>
+</div>

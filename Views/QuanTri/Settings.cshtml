@@ -1,0 +1,78 @@
+﻿@using QuanLySach.Models
+@model SiteSetting
+@{
+    Layout = "_QuanTriLayout";
+    ViewBag.Title = "Настройки";
+}
+
+<div class="admin-panel">
+    <div class="panel-header">
+        <h2>Основные настройки</h2>
+    </div>
+    <form asp-action="Settings" method="post" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group">
+            <label>Название магазина</label>
+            <input type="text" asp-for="StoreName" required />
+        </div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+            <div class="form-group" style="flex:1; min-width:220px;">
+                <label>Email</label>
+                <input type="text" asp-for="StoreEmail" />
+            </div>
+            <div class="form-group" style="flex:1; min-width:220px;">
+                <label>Телефон</label>
+                <input type="text" asp-for="StorePhone" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Адрес</label>
+            <input type="text" asp-for="StoreAddress" />
+        </div>
+        <div class="form-group">
+            <label>Текст в подвале сайта</label>
+            <textarea asp-for="FooterText" rows="2"></textarea>
+        </div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+            <div class="form-group" style="flex:1; min-width:180px;">
+                <label>Валюта по умолчанию</label>
+                <select asp-for="DefaultCurrency">
+                    <option value="RUB">RUB (₽)</option>
+                    <option value="VND">VND (₫)</option>
+                    <option value="USD">USD ($)</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex:1; min-width:180px;">
+                <label>Товаров на странице</label>
+                <input type="number" asp-for="ItemsPerPage" min="4" max="60" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Социальные сети</label>
+            <input type="text" asp-for="FacebookUrl" placeholder="Facebook URL" style="margin-bottom:8px;" />
+            <input type="text" asp-for="InstagramUrl" placeholder="Instagram URL" style="margin-bottom:8px;" />
+            <input type="text" asp-for="TelegramUrl" placeholder="Telegram URL" />
+        </div>
+
+        <div class="form-group">
+            <div class="form-check">
+                <input type="checkbox" asp-for="MaintenanceMode" id="maintenanceMode" />
+                <label for="maintenanceMode" style="margin:0;">Включить режим технического обслуживания сайта</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Сообщение при техническом обслуживании</label>
+            <textarea asp-for="MaintenanceMessage" rows="2"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-gold"><i class="fas fa-save"></i> Сохранить настройки</button>
+    </form>
+</div>
+
+@if (Model.UpdatedAt != default)
+{
+    <div style="color:var(--text-mid); font-size:0.82rem; margin-top:-12px;">Последнее обновление: @Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+}

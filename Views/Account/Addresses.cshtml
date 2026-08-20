@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Адреса доставки";
+    ViewData["ActiveMenu"] = "Addresses";
+}
+<div class="profile-page">
+    <div class="container">
+        <div class="profile-layout">
+            <partial name="_ProfileSidebar" />
+            <div class="profile-content">
+                <h2>Адреса доставки</h2>
+                <div class="address-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <strong>Добавить новый адрес</strong>
+                        <p>У вас пока нет сохранённых адресов</p>
+                    </div>
+                </div>
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label>Город</label>
+                        <input type="text" name="city" placeholder="Москва" />
+                    </div>
+                    <div class="form-group">
+                        <label>Улица, дом, квартира</label>
+                        <input type="text" name="street" placeholder="ул. Книжная, д. 1, кв. 5" />
+                    </div>
+                    <div class="form-group">
+                        <label>Индекс</label>
+                        <input type="text" name="zip" placeholder="123456" />
+                    </div>
+                    <button type="submit" class="btn-save">Сохранить адрес</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
