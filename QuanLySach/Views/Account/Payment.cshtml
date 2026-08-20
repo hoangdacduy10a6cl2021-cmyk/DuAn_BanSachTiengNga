@@ -49,7 +49,7 @@
                     </div>
                     <div id="qr-zalo" class="qr-inline" style="display:none">
                         <div class="qr-inline-box">
-                           <div class="qr-bank-header zalopay"><i class="fas fa-wallet"></i> ZaloPay</div>
+                            <div class="qr-bank-header zalopay"><i class="fas fa-wallet"></i> ZaloPay</div>
                             <img src="/images/zalopay-qr.png"
                                  alt="QR ZaloPay" class="qr-inline-img" />
                             <div class="qr-info">
@@ -121,8 +121,111 @@
                         </div>
                     </div>
 
+                    @{
+                        var bankQrCodes = new Dictionary<string, string>
+                        {
+                            { "Vietcombank", "vietcombank" },
+                            { "Techcombank", "techcombank" },
+                            { "MB Bank", "mbbank" }
+                        };
+                    }
+
+                    <!-- CÁC NGÂN HÀNG / VÍ NGƯỜI DÙNG TỰ THÊM -->
+                    @foreach (var card in Model)
+                    {
+                        var boxId = "custom" + card.Id;
+                        var hasQr = bankQrCodes.ContainsKey(card.CardType);
+                        <div class="payment-method-item" onclick="toggleMethod('@boxId')" style="cursor:pointer">
+                            <div class="payment-method-logo custom-card"><i class="fas fa-university"></i></div>
+                            <span>@card.CardType — @card.CardNumber</span>
+                            <i class="fas fa-qrcode payment-qr-icon" id="chevron-@boxId"></i>
+                        </div>
+                        <div id="qr-@boxId" class="qr-inline" style="display:none">
+                            <div class="qr-inline-box">
+                                <div class="qr-bank-header custom"><i class="fas fa-university"></i> @card.CardType</div>
+                                @if (hasQr)
+                                {
+                                    <img src="https://img.vietqr.io/image/@(bankQrCodes[card.CardType])-@(card.CardNumber)-compact2.jpg"
+                                         alt="QR @card.CardType" class="qr-inline-img" />
+                                }
+                                else
+                                {
+                                    <div class="qr-inline-img qr-placeholder">
+                                        <i class="fas fa-qrcode"></i>
+                                    </div>
+                                }
+                                <div class="qr-info">
+                                    <div class="qr-info-row"><span>Счёт:</span><strong>@card.CardNumber</strong></div>
+                                    <div class="qr-info-row"><span>Владелец:</span><strong>@card.CardName</strong></div>
+                                </div>
+                                <p class="qr-note">
+                                    @(hasQr ? "Откройте приложение банка и отсканируйте QR-код" : "Откройте приложение и отсканируйте QR-код")
+                                </p>
+                                <form asp-controller="Account" asp-action="RemoveCard" method="post" class="remove-card-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@card.Id" />
+                                    <button type="submit" class="remove-card-btn-full">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- NÚT THÊM NGÂN HÀNG MỚI -->
+                    <div class="payment-method-item add-bank-item" onclick="openAddBankModal()">
+                        <div class="payment-method-logo add-bank-logo"><i class="fas fa-plus"></i></div>
+                        <span>Добавить способ оплаты</span>
+                        <i class="fas fa-chevron-right payment-qr-icon"></i>
+                    </div>
+
                 </div>
             </div>
+
+            <!-- MODAL THÊM NGÂN HÀNG -->
+            <div id="addBankModalOverlay" class="add-bank-overlay" style="display:none" onclick="closeAddBankModal(event)">
+                <div class="add-bank-modal" onclick="event.stopPropagation()">
+                    <div class="add-bank-modal-header">
+                        <h3><i class="fas fa-university"></i> Добавить способ оплаты</h3>
+                        <button type="button" class="add-bank-close" onclick="closeAddBankModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <form asp-controller="Account" asp-action="AddBankCard" method="post" class="add-bank-form">
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group">
+                            <label>Ngân hàng / Ví điện tử</label>
+                            <select name="CardType" class="form-control" required>
+                                <option value="">-- Chọn ngân hàng --</option>
+                                <option value="Vietcombank">Vietcombank</option>
+                                <option value="ZaloPay">ZaloPay</option>
+                                <option value="Techcombank">Techcombank</option>
+                                <option value="MB Bank">MB Bank</option>
+                                <option value="Momo">Momo</option>
+                                <option value="Khac">Ngân hàng khác</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Số tài khoản</label>
+                            <input type="text" name="CardNumber" class="form-control" placeholder="Nhập số tài khoản" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tên chủ tài khoản</label>
+                            <input type="text" name="CardName" class="form-control" placeholder="VD: PHAM DUC HOA" required />
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" onclick="closeAddBankModal()">Hủy</button>
+                            <button type="submit" class="btn-save"><i class="fas fa-check"></i> Lưu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -131,19 +234,20 @@
     .payment-section {
         margin-bottom: 30px;
     }
-    .qr-bank-header i {
-    margin-right: 8px;
-    color: #1F3061;
-}
 
-        .payment-section h3 {
-            font-family: Georgia, serif;
-            color: #4a2c00;
-            font-size: 1rem;
-            margin-bottom: 16px;
-            border-bottom: 1px solid #f0e8d8;
-            padding-bottom: 10px;
-        }
+    .qr-bank-header i {
+        margin-right: 8px;
+        color: #1F3061;
+    }
+
+    .payment-section h3 {
+        font-family: Georgia, serif;
+        color: #4a2c00;
+        font-size: 1rem;
+        margin-bottom: 16px;
+        border-bottom: 1px solid #f0e8d8;
+        padding-bottom: 10px;
+    }
 
     .payment-method-item {
         display: flex;
@@ -386,24 +490,199 @@
         font-size: 12px;
         font-weight: 600;
     }
+
+    /* THẺ NGƯỜI DÙNG TỰ THÊM (QR STYLE) */
+    .custom-card {
+        background: #b8860b;
+    }
+
+    .qr-bank-header.custom {
+        background: #fdf1d8;
+        color: #4a2c00;
+    }
+
+    .qr-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        color: #b8860b;
+        font-size: 64px;
+    }
+
+    .remove-card-form {
+        margin-top: 8px;
+    }
+
+    .remove-card-btn-full {
+        width: 100%;
+        background: #fff;
+        border: 1px solid #e0b0a8;
+        color: #c0392b;
+        padding: 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+        .remove-card-btn-full:hover {
+            background: #fdf0ee;
+        }
+
+    /* NÚT THÊM NGÂN HÀNG */
+    .add-bank-item {
+        border-style: dashed;
+        border-color: #b8860b;
+        color: #b8860b;
+        font-weight: 600;
+    }
+
+    .add-bank-logo {
+        background: #fdf6e3;
+        border: 2px dashed #b8860b;
+        color: #b8860b !important;
+    }
+
+    /* MODAL */
+    .add-bank-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .add-bank-modal {
+        background: #fff;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 420px;
+        padding: 24px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: fadeInUp .2s ease;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .add-bank-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        border-bottom: 1px solid #f0e8d8;
+        padding-bottom: 12px;
+    }
+
+        .add-bank-modal-header h3 {
+            font-family: Georgia, serif;
+            color: #4a2c00;
+            font-size: 1.05rem;
+            margin: 0;
+        }
+
+    .add-bank-close {
+        background: none;
+        border: none;
+        font-size: 16px;
+        color: #999;
+        cursor: pointer;
+    }
+
+    .add-bank-form .form-group {
+        margin-bottom: 14px;
+    }
+
+    .add-bank-form label {
+        display: block;
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 6px;
+        font-weight: 600;
+    }
+
+    .add-bank-form .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1.5px solid #f0e8d8;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color .2s;
+    }
+
+        .add-bank-form .form-control:focus {
+            border-color: #b8860b;
+        }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .btn-cancel {
+        padding: 9px 16px;
+        border-radius: 8px;
+        border: 1.5px solid #f0e8d8;
+        background: #fff;
+        color: #666;
+        cursor: pointer;
+    }
+
+    .btn-save {
+        padding: 9px 18px;
+        border-radius: 8px;
+        border: none;
+        background: #b8860b;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+        .btn-save:hover {
+            background: #9c7209;
+        }
 </style>
 
 <script>
-    function toggleQR(type) {
-        const ids = ['vcb', 'zalo', 'cod'];
-        ids.forEach(function(id) {
-            const box = document.getElementById('qr-' + id);
-            const chevron = document.getElementById('chevron-' + id);
-            if (id === type) {
+    function toggleMethod(key) {
+        const boxes = document.querySelectorAll('.qr-inline');
+        boxes.forEach(function(box) {
+            const chevron = document.getElementById('chevron-' + box.id.replace('qr-', ''));
+            if (box.id === 'qr-' + key) {
                 const isOpen = box.style.display !== 'none';
                 box.style.display = isOpen ? 'none' : 'block';
-                if (chevron) {
-                    chevron.classList.toggle('open', !isOpen);
-                }
+                if (chevron) chevron.classList.toggle('open', !isOpen);
             } else {
                 box.style.display = 'none';
                 if (chevron) chevron.classList.remove('open');
             }
         });
+    }
+
+    function toggleQR(type) {
+        toggleMethod(type);
+    }
+
+    function openAddBankModal() {
+        document.getElementById('addBankModalOverlay').style.display = 'flex';
+    }
+
+    function closeAddBankModal(e) {
+        document.getElementById('addBankModalOverlay').style.display = 'none';
     }
 </script>

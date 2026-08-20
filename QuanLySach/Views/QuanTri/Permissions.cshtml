@@ -19,12 +19,7 @@
     </form>
 </div>
 
-@if (Model.SelectedRole != null && Model.SelectedRole.IsSuperAdmin)
-{
-    <div class="alert alert-success">
-        Роль «@Model.SelectedRole.Name» — суперадминистратор и всегда имеет полный доступ ко всем модулям. Матрица прав ниже недоступна для редактирования.
-    </div>
-}
+
 
 <div class="admin-panel">
     <div class="panel-header">

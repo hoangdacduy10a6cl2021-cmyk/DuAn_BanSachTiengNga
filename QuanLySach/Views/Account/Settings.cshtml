@@ -105,14 +105,37 @@
                         </div>
 
                         <h3 style="margin-top:24px;">Настройки безопасности</h3>
-                        <form method="post" asp-action="Settings">
+                        <form method="post" asp-action="Settings" class="password-form" onsubmit="return validatePasswordForm()">
                             @Html.AntiForgeryToken()
-                            <div class="settings-password-row">
-                                <input type="password" name="currentPassword" placeholder="Изменить пароль" />
-                                <i class="fas fa-eye password-eye"></i>
+
+                            <div class="form-group password-field">
+                                <label>Текущий пароль</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" name="currentPassword" id="currentPassword" placeholder="Введите текущий пароль" required />
+                                    <i class="fas fa-eye password-eye" onclick="togglePasswordVisibility('currentPassword', this)"></i>
+                                </div>
                             </div>
-                            <input type="hidden" name="newPassword" value="" />
-                            <button type="submit" class="btn-save" style="margin-top:16px;display:none"></button>
+
+                            <div class="form-group password-field">
+                                <label>Новый пароль</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" name="newPassword" id="newPassword" placeholder="Не менее 6 символов" required minlength="6" />
+                                    <i class="fas fa-eye password-eye" onclick="togglePasswordVisibility('newPassword', this)"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group password-field">
+                                <label>Подтвердите новый пароль</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" id="confirmPassword" placeholder="Повторите новый пароль" required minlength="6" />
+                                    <i class="fas fa-eye password-eye" onclick="togglePasswordVisibility('confirmPassword', this)"></i>
+                                </div>
+                                <span id="passwordMismatchError" class="field-error" style="display:none">Пароли не совпадают</span>
+                            </div>
+
+                            <button type="submit" class="btn-save" style="margin-top:16px;">
+                                <i class="fas fa-key"></i> Изменить пароль
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -163,20 +186,72 @@
             transform: translateY(0);
         }
     }
+
+    /* FORM ĐỔI MẬT KHẨU */
+    .password-form .form-group {
+        margin-bottom: 16px;
+    }
+
+    .password-form label {
+        display: block;
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 6px;
+        font-weight: 600;
+    }
+
+    .password-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+        .password-input-wrapper input {
+            width: 100%;
+            padding: 10px 40px 10px 12px;
+            border: 1.5px solid #f0e8d8;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+            .password-input-wrapper input:focus {
+                border-color: #b8860b;
+            }
+
+    .password-eye {
+        position: absolute;
+        right: 14px;
+        color: #999;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .password-eye:hover {
+            color: #b8860b;
+        }
+
+    .field-error {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: #c0392b;
+    }
 </style>
 
 <script>
     // Load settings từ DB khi vào trang
-    window.addEventListener('DOMContentLoaded', function () {
+    window.addEventListener('DOMContentLoaded', function() {
         fetch('/Account/GetSettings')
             .then(r => r.json())
             .then(data => {
                 if (!data.success) return;
-                setVal('showCyrillic',        data.showCyrillic);
+                setVal('showCyrillic', data.showCyrillic);
                 setVal('showTransliteration', data.showTransliteration);
-                setVal('emailNotifications',  data.emailNotifications);
-                setVal('smsNotifications',    data.smsNotifications);
-                setSelect('language',  data.language);
+                setVal('emailNotifications', data.emailNotifications);
+                setVal('smsNotifications', data.smsNotifications);
+                setSelect('language', data.language);
                 setSelect('currency1', data.currency1);
                 setSelect('currency2', data.currency2);
                 setSelect('currency3', data.currency3);
@@ -201,14 +276,14 @@
 
     function getPayload() {
         return {
-            showCyrillic:        document.getElementById('showCyrillic').checked,
+            showCyrillic: document.getElementById('showCyrillic').checked,
             showTransliteration: document.getElementById('showTransliteration').checked,
-            emailNotifications:  document.getElementById('emailNotifications').checked,
-            smsNotifications:    document.getElementById('smsNotifications').checked,
-            language:            document.getElementById('language').value,
-            currency1:           document.getElementById('currency1').value,
-            currency2:           document.getElementById('currency2').value,
-            currency3:           document.getElementById('currency3').value,
+            emailNotifications: document.getElementById('emailNotifications').checked,
+            smsNotifications: document.getElementById('smsNotifications').checked,
+            language: document.getElementById('language').value,
+            currency1: document.getElementById('currency1').value,
+            currency2: document.getElementById('currency2').value,
+            currency3: document.getElementById('currency3').value,
         };
     }
 
@@ -216,7 +291,7 @@
     let autoSaveTimer = null;
     function autoSave() {
         clearTimeout(autoSaveTimer);
-        autoSaveTimer = setTimeout(function () {
+        autoSaveTimer = setTimeout(function() {
             doSave(true); // true = auto (không disable nút)
         }, 500);
     }
@@ -238,36 +313,65 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(getPayload())
         })
-        .then(r => r.json())
-        .then(data => {
-            if (!isAuto) {
-                btn.disabled = false;
-                btn.textContent = 'Сохранить изменения';
-            }
-            showToast(
-                data.success
-                    ? 'Изменения успешно сохранены!'
-                    : 'Ошибка при сохранении. Попробуйте снова.',
-                data.success
-            );
-        })
-        .catch(function () {
-            if (!isAuto) {
-                btn.disabled = false;
-                btn.textContent = 'Сохранить изменения';
-            }
-            showToast('Ошибка соединения с сервером.', false);
-        });
+            .then(r => r.json())
+            .then(data => {
+                if (!isAuto) {
+                    btn.disabled = false;
+                    btn.textContent = 'Сохранить изменения';
+                }
+                showToast(
+                    data.success
+                        ? 'Изменения успешно сохранены!'
+                        : 'Ошибка при сохранении. Попробуйте снова.',
+                    data.success
+                );
+            })
+            .catch(function() {
+                if (!isAuto) {
+                    btn.disabled = false;
+                    btn.textContent = 'Сохранить изменения';
+                }
+                showToast('Ошибка соединения с сервером.', false);
+            });
     }
 
     function showToast(msg, success) {
         const toast = document.getElementById('save-toast');
-        const icon  = toast.querySelector('i');
+        const icon = toast.querySelector('i');
         document.getElementById('toast-msg').textContent = msg;
         toast.className = 'save-toast' + (success ? '' : ' error');
-        icon.className  = success ? 'fas fa-check-circle' : 'fas fa-times-circle';
+        icon.className = success ? 'fas fa-check-circle' : 'fas fa-times-circle';
         toast.style.display = 'flex';
         toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(function () { toast.style.display = 'none'; }, 4000);
+        setTimeout(function() { toast.style.display = 'none'; }, 4000);
+    }
+
+    // ĐỔI MẬT KHẨU
+    function togglePasswordVisibility(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    function validatePasswordForm() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorEl = document.getElementById('passwordMismatchError');
+
+        if (newPassword !== confirmPassword) {
+            errorEl.style.display = 'block';
+            document.getElementById('confirmPassword').focus();
+            return false;
+        }
+
+        errorEl.style.display = 'none';
+        return true;
     }
 </script>
