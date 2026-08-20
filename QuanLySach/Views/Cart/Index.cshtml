@@ -53,9 +53,35 @@
                     <span>Доставка:</span>
                     <span style="color:#2e7d32">Бесплатно</span>
                 </div>
+
+                <!-- MÃ GIẢM GIÁ -->
+                <div class="promo-box">
+                    @{
+                        string? appliedCode = ViewBag.PromoCode;
+                    }
+                    <div id="promo-input-row" class="promo-input-row" style="display:@(string.IsNullOrEmpty(appliedCode) ? "flex" : "none")">
+                        <input type="text" id="promoCodeInput" placeholder="Nhập mã giảm giá" maxlength="30" />
+                        <button type="button" id="promoApplyBtn" onclick="applyPromo()">Áp dụng</button>
+                    </div>
+                    <div id="promo-applied-row" class="promo-applied-row" style="display:@(string.IsNullOrEmpty(appliedCode) ? "none" : "flex")">
+                        <span><i class="fas fa-tag"></i> Mã <strong id="promo-code-label">@appliedCode</strong> đã áp dụng (-<span id="promo-percent-label">@ViewBag.DiscountPercent</span>%)</span>
+                        <button type="button" class="promo-remove-btn" onclick="removePromo()">Gỡ</button>
+                    </div>
+                    <div id="promo-message" class="promo-message"></div>
+                </div>
+
+                <div class="summary-line" id="promo-subtotal-line" style="display:@(string.IsNullOrEmpty(appliedCode) ? "none" : "flex")">
+                    <span>Tạm tính:</span>
+                    <span id="promo-subtotal-value">@(((decimal)ViewBag.SubTotal).ToString("0.00")) ₽</span>
+                </div>
+                <div class="summary-line summary-discount" id="promo-discount-line" style="display:@(string.IsNullOrEmpty(appliedCode) ? "none" : "flex")">
+                    <span>Giảm giá:</span>
+                    <span id="promo-discount-value">-@(((decimal)ViewBag.DiscountAmount).ToString("0.00")) ₽</span>
+                </div>
+
                 <div class="cart-total-row">
                     <span>Итого:</span>
-                    <span class="cart-total">@Model.Sum(i => i.Book!.Price * i.Quantity).ToString("0.00") ₽</span>
+                    <span class="cart-total" id="cart-total-value">@(((decimal)ViewBag.CartTotal).ToString("0.00")) ₽</span>
                 </div>
                 <a asp-action="Checkout" class="btn-checkout">Đặt hàng</a>
             </div>
@@ -232,6 +258,100 @@
         color: #b8860b;
     }
 
+    .summary-discount span {
+        color: #2e7d32;
+        font-weight: 700;
+    }
+
+    /* PROMO BOX */
+    .promo-box {
+        margin: 4px 0 12px;
+    }
+
+    .promo-input-row {
+        display: flex;
+        gap: 8px;
+    }
+
+        .promo-input-row input {
+            flex: 1;
+            min-width: 0;
+            padding: 9px 12px;
+            border: 1.5px solid #ddc590;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            box-sizing: border-box;
+            text-transform: uppercase;
+        }
+
+            .promo-input-row input:focus {
+                border-color: #b8860b;
+            }
+
+        .promo-input-row button {
+            background: #b8860b;
+            color: #fff;
+            border: none;
+            padding: 0 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+            .promo-input-row button:hover {
+                background: #9a6f00;
+            }
+
+            .promo-input-row button:disabled {
+                opacity: 0.6;
+                cursor: default;
+            }
+
+    .promo-applied-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        background: #e8f5e9;
+        border: 1px solid #a5d6a7;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 12.5px;
+        color: #1b5e20;
+    }
+
+        .promo-applied-row i {
+            margin-right: 4px;
+        }
+
+    .promo-remove-btn {
+        background: none;
+        border: none;
+        color: #c62828;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: underline;
+        flex-shrink: 0;
+    }
+
+    .promo-message {
+        font-size: 12px;
+        margin-top: 6px;
+        min-height: 14px;
+    }
+
+        .promo-message.error {
+            color: #c62828;
+        }
+
+        .promo-message.success {
+            color: #2e7d32;
+        }
+
     .btn-checkout {
         display: block;
         background: #b8860b;
@@ -283,3 +403,67 @@
         }
     }
 </style>
+
+<script>
+    function applyPromo() {
+        const input = document.getElementById('promoCodeInput');
+        const btn = document.getElementById('promoApplyBtn');
+        const msg = document.getElementById('promo-message');
+        const code = input.value.trim();
+
+        if (!code) {
+            msg.textContent = 'Vui lòng nhập mã giảm giá.';
+            msg.className = 'promo-message error';
+            return;
+        }
+
+        btn.disabled = true;
+        const formData = new FormData();
+        formData.append('code', code);
+
+        fetch('@Url.Action("ApplyPromo", "Cart")', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                if (data.success) {
+                    msg.textContent = data.message;
+                    msg.className = 'promo-message success';
+                    updatePromoUI(true, data.code, data.discountPercent, data.subTotal, data.discountAmount, data.total);
+                } else {
+                    msg.textContent = data.message;
+                    msg.className = 'promo-message error';
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                msg.textContent = 'Có lỗi xảy ra, vui lòng thử lại.';
+                msg.className = 'promo-message error';
+            });
+    }
+
+    function removePromo() {
+        fetch('@Url.Action("RemovePromo", "Cart")', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('promo-message').textContent = '';
+                document.getElementById('promoCodeInput').value = '';
+                updatePromoUI(false, null, 0, data.subTotal, '0.00', data.total);
+            });
+    }
+
+    function updatePromoUI(applied, code, percent, subTotal, discountAmount, total) {
+        document.getElementById('promo-input-row').style.display = applied ? 'none' : 'flex';
+        document.getElementById('promo-applied-row').style.display = applied ? 'flex' : 'none';
+        document.getElementById('promo-subtotal-line').style.display = applied ? 'flex' : 'none';
+        document.getElementById('promo-discount-line').style.display = applied ? 'flex' : 'none';
+
+        if (applied) {
+            document.getElementById('promo-code-label').textContent = code;
+            document.getElementById('promo-percent-label').textContent = percent;
+        }
+
+        document.getElementById('promo-subtotal-value').textContent = subTotal + ' ₽';
+        document.getElementById('promo-discount-value').textContent = '-' + discountAmount + ' ₽';
+        document.getElementById('cart-total-value').textContent = total + ' ₽';
+    }
+</script>

@@ -19,6 +19,24 @@ namespace QuanLySach.Controllers
         }
         public IActionResult Promotions()
         {
+            var promoCode = HttpContext.Session.GetString("PromoCode");
+            if (!string.IsNullOrEmpty(promoCode))
+            {
+                var now = DateTime.Now;
+                var promo = _db.Promotions.FirstOrDefault(p =>
+                    p.Code.ToLower() == promoCode.ToLower() &&
+                    p.IsActive && p.StartDate <= now && p.EndDate >= now);
+
+                if (promo != null)
+                {
+                    ViewBag.PromoCode = promo.Code;
+                    ViewBag.DiscountPercent = promo.DiscountPercent;
+                }
+                else
+                {
+                    HttpContext.Session.Remove("PromoCode");
+                }
+            }
             return View();
         }
         public IActionResult Popular()

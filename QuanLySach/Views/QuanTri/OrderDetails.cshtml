@@ -63,7 +63,16 @@
             }
         </tbody>
     </table>
-    <p style="text-align:right; margin-top:12px; font-weight:700;">
+    <p style="text-align:right; margin-top:12px;">
+        Подытог: @Model.SubTotal.ToString("N0") ₽
+    </p>
+    @if (!string.IsNullOrEmpty(Model.PromoCode))
+    {
+        <p style="text-align:right; color:#2e7d32;">
+            Промокод «@Model.PromoCode» (-@Model.DiscountPercent%): -@Model.DiscountAmount.ToString("N0") ₽
+        </p>
+    }
+    <p style="text-align:right; margin-top:4px; font-weight:700;">
         Итого: @Model.TotalPrice.ToString("N0") ₽
     </p>
 </div>

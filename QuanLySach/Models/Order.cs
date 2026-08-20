@@ -1,4 +1,5 @@
-﻿namespace QuanLySach.Models
+﻿// Models/Order.cs
+namespace QuanLySach.Models
 {
     public class Order
     {
@@ -22,6 +23,13 @@
         // Giao hàng
         public string DeliveryMethod { get; set; } = "Курьером";
         public decimal DeliveryPrice { get; set; } = 0;
+
+        // Mã giảm giá (khuyến mãi)
+        public string? PromoCode { get; set; }
+        public int DiscountPercent { get; set; } = 0;
+        public decimal DiscountAmount { get; set; } = 0;
+        public decimal SubTotal { get; set; }
+
         public decimal TotalPrice { get; set; }
 
         // Thanh toán

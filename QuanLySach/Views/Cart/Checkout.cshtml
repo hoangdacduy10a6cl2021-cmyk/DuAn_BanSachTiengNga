@@ -1,7 +1,11 @@
 ﻿@model IEnumerable<QuanLySach.Models.CartItem>
 @{
     ViewData["Title"] = "Оформление заказа";
-    var total = Model.Sum(i => i.Book!.Price * i.Quantity);
+    decimal subTotal = ViewBag.SubTotal;
+    decimal discountAmount = ViewBag.DiscountAmount;
+    int discountPercent = ViewBag.DiscountPercent;
+    string? promoCode = ViewBag.PromoCode;
+    var total = ViewBag.CartTotal;
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <div class="checkout-page">
@@ -150,6 +154,17 @@
                         <span>Доставка:</span>
                         <span style="color:#2e7d32">Бесплатно</span>
                     </div>
+                    @if (!string.IsNullOrEmpty(promoCode))
+                    {
+                        <div class="order-line">
+                            <span>Tạm tính:</span>
+                            <span>@subTotal.ToString("0.00") ₽</span>
+                        </div>
+                        <div class="order-line">
+                            <span>Mã "@promoCode" (-@discountPercent%):</span>
+                            <span style="color:#2e7d32">-@discountAmount.ToString("0.00") ₽</span>
+                        </div>
+                    }
                     <div class="order-total">
                         <span>Итого:</span>
                         <span>@total.ToString("0.00") ₽</span>

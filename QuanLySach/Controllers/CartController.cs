@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// Controllers/CartController.cs — thay thế toàn bộ file
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuanLySach.Models;
 
@@ -21,7 +22,115 @@ namespace QuanLySach.Controllers
                 .Where(c => c.SessionId == sessionId)
                 .Include(c => c.Book)
                 .ToList();
+
+            SetPromoViewData(items);
             return View(items);
+        }
+
+        // ===== MÃ GIẢM GIÁ (KHUYẾN MÃI) =====
+
+        // Tìm mã khuyến mãi hợp lệ (đang bật, còn hạn) theo code
+        private Promotion? FindValidPromo(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code)) return null;
+            var now = DateTime.Now;
+            var trimmed = code.Trim();
+
+            return _db.Promotions.FirstOrDefault(p =>
+                p.Code.ToLower() == trimmed.ToLower() &&
+                p.IsActive &&
+                p.StartDate <= now &&
+                p.EndDate >= now);
+        }
+
+        // Đưa thông tin giảm giá (nếu có mã đang áp dụng trong session) ra ViewBag để view sử dụng
+        private void SetPromoViewData(List<CartItem> items)
+        {
+            var subTotal = items.Sum(i => i.Book != null ? i.Book.Price * i.Quantity : 0);
+            var promoCode = HttpContext.Session.GetString("PromoCode");
+            decimal discountAmount = 0;
+            int discountPercent = 0;
+
+            if (!string.IsNullOrEmpty(promoCode))
+            {
+                var promo = FindValidPromo(promoCode);
+                if (promo != null)
+                {
+                    discountPercent = promo.DiscountPercent;
+                    discountAmount = Math.Round(subTotal * discountPercent / 100m, 2);
+                }
+                else
+                {
+                    // Mã không còn hợp lệ (hết hạn / bị tắt) -> tự động gỡ khỏi session
+                    HttpContext.Session.Remove("PromoCode");
+                    promoCode = null;
+                }
+            }
+
+            ViewBag.PromoCode = promoCode;
+            ViewBag.DiscountPercent = discountPercent;
+            ViewBag.DiscountAmount = discountAmount;
+            ViewBag.SubTotal = subTotal;
+            ViewBag.CartTotal = subTotal - discountAmount;
+        }
+
+        // Áp dụng mã giảm giá (gọi bằng AJAX từ trang Giỏ hàng hoặc trang Khuyến mãi)
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult ApplyPromo(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                return Json(new { success = false, message = "Vui lòng nhập mã giảm giá." });
+
+            var promo = FindValidPromo(code);
+            if (promo == null)
+                return Json(new { success = false, message = "Mã giảm giá không tồn tại hoặc đã hết hạn." });
+
+            HttpContext.Session.SetString("PromoCode", promo.Code);
+
+            var sessionId = HttpContext.Session.Id;
+            var items = _db.CartItems
+                .Where(c => c.SessionId == sessionId)
+                .Include(c => c.Book)
+                .ToList();
+
+            var subTotal = items.Sum(i => i.Book != null ? i.Book.Price * i.Quantity : 0);
+            var discountAmount = Math.Round(subTotal * promo.DiscountPercent / 100m, 2);
+            var total = subTotal - discountAmount;
+
+            return Json(new
+            {
+                success = true,
+                message = $"Đã áp dụng mã \"{promo.Code}\" – giảm {promo.DiscountPercent}%.",
+                code = promo.Code,
+                discountPercent = promo.DiscountPercent,
+                subTotal = subTotal.ToString("0.00"),
+                discountAmount = discountAmount.ToString("0.00"),
+                total = total.ToString("0.00")
+            });
+        }
+
+        // Gỡ mã giảm giá đang áp dụng
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult RemovePromo()
+        {
+            HttpContext.Session.Remove("PromoCode");
+
+            var sessionId = HttpContext.Session.Id;
+            var items = _db.CartItems
+                .Where(c => c.SessionId == sessionId)
+                .Include(c => c.Book)
+                .ToList();
+
+            var subTotal = items.Sum(i => i.Book != null ? i.Book.Price * i.Quantity : 0);
+
+            return Json(new
+            {
+                success = true,
+                subTotal = subTotal.ToString("0.00"),
+                total = subTotal.ToString("0.00")
+            });
         }
 
         // Thêm vào giỏ
@@ -83,6 +192,7 @@ namespace QuanLySach.Controllers
             if (!items.Any())
                 return RedirectToAction("Index");
 
+            SetPromoViewData(items);
             return View(items);
         }
 
@@ -109,6 +219,13 @@ namespace QuanLySach.Controllers
                 return RedirectToAction("Index");
             }
 
+            // Áp dụng mã giảm giá (nếu có và còn hợp lệ) cho toàn bộ đơn hàng
+            var subTotal = items.Sum(i => i.Book!.Price * i.Quantity);
+            var promoCode = HttpContext.Session.GetString("PromoCode");
+            var promo = string.IsNullOrEmpty(promoCode) ? null : FindValidPromo(promoCode);
+            var discountPercent = promo?.DiscountPercent ?? 0;
+            var discountAmount = promo != null ? Math.Round(subTotal * discountPercent / 100m, 2) : 0;
+
             var order = new Order
             {
                 UserId = HttpContext.Session.GetInt32("UserId"),
@@ -122,7 +239,11 @@ namespace QuanLySach.Controllers
                 PostalCode = postalCode,
                 DeliveryMethod = deliveryMethod,
                 DeliveryPrice = 0,
-                TotalPrice = items.Sum(i => i.Book!.Price * i.Quantity)
+                PromoCode = promo?.Code,
+                DiscountPercent = discountPercent,
+                DiscountAmount = discountAmount,
+                SubTotal = subTotal,
+                TotalPrice = subTotal - discountAmount
             };
 
             _db.Orders.Add(order);
@@ -147,6 +268,9 @@ namespace QuanLySach.Controllers
 
             _db.CartItems.RemoveRange(items);
             await _db.SaveChangesAsync();
+
+            // Đơn hàng đã được tạo, gỡ mã giảm giá khỏi session để không dùng lại cho đơn tiếp theo
+            HttpContext.Session.Remove("PromoCode");
 
             TempData["ToastSuccess"] = "Заказ успешно оформлен! Спасибо за покупку 🎉";
             return RedirectToAction("OrderSuccess", new { id = order.Id });
