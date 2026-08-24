@@ -280,6 +280,28 @@ namespace QuanLySach.Controllers
             TempData["CardSuccess"] = "Карта успешно добавлена!";
             return RedirectToAction("Payment");
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddBankCard(string CardType, string CardNumber, string CardName)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+
+            var card = new PaymentCard
+            {
+                UserId = userId.Value,
+                CardNumber = CardNumber,
+                CardName = CardName.ToUpper(),
+                CardType = CardType,
+                Expiry = ""
+            };
+
+            _db.PaymentCards.Add(card);
+            await _db.SaveChangesAsync();
+
+            TempData["CardSuccess"] = "Đã thêm phương thức thanh toán thành công!";
+            return RedirectToAction("Payment");
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
