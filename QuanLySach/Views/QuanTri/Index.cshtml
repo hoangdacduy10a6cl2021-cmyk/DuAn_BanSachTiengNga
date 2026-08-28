@@ -52,7 +52,7 @@
                 <div style="width:24px; height:24px; border-radius:50%; background:@(rank == 1 ? "#b8860b" : "#f5e6c8"); color:@(rank == 1 ? "#fff" : "#8b6508"); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0;">@rank</div>
                 <div style="min-width:0; flex:1;">
                     <div style="font-weight:700; font-size:0.85rem; color:#2c1a0e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@item.Book.Title</div>
-                    <div style="font-size:0.75rem; color:#555;">Продано: @item.SoldQty</div>
+                    <div style="font-size:0.75rem; color:#555;"><span>Продано</span>: @item.SoldQty</div>
                 </div>
             </div>
             rank++;

@@ -8,7 +8,7 @@ function addToCart(bookId) {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                showNotification('Книга добавлена в корзину!');
+                showNotification(t('added_to_cart', 'Книга добавлена в корзину!'));
                 const cartText = document.getElementById('cart-total-text');
                 if (cartText && data.cartTotal) {
                     cartText.textContent = data.cartTotal;

@@ -69,7 +69,18 @@
                 </div>
             </div>
 
-            <div class="book-detail-price">@Model.Price.ToString("0.00") ₽</div>
+            @if (Model.HasDiscount)
+            {
+                <div class="book-detail-badge sale">🔥 Giảm @Model.DiscountPercent%</div>
+                <div class="book-detail-price sale">
+                    @Model.FinalPrice.ToString("0.00") ₽
+                    <span class="book-detail-price-old">@Model.Price.ToString("0.00") ₽</span>
+                </div>
+            }
+            else
+            {
+                <div class="book-detail-price">@Model.Price.ToString("0.00") ₽</div>
+            }
 
             <div class="book-detail-actions">
                 @if (Model.Stock > 0)
@@ -106,11 +117,25 @@
                             <div class="book-cover">
                                 <img src="@book.CoverImageUrl" alt="@book.Title"
                                      onerror="this.src='https://via.placeholder.com/200x300?text=No+Cover'" />
+                                @if (book.HasDiscount)
+                                {
+                                    <span class="discount-badge">-@book.DiscountPercent%</span>
+                                }
                             </div>
                             <div class="book-info">
                                 <h4>@book.Title</h4>
                                 <p class="author">@book.Author</p>
-                                <p class="price">@book.Price.ToString("0.00") ₽</p>
+                                @if (book.HasDiscount)
+                                {
+                                    <p class="price price-wrap">
+                                        <span class="price-new">@book.FinalPrice.ToString("0.00") ₽</span>
+                                        <span class="price-old">@book.Price.ToString("0.00") ₽</span>
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="price">@book.Price.ToString("0.00") ₽</p>
+                                }
                             </div>
                         </a>
                         <div style="padding: 0 14px 14px">
@@ -242,6 +267,23 @@
         margin-bottom: 20px;
     }
 
+        .book-detail-price.sale {
+            color: #e53935;
+        }
+
+    .book-detail-price-old {
+        font-size: 17px;
+        font-weight: 500;
+        color: #999;
+        text-decoration: line-through;
+        margin-left: 10px;
+    }
+
+    .book-detail-badge.sale {
+        background: #ffe1df;
+        color: #e53935;
+    }
+
     .book-detail-actions {
         display: flex;
         gap: 12px;
@@ -370,21 +412,21 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ bookId: bookId })
         })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                if (data.added) {
-                    btn.classList.add('active');
-                    btn.querySelector('i').style.color = '#e53935';
-                    btn.querySelector('span').textContent = 'В избранном';
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.added) {
+                        btn.classList.add('active');
+                        btn.querySelector('i').style.color = '#e53935';
+                        btn.querySelector('span').textContent = 'В избранном';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.querySelector('i').style.color = '';
+                        btn.querySelector('span').textContent = 'В избранное';
+                    }
                 } else {
-                    btn.classList.remove('active');
-                    btn.querySelector('i').style.color = '';
-                    btn.querySelector('span').textContent = 'В избранное';
+                    alert(data.message || 'Войдите в аккаунт');
                 }
-            } else {
-                alert(data.message || 'Войдите в аккаунт');
-            }
-        });
+            });
     }
 </script>

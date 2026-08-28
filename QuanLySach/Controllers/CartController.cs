@@ -46,7 +46,7 @@ namespace QuanLySach.Controllers
         // Đưa thông tin giảm giá (nếu có mã đang áp dụng trong session) ra ViewBag để view sử dụng
         private void SetPromoViewData(List<CartItem> items)
         {
-            var subTotal = items.Sum(i => i.Book != null ? i.Book.Price * i.Quantity : 0);
+            var subTotal = items.Sum(i => i.Book != null ? i.Book.FinalPrice * i.Quantity : 0);
             var promoCode = HttpContext.Session.GetString("PromoCode");
             decimal discountAmount = 0;
             int discountPercent = 0;
@@ -94,7 +94,7 @@ namespace QuanLySach.Controllers
                 .Include(c => c.Book)
                 .ToList();
 
-            var subTotal = items.Sum(i => i.Book != null ? i.Book.Price * i.Quantity : 0);
+            var subTotal = items.Sum(i => i.Book != null ? i.Book.FinalPrice * i.Quantity : 0);
             var discountAmount = Math.Round(subTotal * promo.DiscountPercent / 100m, 2);
             var total = subTotal - discountAmount;
 
@@ -123,7 +123,7 @@ namespace QuanLySach.Controllers
                 .Include(c => c.Book)
                 .ToList();
 
-            var subTotal = items.Sum(i => i.Book != null ? i.Book.Price * i.Quantity : 0);
+            var subTotal = items.Sum(i => i.Book != null ? i.Book.FinalPrice * i.Quantity : 0);
 
             return Json(new
             {
@@ -162,7 +162,7 @@ namespace QuanLySach.Controllers
             var cartTotal = _db.CartItems
                 .Where(c => c.SessionId == sessionId)
                 .Include(c => c.Book)
-                .Sum(c => c.Book != null ? c.Book.Price * c.Quantity : 0);
+                .Sum(c => c.Book != null ? c.Book.FinalPrice * c.Quantity : 0);
 
             return Json(new { success = true, cartTotal = cartTotal.ToString("N0") + " ₽" });
         }
@@ -211,6 +211,16 @@ namespace QuanLySach.Controllers
             if (!items.Any())
                 return RedirectToAction("Index");
 
+            // Kiểm tra các trường bắt buộc, tránh lỗi 500 khi thiếu dữ liệu
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(phone) || string.IsNullOrWhiteSpace(city) ||
+                string.IsNullOrWhiteSpace(street) || string.IsNullOrWhiteSpace(house) ||
+                string.IsNullOrWhiteSpace(apartment) || string.IsNullOrWhiteSpace(postalCode))
+            {
+                TempData["ToastError"] = "Пожалуйста, заполните все обязательные поля!";
+                return RedirectToAction("Checkout");
+            }
+
             // Kiểm tra lại tồn kho trước khi chốt đơn (phòng trường hợp hết hàng giữa chừng)
             var outOfStockItems = items.Where(i => i.Book == null || i.Quantity > i.Book.Stock).ToList();
             if (outOfStockItems.Any())
@@ -220,7 +230,7 @@ namespace QuanLySach.Controllers
             }
 
             // Áp dụng mã giảm giá (nếu có và còn hợp lệ) cho toàn bộ đơn hàng
-            var subTotal = items.Sum(i => i.Book!.Price * i.Quantity);
+            var subTotal = items.Sum(i => i.Book!.FinalPrice * i.Quantity);
             var promoCode = HttpContext.Session.GetString("PromoCode");
             var promo = string.IsNullOrEmpty(promoCode) ? null : FindValidPromo(promoCode);
             var discountPercent = promo?.DiscountPercent ?? 0;
@@ -231,13 +241,13 @@ namespace QuanLySach.Controllers
                 UserId = HttpContext.Session.GetInt32("UserId"),
                 Name = name,
                 Email = email,
-                Phone = phone,
+                Phone = phone ?? "",
                 City = city,
-                Street = street,
-                House = house,
-                Apartment = apartment,
-                PostalCode = postalCode,
-                DeliveryMethod = deliveryMethod,
+                Street = street ?? "",
+                House = house ?? "",
+                Apartment = apartment ?? "",
+                PostalCode = postalCode ?? "",
+                DeliveryMethod = deliveryMethod ?? "Курьером",
                 DeliveryPrice = 0,
                 PromoCode = promo?.Code,
                 DiscountPercent = discountPercent,
@@ -254,7 +264,7 @@ namespace QuanLySach.Controllers
                 OrderId = order.Id,
                 BookId = i.BookId,
                 Quantity = i.Quantity,
-                Price = i.Book!.Price
+                Price = i.Book!.FinalPrice
             }).ToList();
 
             _db.OrderItems.AddRange(orderItems);

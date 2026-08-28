@@ -18,6 +18,7 @@
                 <th>Дата заказа</th>
                 <th>Сумма</th>
                 <th>Статус</th>
+                <th>Xác nhận bởi</th>
                 <th></th>
             </tr>
         </thead>
@@ -31,12 +32,22 @@
                     <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
                     <td>@order.TotalPrice.ToString("N0") ₽</td>
                     <td><span class="badge">@order.Status</span></td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(order.ConfirmedByAdminName))
+                        {
+                            <span>@order.ConfirmedByAdminName</span>
+                        }
+                        else
+                        {
+                            <span style="color:#999;">—</span>
+                        }
+                    </td>
                     <td><a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-outline btn-sm">Подробнее</a></td>
                 </tr>
             }
             @if (!Model.Any())
             {
-                <tr><td colspan="7">Заказов пока нет.</td></tr>
+                <tr><td colspan="8">Заказов пока нет.</td></tr>
             }
         </tbody>
     </table>

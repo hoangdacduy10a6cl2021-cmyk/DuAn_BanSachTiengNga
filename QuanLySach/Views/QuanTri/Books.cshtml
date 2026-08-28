@@ -7,7 +7,7 @@
 
 <div class="admin-panel">
     <div class="panel-header">
-        <h2>Список книг (@Model.Count)</h2>
+        <h2>Список книг (@ViewBag.TotalItems)</h2>
         <div style="display:flex; gap:10px;">
             <form method="get" style="display:flex;">
                 <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Поиск по названию/автору..." style="padding:7px 10px; border:1px solid #ddd; border-radius:6px 0 0 6px; font-size:0.85rem;" />
@@ -44,7 +44,13 @@
                     <td>@book.Title</td>
                     <td>@book.Author</td>
                     <td>@(book.Category?.Name ?? "—")</td>
-                    <td>@book.Price.ToString("N0") ₽</td>
+                    <td>
+                        @book.Price.ToString("N0") ₽
+                        @if (book.HasDiscount)
+                        {
+                            <br /><span style="color:#e53935; font-size:12px; font-weight:700;">-@book.DiscountPercent% → @book.FinalPrice.ToString("N0") ₽</span>
+                        }
+                    </td>
                     <td>@book.Stock</td>
                     <td>
                         @if (book.Stock <= 0)
@@ -85,4 +91,42 @@
             }
         </tbody>
     </table>
+
+    @{
+        int currentPage = ViewBag.CurrentPage;
+        int totalPages = ViewBag.TotalPages;
+    }
+    @if (totalPages > 1)
+    {
+        int windowSize = 5;
+        int startPage = Math.Max(1, currentPage - windowSize / 2);
+        int endPage = Math.Min(totalPages, startPage + windowSize - 1);
+        startPage = Math.Max(1, Math.Min(startPage, endPage - windowSize + 1));
+
+        <div class="pagination">
+            @for (int p = startPage; p <= endPage; p++)
+            {
+                <div class="page-item @(p == currentPage ? "active" : "")">
+                    @if (p == currentPage)
+                    {
+                        <span>@p</span>
+                    }
+                    else
+                    {
+                        <a asp-action="Books" asp-route-page="@p" asp-route-searchTerm="@ViewBag.SearchTerm">@p</a>
+                    }
+                </div>
+            }
+            <div class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                @if (currentPage >= totalPages)
+                {
+                    <span>&rsaquo;</span>
+                }
+                else
+                {
+                    <a asp-action="Books" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@ViewBag.SearchTerm">&rsaquo;</a>
+                }
+            </div>
+        </div>
+    }
 </div>

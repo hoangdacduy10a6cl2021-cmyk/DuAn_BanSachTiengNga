@@ -1,4 +1,6 @@
-﻿namespace QuanLySach.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace QuanLySach.Models
 {
     public class Book
     {
@@ -14,6 +16,17 @@
         public string? Description { get; set; }
         public int Stock { get; set; } = 0;
 
+        // % giảm giá (0-100). 0 = sách không sale.
+        public int DiscountPercent { get; set; } = 0;
+
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        [NotMapped]
+        public bool HasDiscount => DiscountPercent > 0 && DiscountPercent < 100;
+
+        [NotMapped]
+        public decimal FinalPrice => HasDiscount
+            ? Math.Round(Price * (100 - DiscountPercent) / 100m, 2)
+            : Price;
     }
 }

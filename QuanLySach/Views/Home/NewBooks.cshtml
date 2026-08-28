@@ -1,28 +1,28 @@
 ﻿@model IEnumerable<QuanLySach.Models.Book>
 
 @{
-    ViewData["Title"] = "Sách mới";
+    ViewData["Title"] = "Новинки";
 }
 
 <div class="popular-page">
-    <h2 class="popular-title">Sách mới</h2>
-    <p class="popular-subtitle">Những cuốn sách mới nhất vừa được cập nhật</p>
+    <h2 class="popular-title">Новинки</h2>
+    <p class="popular-subtitle">Самые последние поступления в каталог</p>
 
     <div class="new-books-toolbar">
         <form method="get" asp-action="NewBooks">
-            <label for="sortOrder">Sắp xếp:</label>
+            <label for="sortOrder">Сортировка:</label>
             <select name="sortOrder" id="sortOrder" onchange="this.form.submit()">
-                <option value="newest" selected="@(ViewBag.SortOrder == "newest")">Mới nhất</option>
-                <option value="priceAsc" selected="@(ViewBag.SortOrder == "priceAsc")">Giá tăng dần</option>
-                <option value="priceDesc" selected="@(ViewBag.SortOrder == "priceDesc")">Giá giảm dần</option>
-                <option value="nameAsc" selected="@(ViewBag.SortOrder == "nameAsc")">Tên A-Z</option>
+                <option value="newest" selected="@(ViewBag.SortOrder == "newest")">Новинки</option>
+                <option value="priceAsc" selected="@(ViewBag.SortOrder == "priceAsc")">Цена по возрастанию</option>
+                <option value="priceDesc" selected="@(ViewBag.SortOrder == "priceDesc")">Цена по убыванию</option>
+                <option value="nameAsc" selected="@(ViewBag.SortOrder == "nameAsc")">Название A-Я</option>
             </select>
         </form>
     </div>
 
     @if (!Model.Any())
     {
-        <p class="no-books-msg">Hiện chưa có sách mới nào.</p>
+        <p class="no-books-msg">Пока нет новых книг.</p>
     }
     else
     {
@@ -37,9 +37,9 @@
                         }
                         else
                         {
-                            <div class="no-cover">Không có ảnh bìa</div>
+                            <div class="no-cover">Нет обложки</div>
                         }
-                        <span class="badge-new">MỚI</span>
+                        <span class="badge-new">НОВИНКА</span>
                         <button class="wishlist-btn" onclick="toggleWishlist(@book.Id, this)">
                             <i class="fas fa-heart"></i>
                         </button>
@@ -49,7 +49,7 @@
                         <p class="book-author">@book.Author</p>
                         <p class="book-price">@book.Price.ToString("0.00") ₽</p>
                         <button class="add-to-cart-btn btn-cart" onclick="addToCart(@book.Id)">
-                            <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                            <i class="fas fa-shopping-cart"></i> В корзину
                         </button>
                     </div>
                 </div>

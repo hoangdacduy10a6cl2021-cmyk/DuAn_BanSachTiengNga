@@ -170,7 +170,10 @@ namespace QuanLySach.Controllers
             ViewBag.TotalCategories = await _db.Categories.CountAsync();
             ViewBag.TotalOrders = await _db.Orders.CountAsync();
             ViewBag.TotalUsers = await _db.Users.CountAsync();
-            ViewBag.TotalRevenue = await _db.Orders.SumAsync(o => (decimal?)o.TotalPrice) ?? 0;
+            // Doanh thu chỉ tính đơn đã hoàn thành ("Выполнен") — đơn bị hủy hoặc chưa hoàn thành không được tính
+            ViewBag.TotalRevenue = await _db.Orders
+                .Where(o => o.Status == "Выполнен")
+                .SumAsync(o => (decimal?)o.TotalPrice) ?? 0;
 
             ViewBag.RecentOrders = await _db.Orders
                 .OrderByDescending(o => o.CreatedAt)
@@ -210,7 +213,11 @@ namespace QuanLySach.Controllers
             var monthlyRevenue = new decimal[12];
             foreach (var order in ordersThisYear)
             {
-                monthlyRevenue[order.CreatedAt.Month - 1] += order.TotalPrice;
+                // Chỉ cộng vào biểu đồ doanh thu nếu đơn đã hoàn thành
+                if (order.Status == "Выполнен")
+                {
+                    monthlyRevenue[order.CreatedAt.Month - 1] += order.TotalPrice;
+                }
             }
 
             ViewBag.ChartLabels = string.Join(",", Enumerable.Range(1, 12).Select(m => $"'Th{m}'"));
@@ -220,7 +227,7 @@ namespace QuanLySach.Controllers
         }
 
         // ================= BOOKS =================
-        public async Task<IActionResult> Books(string? searchTerm)
+        public async Task<IActionResult> Books(string? searchTerm, int page = 1)
         {
             if (RequirePermission("Books", "View") is IActionResult redirect) return redirect;
 
@@ -231,8 +238,24 @@ namespace QuanLySach.Controllers
                 query = query.Where(b => b.Title.Contains(searchTerm) || b.Author.Contains(searchTerm));
             }
 
-            var books = await query.OrderByDescending(b => b.Id).ToListAsync();
+            int pageSize = 10;
+            int totalItems = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            if (totalPages < 1) totalPages = 1;
+            if (page < 1) page = 1;
+            if (page > totalPages) page = totalPages;
+
+            var books = await query
+                .OrderByDescending(b => b.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
             ViewBag.SearchTerm = searchTerm;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+
             return View(books);
         }
 
@@ -670,9 +693,15 @@ namespace QuanLySach.Controllers
             if (order != null)
             {
                 order.Status = status;
+
+                // Ghi lại nhân viên đã xác nhận / cập nhật trạng thái đơn hàng này để dễ quản lý
+                order.ConfirmedByAdminId = HttpContext.Session.GetInt32("AdminId");
+                order.ConfirmedByAdminName = HttpContext.Session.GetString("AdminName") ?? "Hệ thống";
+                order.ConfirmedAt = DateTime.Now;
+
                 await _db.SaveChangesAsync();
-                LogActivity("Orders", "Cập nhật trạng thái đơn hàng", "Đã cập nhật trạng thái đơn hàng!");
-                TempData["Success"] = "Đã cập nhật trạng thái đơn hàng!";
+                LogActivity("Orders", "Cập nhật trạng thái đơn hàng", $"Đã cập nhật trạng thái đơn hàng #{order.Id} thành \"{status}\"!");
+                TempData["Success"] = $"Đã cập nhật trạng thái đơn hàng! (Xác nhận bởi: {order.ConfirmedByAdminName})";
             }
             return RedirectToAction("OrderDetails", new { id });
         }
@@ -943,7 +972,8 @@ namespace QuanLySach.Controllers
                 {
                     UserId = g.Key,
                     OrderCount = g.Count(),
-                    TotalSpent = g.Sum(o => o.TotalPrice),
+                    // Chỉ tính tiền đã chi trên các đơn hoàn thành (không tính đơn hủy / chưa hoàn thành)
+                    TotalSpent = g.Sum(o => o.Status == "Выполнен" ? o.TotalPrice : 0),
                     LastOrderAt = g.Max(o => o.CreatedAt)
                 })
                 .ToListAsync();
@@ -1001,14 +1031,17 @@ namespace QuanLySach.Controllers
                 .ThenInclude(b => b!.Category)
                 .ToListAsync();
 
+            // Doanh thu chỉ tính trên các đơn đã hoàn thành ("Выполнен")
+            var completedOrders = orders.Where(o => o.Status == "Выполнен").ToList();
+
             var vm = new QuanLySach.ViewModels.StatisticsViewModel
             {
                 FromDate = fromDate,
                 ToDate = toDate,
                 TotalOrders = orders.Count,
-                TotalRevenue = orders.Sum(o => o.TotalPrice),
-                AverageOrderValue = orders.Count > 0 ? orders.Sum(o => o.TotalPrice) / orders.Count : 0,
-                TotalBooksSold = orders.SelectMany(o => o.Items).Sum(i => i.Quantity)
+                TotalRevenue = completedOrders.Sum(o => o.TotalPrice),
+                AverageOrderValue = completedOrders.Count > 0 ? completedOrders.Sum(o => o.TotalPrice) / completedOrders.Count : 0,
+                TotalBooksSold = completedOrders.SelectMany(o => o.Items).Sum(i => i.Quantity)
             };
 
             vm.NewCustomers = await _db.Users.CountAsync(u => u.CreatedAt >= fromDate && u.CreatedAt <= toDate);
@@ -1017,11 +1050,11 @@ namespace QuanLySach.Controllers
             for (int i = 0; i < dayCount; i++)
             {
                 var day = fromDate.Date.AddDays(i);
-                var revenue = orders.Where(o => o.CreatedAt.Date == day).Sum(o => o.TotalPrice);
+                var revenue = completedOrders.Where(o => o.CreatedAt.Date == day).Sum(o => o.TotalPrice);
                 vm.RevenueByDay.Add((day.ToString("dd/MM"), revenue));
             }
 
-            vm.RevenueByCategory = orders.SelectMany(o => o.Items)
+            vm.RevenueByCategory = completedOrders.SelectMany(o => o.Items)
                 .Where(i => i.Book != null)
                 .GroupBy(i => i.Book!.Category?.Name ?? "Khác")
                 .Select(g => (g.Key, g.Sum(i => i.Price * i.Quantity), g.Sum(i => i.Quantity)))

@@ -35,6 +35,11 @@ namespace QuanLySach.Models
         // Thanh toán
         public string PaymentMethod { get; set; } = "Наличными";
 
+        // Xác nhận đơn hàng (nhân viên nào cập nhật trạng thái gần nhất)
+        public int? ConfirmedByAdminId { get; set; }
+        public string? ConfirmedByAdminName { get; set; }
+        public DateTime? ConfirmedAt { get; set; }
+
         public List<OrderItem> Items { get; set; } = new();
     }
 

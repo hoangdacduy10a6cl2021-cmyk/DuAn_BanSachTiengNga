@@ -29,7 +29,9 @@ const translations = {
         returns: "Returns",
         help: "Help",
         address: "6/3 Myasnitskaya St., Bldg. 1, Moscow, Russia, 101000",
-        copyright: "© 2026 Book Paradise. All rights reserved."
+        copyright: "© 2026 Book Paradise. All rights reserved.",
+        added_to_cart: "Book added to cart!",
+        fill_required_fields: "Please fill in all required fields!"
     },
     vi: {
         shipping_info: "Giao hàng & Thanh toán",
@@ -60,7 +62,9 @@ const translations = {
         returns: "Đổi trả",
         help: "Trợ giúp",
         address: "Phố Myasnitskaya, số 6/3, tòa 1, Moscow, Nga, 101000",
-        copyright: "© 2026 Thiên đường sách. Bảo lưu mọi quyền."
+        copyright: "© 2026 Thiên đường sách. Bảo lưu mọi quyền.",
+        added_to_cart: "Đã thêm sách vào giỏ hàng!",
+        fill_required_fields: "Vui lòng điền đầy đủ tất cả các trường bắt buộc!"
     }
 };
 
@@ -98,7 +102,7 @@ function applyLang(lang) {
 }
 
 // ===== Tự động dịch phần còn lại của trang (không có data-i18n) =====
-const AUTO_CACHE_KEY = 'i18n_auto_cache_v2';
+const AUTO_CACHE_KEY = 'i18n_auto_cache_v3';
 
 function loadAutoCache() {
     try {
@@ -161,7 +165,7 @@ async function callTranslateBatch(texts, targetLang) {
     });
     if (!resp.ok) throw new Error('Translate API error: ' + resp.status);
     const data = await resp.json();
-    return data.results || texts;
+    return { results: data.results || texts, ok: data.ok || texts.map(() => false) };
 }
 
 async function autoTranslatePage(lang) {
@@ -197,8 +201,15 @@ async function autoTranslatePage(lang) {
     if (pending.size > 0) {
         try {
             const texts = Array.from(pending);
-            const translated = await callTranslateBatch(texts, lang);
-            texts.forEach((t, i) => { langCache[t] = translated[i] ?? t; });
+            const { results: translated, ok } = await callTranslateBatch(texts, lang);
+            texts.forEach((t, i) => {
+                // Chỉ lưu vào cache khi server xác nhận dịch THÀNH CÔNG.
+                // Nếu dịch thất bại (bị chặn/rate-limit), KHÔNG cache để lần đổi
+                // ngôn ngữ tiếp theo sẽ tự thử dịch lại, thay vì kẹt tiếng Nga vĩnh viễn.
+                if (ok && ok[i]) {
+                    langCache[t] = translated[i] ?? t;
+                }
+            });
             saveAutoCache(cache);
         } catch (e) {
             console.warn('Không dịch được (kiểm tra kết nối mạng / endpoint dịch):', e);
@@ -231,6 +242,14 @@ function setLang(lang) {
     localStorage.setItem('siteLang', lang);
     applyLang(lang);
     autoTranslatePage(lang);
+}
+
+// Dùng cho các thông báo được tạo động bằng JS (toast, alert...) sau khi trang đã tải xong,
+// vì những nội dung này sinh ra SAU lúc quét dịch tự động nên không được xử lý cùng.
+function t(key, fallbackRu) {
+    const lang = localStorage.getItem('siteLang') || 'ru';
+    if (lang === 'ru') return fallbackRu;
+    return (translations[lang] && translations[lang][key]) || fallbackRu;
 }
 
 document.addEventListener('DOMContentLoaded', function () {

@@ -21,10 +21,10 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
+// TẠM THỜI bật trang lỗi chi tiết kể cả trên production để tìm nguyên nhân lỗi 500.
+// ⚠️ Sau khi đã tìm ra và sửa lỗi, PHẢI đổi lại thành "if (app.Environment.IsDevelopment())"
+// để không lộ thông tin nhạy cảm (đường dẫn server, connection string, stack trace...) cho người dùng thật.
+app.UseDeveloperExceptionPage();
 
 app.UseStaticFiles();
 app.UseRouting();

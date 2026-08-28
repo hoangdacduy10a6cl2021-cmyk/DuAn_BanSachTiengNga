@@ -24,13 +24,25 @@
                         <img src="@item.Book?.CoverImageUrl" alt="@item.Book?.Title" />
                         <div class="cart-item-info">
                             <h4>@item.Book?.Title</h4>
-                            <p>@item.Book?.Author</p>
-                            <p class="cart-item-price-mobile">@item.Book?.Price.ToString("0.00") ₽ × @item.Quantity = <strong>@((item.Book!.Price * item.Quantity).ToString("0.00")) ₽</strong></p>
+                            <p>
+                                @item.Book?.Author
+                                @if (item.Book != null && item.Book.HasDiscount)
+                                {
+                                    <span style="color:#e53935; font-weight:700; margin-left:6px;">-@item.Book.DiscountPercent%</span>
+                                }
+                            </p>
+                            <p class="cart-item-price-mobile">@item.Book?.FinalPrice.ToString("0.00") ₽ × @item.Quantity = <strong>@((item.Book!.FinalPrice * item.Quantity).ToString("0.00")) ₽</strong></p>
                         </div>
                         <div class="cart-item-right">
-                            <div class="cart-item-price">@item.Book?.Price.ToString("0.00") ₽</div>
+                            <div class="cart-item-price">
+                                @item.Book?.FinalPrice.ToString("0.00") ₽
+                                @if (item.Book != null && item.Book.HasDiscount)
+                                {
+                                    <span style="font-size:12px; color:#999; text-decoration:line-through; display:block;">@item.Book.Price.ToString("0.00") ₽</span>
+                                }
+                            </div>
                             <div class="cart-item-qty">× @item.Quantity</div>
-                            <div class="cart-item-total">@((item.Book!.Price * item.Quantity).ToString("0.00")) ₽</div>
+                            <div class="cart-item-total">@((item.Book!.FinalPrice * item.Quantity).ToString("0.00")) ₽</div>
                         </div>
                         <form asp-action="Remove" method="post">
                             <input type="hidden" name="id" value="@item.Id" />
@@ -46,7 +58,7 @@
                 {
                     <div class="summary-line">
                         <span class="summary-book-title">@item.Book?.Title</span>
-                        <span>@item.Book?.Price.ToString("0.00") ₽ × @item.Quantity</span>
+                        <span>@item.Book?.FinalPrice.ToString("0.00") ₽ × @item.Quantity</span>
                     </div>
                 }
                 <div class="summary-delivery">

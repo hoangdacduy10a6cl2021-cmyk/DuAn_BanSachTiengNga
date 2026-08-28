@@ -16,6 +16,22 @@
     <p><strong>Способ доставки:</strong> @Model.DeliveryMethod (@Model.DeliveryPrice.ToString("N0") ₽)</p>
     <p><strong>Дата заказа:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
 
+    @if (!string.IsNullOrEmpty(Model.ConfirmedByAdminName))
+    {
+        <p>
+            <strong>Xác nhận bởi:</strong>
+            <span class="badge" style="background:#2e7d32;">@Model.ConfirmedByAdminName</span>
+            @if (Model.ConfirmedAt != null)
+            {
+                <span style="color:#777;">(lúc @Model.ConfirmedAt.Value.ToString("dd/MM/yyyy HH:mm"))</span>
+            }
+        </p>
+    }
+    else
+    {
+        <p><strong>Xác nhận bởi:</strong> <span style="color:#999;">Chưa có nhân viên nào xác nhận</span></p>
+    }
+
     <form asp-action="OrderUpdateStatus" asp-route-id="@Model.Id" method="post" class="admin-form" style="max-width:320px; margin-top:16px;">
         @Html.AntiForgeryToken()
         <div class="form-group">

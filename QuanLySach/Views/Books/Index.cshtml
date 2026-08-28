@@ -63,6 +63,10 @@
                                 <div class="book-cover">
                                     <img src="@book.CoverImageUrl" alt="@book.Title"
                                          onerror="this.onerror=null; this.src='https://via.placeholder.com/200x300?text=No+Cover'" />
+                                    @if (book.HasDiscount)
+                                    {
+                                        <span class="discount-badge">-@book.DiscountPercent%</span>
+                                    }
                                     <button class="wishlist-btn"
                                             onclick="event.preventDefault(); toggleWishlist(@book.Id, this)">
                                         <i class="fas fa-heart"></i>
@@ -71,7 +75,17 @@
                                 <div class="book-info">
                                     <h4>@book.Title</h4>
                                     <p class="author">@book.Author</p>
-                                    <p class="price">@book.Price ₽</p>
+                                    @if (book.HasDiscount)
+                                    {
+                                        <p class="price price-wrap">
+                                            <span class="price-new">@book.FinalPrice.ToString("0.00") ₽</span>
+                                            <span class="price-old">@book.Price.ToString("0.00") ₽</span>
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="price">@book.Price.ToString("0.00") ₽</p>
+                                    }
                                 </div>
                             </a>
                             <div style="padding: 0 14px 14px">

@@ -29,7 +29,7 @@
                     </div>
                     <div class="form-group">
                         <label>Телефон</label>
-                        <input type="text" name="phone" placeholder="Введите ваш телефон" />
+                        <input type="text" name="phone" placeholder="Введите ваш телефон" required />
                     </div>
 
                     <h3 style="margin-top:20px">Способ доставки</h3>
@@ -44,16 +44,16 @@
 
                     <h3 style="margin-top:20px">Способ оплаты</h3>
 
-                   <!-- RADIO CHON -->
-<label class="delivery-option" onclick="selectPayment('cash')">
-    <input type="radio" name="paymentChoice" value="cash" checked />
-    <span><i class="fas fa-money-bill"></i> Наличными при получении – <strong style="color:#2e7d32">Бесплатно</strong></span>
-</label>
+                    <!-- RADIO CHON -->
+                    <label class="delivery-option" onclick="selectPayment('cash')">
+                        <input type="radio" name="paymentChoice" value="cash" checked />
+                        <span><i class="fas fa-money-bill"></i> Наличными при получении – <strong style="color:#2e7d32">Бесплатно</strong></span>
+                    </label>
 
-<label class="delivery-option" onclick="selectPayment('qr')">
-    <input type="radio" name="paymentChoice" value="qr" />
-    <span><i class="fas fa-qrcode"></i> Оплата по QR-коду (Vietcombank / ZaloPay)</span>
-</label>
+                    <label class="delivery-option" onclick="selectPayment('qr')">
+                        <input type="radio" name="paymentChoice" value="qr" />
+                        <span><i class="fas fa-qrcode"></i> Оплата по QR-коду (Vietcombank / ZaloPay)</span>
+                    </label>
 
                     <!-- ===== CASH INFO (MỚI ĐẸP HƠN) ===== -->
                     <div id="cash-info" class="cash-info-box">
@@ -106,7 +106,7 @@
                             <span>Доступно только для доставки по России. Дополнительная комиссия не взимается.</span>
                         </div>
 
-                       <span class="badge-free"><i class="fas fa-check"></i> Бесплатно</span>
+                        <span class="badge-free"><i class="fas fa-check"></i> Бесплатно</span>
                     </div>
 
                 </div>
@@ -122,19 +122,19 @@
                     </div>
                     <div class="form-group">
                         <label>Улица</label>
-                        <input type="text" name="street" placeholder="Введите улицу" />
+                        <input type="text" name="street" placeholder="Введите улицу" required />
                     </div>
                     <div class="form-group">
                         <label>Дом</label>
-                        <input type="text" name="house" placeholder="Введите дом" />
+                        <input type="text" name="house" placeholder="Введите дом" required />
                     </div>
                     <div class="form-group">
                         <label>Квартира</label>
-                        <input type="text" name="apartment" placeholder="Введите квартиру" />
+                        <input type="text" name="apartment" placeholder="Введите квартиру" required />
                     </div>
                     <div class="form-group">
                         <label>Индекс</label>
-                        <input type="text" name="postalCode" placeholder="Введите индекс" />
+                        <input type="text" name="postalCode" placeholder="Введите индекс" required />
                     </div>
                 </div>
             </div>
@@ -147,7 +147,7 @@
                     {
                         <div class="order-line">
                             <span>@item.Book?.Title</span>
-                            <span>@item.Book?.Price.ToString("0.00") ₽ × @item.Quantity</span>
+                            <span>@item.Book?.FinalPrice.ToString("0.00") ₽ × @item.Quantity</span>
                         </div>
                     }
                     <div class="order-line">
@@ -186,13 +186,12 @@
         <p class="qr-modal-sub">Отсканируйте код в приложении банка</p>
 
         <div class="qr-tabs">
-             <button class="qr-tab active" onclick="switchQR('vcb', this)"><i class="fas fa-bank"></i> Vietcombank</button>
-           <button class="qr-tab" onclick="switchQR('zalo', this)"><i class="fas fa-wallet"></i> ZaloPay</button>
+            <button class="qr-tab active" onclick="switchQR('vcb', this)"><i class="fas fa-bank"></i> Vietcombank</button>
+            <button class="qr-tab" onclick="switchQR('zalo', this)"><i class="fas fa-wallet"></i> ZaloPay</button>
         </div>
 
         <!-- VCB -->
         <div id="qr-vcb" class="qr-content">
-            <button class="qr-tab active" onclick="switchQR('vcb', this)"><i class="fas fa-bank"></i> Vietcombank</button>
             <img src="https://img.vietqr.io/image/vietcombank-1035382800-compact2.jpg?amount=@((int)total)&addInfo=ThanhToanDonHang&accountName=PHAM+DUC+HOA"
                  alt="QR Vietcombank" class="qr-image" />
             <div class="qr-info">
@@ -213,8 +212,6 @@
 
         <!-- ZALOPAY -->
         <div id="qr-zalo" class="qr-content" style="display:none">
-            <button class="qr-tab" onclick="switchQR('zalo', this)"><i class="fas fa-wallet"></i> ZaloPay</button>
-
             <img src="/images/zalopay-qr.png" alt="QR ZaloPay" class="qr-image" />
             <div class="qr-info">
                 <div class="qr-info-row">
@@ -228,12 +225,12 @@
             </div>
         </div>
 
-       <p class="qr-guide">
-    <i class="fas fa-times"></i> Nolse онлаты наймите кнопку ниже для подтверждения
-</p>
-<button class="btn-paid" onclick="confirmQRPayment()">
-    <i class="fas fa-check-square"></i> Я оплатил – Подтвердить заказ
-</button>
+        <p class="qr-guide">
+            <i class="fas fa-info-circle"></i> После оплаты нажмите кнопку ниже для подтверждения
+        </p>
+        <button class="btn-paid" onclick="confirmQRPayment()">
+            <i class="fas fa-check-square"></i> Я оплатил – Подтвердить заказ
+        </button>
     </div>
 </div>
 <div id="qr-overlay" class="qr-overlay" style="display:none" onclick="closeQR()"></div>
@@ -244,24 +241,28 @@
         margin: 40px auto;
         padding: 0 20px;
     }
-    .qr-guide i {
-    margin-right: 6px;
-    color: #ff6b6b;
-}
 
-.btn-paid i {
-    margin-right: 8px;
-    color: #28a745;
-}
-.badge-free i {
-    margin-right: 6px;
-    color: #28a745;
-}
-.delivery-option i {
-    margin-right: 8px;
-    font-size: 18px;
-    color: #333;
-}
+    .qr-guide i {
+        margin-right: 6px;
+        color: #ff6b6b;
+    }
+
+    .btn-paid i {
+        margin-right: 8px;
+        color: #28a745;
+    }
+
+    .badge-free i {
+        margin-right: 6px;
+        color: #28a745;
+    }
+
+    .delivery-option i {
+        margin-right: 8px;
+        font-size: 18px;
+        color: #333;
+    }
+
     .checkout-title {
         font-family: Georgia, serif;
         font-size: 2rem;
@@ -498,12 +499,14 @@
 
     .qr-modal {
         position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        inset: 0;
         z-index: 1001;
-        width: 100%;
-        max-width: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+        pointer-events: none;
     }
 
     .qr-modal-box {
@@ -514,6 +517,9 @@
         position: relative;
         max-height: 90vh;
         overflow-y: auto;
+        width: 100%;
+        max-width: 420px;
+        pointer-events: auto;
     }
 
     .qr-close {
@@ -648,10 +654,31 @@
         document.getElementById('paymentMethodInput').value = type === 'cash' ? 'Наличными' : 'QR-код';
     }
 
+    function showToastError(message, key) {
+        const finalMessage = key ? t(key, message) : message;
+
+        const old = document.getElementById('toast-error');
+        if (old) old.remove();
+
+        const div = document.createElement('div');
+        div.id = 'toast-error';
+        div.innerHTML = '<i class="fas fa-circle-exclamation"></i> ' + finalMessage;
+        document.body.appendChild(div);
+
+        setTimeout(() => div.remove(), 4000);
+    }
+
     function handleOrder() {
+        const orderForm = document.getElementById('orderForm');
+
+        if (!orderForm.checkValidity()) {
+            showToastError('Пожалуйста, заполните все обязательные поля!', 'fill_required_fields');
+            return;
+        }
+
         const paymentChoice = document.querySelector('input[name="paymentChoice"]:checked').value;
         if (paymentChoice === 'qr') {
-            document.getElementById('qr-modal').style.display = 'block';
+            document.getElementById('qr-modal').style.display = 'flex';
             document.getElementById('qr-overlay').style.display = 'block';
         } else {
             document.getElementById('orderForm').submit();
