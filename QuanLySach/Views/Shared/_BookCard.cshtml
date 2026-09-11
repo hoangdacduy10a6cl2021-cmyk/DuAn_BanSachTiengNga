@@ -21,13 +21,13 @@
         @if (Model.HasDiscount)
         {
             <p class="price price-wrap">
-                <span class="price-new">@Model.FinalPrice.ToString("0.00") ₽</span>
-                <span class="price-old">@Model.Price.ToString("0.00") ₽</span>
+                <span class="price-new notranslate">@Model.FinalPrice.ToString("0.00") ₽</span>
+                <span class="price-old notranslate">@Model.Price.ToString("0.00") ₽</span>
             </p>
         }
         else
         {
-            <p class="price">@Model.Price.ToString("0.00") ₽</p>
+            <p class="price notranslate">@Model.Price.ToString("0.00") ₽</p>
         }
         @if (Model.Stock <= 0)
         {

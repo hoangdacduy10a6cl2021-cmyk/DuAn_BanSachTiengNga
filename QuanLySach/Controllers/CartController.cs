@@ -162,6 +162,7 @@ namespace QuanLySach.Controllers
             var cartTotal = _db.CartItems
                 .Where(c => c.SessionId == sessionId)
                 .Include(c => c.Book)
+                .ToList()   // ✅ materialize trước, để FinalPrice tính bằng C# thay vì bắt SQL dịch
                 .Sum(c => c.Book != null ? c.Book.FinalPrice * c.Quantity : 0);
 
             return Json(new { success = true, cartTotal = cartTotal.ToString("N0") + " ₽" });
@@ -183,6 +184,12 @@ namespace QuanLySach.Controllers
         // Trang checkout
         public IActionResult Checkout()
         {
+            if (HttpContext.Session.GetInt32("UserId") == null)
+            {
+                TempData["ToastError"] = "Vui lòng đăng nhập để tiến hành thanh toán.";
+                return RedirectToAction("Login", "Account");
+            }
+
             var sessionId = HttpContext.Session.Id;
             var items = _db.CartItems
                 .Where(c => c.SessionId == sessionId)
@@ -202,6 +209,12 @@ namespace QuanLySach.Controllers
         string city, string street, string house, string apartment, string postalCode,
         string deliveryMethod, string paymentMethod)
         {
+            if (HttpContext.Session.GetInt32("UserId") == null)
+            {
+                TempData["ToastError"] = "Vui lòng đăng nhập để tiến hành thanh toán.";
+                return RedirectToAction("Login", "Account");
+            }
+
             var sessionId = HttpContext.Session.Id;
             var items = _db.CartItems
                 .Where(c => c.SessionId == sessionId)

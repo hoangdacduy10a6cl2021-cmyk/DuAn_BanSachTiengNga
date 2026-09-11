@@ -141,6 +141,12 @@ namespace QuanLySach.Controllers
             return View();
         }
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Index()
         {
             // Chưa đăng nhập → chuyển sang trang Đăng ký

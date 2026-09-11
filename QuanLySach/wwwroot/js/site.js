@@ -181,7 +181,7 @@ function liveSearch(query) {
                                 <div class="search-item-title">${book.title}</div>
                                 <div class="search-item-author">${book.author}</div>
                             </div>
-                            <div class="search-item-price">${book.price} ₽</div>
+                            <div class="search-item-price notranslate">${book.price} ₽</div>
                         </a>
                     `).join('');
                 }

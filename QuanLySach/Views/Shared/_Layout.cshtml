@@ -163,7 +163,7 @@
                             .Include(c => c.Book)
                             .Sum(c => c.Book != null ? c.Book.Price * c.Quantity : 0);
                     }
-                    <span><span data-i18n="cart">Корзина</span><br /><span id="cart-total-text">@cartTotal.ToString("N0") ₽</span></span>
+                    <span><span data-i18n="cart">Корзина</span><br /><span id="cart-total-text" class="notranslate">@cartTotal.ToString("N0") ₽</span></span>
                 </a>
             </div>
         </div>

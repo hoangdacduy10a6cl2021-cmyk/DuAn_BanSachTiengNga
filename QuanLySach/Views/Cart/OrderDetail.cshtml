@@ -43,10 +43,10 @@
                     <div class="book-info">
                         <div class="book-title">@item.Book?.Title</div>
                         <div class="book-author">@item.Book?.Author</div>
-                        <div class="book-qty">@item.Quantity шт. × @item.Price.ToString("0.00") ₽</div>
+                        <div class="book-qty notranslate">@item.Quantity шт. × @item.Price.ToString("0.00") ₽</div>
                     </div>
                     <div class="book-total">
-                        @((item.Quantity * item.Price).ToString("0.00")) ₽
+                        <span class="notranslate">@((item.Quantity * item.Price).ToString("0.00")) ₽</span>
                     </div>
                 </div>
             }
@@ -56,12 +56,12 @@
                 {
                     <div class="summary-row">
                         <span>Доставка</span>
-                        <span>@Model.DeliveryPrice.ToString("0.00") ₽</span>
+                        <span class="notranslate">@Model.DeliveryPrice.ToString("0.00") ₽</span>
                     </div>
                 }
                 <div class="summary-row total">
                     <span>Итого</span>
-                    <span>@Model.TotalPrice.ToString("0.00") ₽</span>
+                    <span class="notranslate">@Model.TotalPrice.ToString("0.00") ₽</span>
                 </div>
             </div>
         </div>

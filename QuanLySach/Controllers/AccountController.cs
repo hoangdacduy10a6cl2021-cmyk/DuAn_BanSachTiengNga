@@ -52,10 +52,11 @@ namespace QuanLySach.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            // Chỉ tự-redirect khi đã là Admin. Không redirect theo UserId (khách hàng),
+            // vì nếu redirect sang /Home lúc site đang bật "Chế độ bảo trì" thì admin
+            // sẽ bị chính middleware bảo trì chặn lại, không vào được trang đăng nhập nữa.
             if (HttpContext.Session.GetInt32("AdminId") != null)
                 return RedirectToAction("Index", "QuanTri");
-            if (HttpContext.Session.GetInt32("UserId") != null)
-                return RedirectToAction("Index", "Home");
 
             return View(new LoginViewModel());
         }

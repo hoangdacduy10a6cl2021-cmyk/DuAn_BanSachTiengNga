@@ -147,7 +147,7 @@
                     {
                         <div class="order-line">
                             <span>@item.Book?.Title</span>
-                            <span>@item.Book?.FinalPrice.ToString("0.00") ₽ × @item.Quantity</span>
+                            <span class="notranslate">@item.Book?.FinalPrice.ToString("0.00") ₽ × @item.Quantity</span>
                         </div>
                     }
                     <div class="order-line">
@@ -158,16 +158,16 @@
                     {
                         <div class="order-line">
                             <span>Tạm tính:</span>
-                            <span>@subTotal.ToString("0.00") ₽</span>
+                            <span class="notranslate">@subTotal.ToString("0.00") ₽</span>
                         </div>
                         <div class="order-line">
                             <span>Mã "@promoCode" (-@discountPercent%):</span>
-                            <span style="color:#2e7d32">-@discountAmount.ToString("0.00") ₽</span>
+                            <span style="color:#2e7d32" class="notranslate">-@discountAmount.ToString("0.00") ₽</span>
                         </div>
                     }
                     <div class="order-total">
                         <span>Итого:</span>
-                        <span>@total.ToString("0.00") ₽</span>
+                        <span class="notranslate">@total.ToString("0.00") ₽</span>
                     </div>
                     <button type="button" onclick="handleOrder()" class="btn-place-order">
                         Подтвердить заказ
@@ -205,7 +205,7 @@
                 </div>
                 <div class="qr-info-row">
                     <span>Сумма:</span>
-                    <strong style="color:#b8860b">@total.ToString("0.00") ₽</strong>
+                    <strong style="color:#b8860b" class="notranslate">@total.ToString("0.00") ₽</strong>
                 </div>
             </div>
         </div>
@@ -220,7 +220,7 @@
                 </div>
                 <div class="qr-info-row">
                     <span>Сумма:</span>
-                    <strong style="color:#b8860b">@total.ToString("0.00") ₽</strong>
+                    <strong style="color:#b8860b" class="notranslate">@total.ToString("0.00") ₽</strong>
                 </div>
             </div>
         </div>

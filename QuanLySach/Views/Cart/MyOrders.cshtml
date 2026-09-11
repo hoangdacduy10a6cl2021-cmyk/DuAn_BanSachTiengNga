@@ -28,7 +28,7 @@
                     <tr>
                         <td>@order.Id</td>
                         <td>@order.CreatedAt.ToString("dd.MM.yyyy")</td>
-                        <td><strong>@order.TotalPrice.ToString("0.00") ₽</strong></td>
+                        <td><strong class="notranslate">@order.TotalPrice.ToString("0.00") ₽</strong></td>
                         <td><span class="status-badge status-@order.Status.ToLower().Replace(" ", "-")">@order.Status</span></td>
                         <td><a href="/Cart/OrderDetail/@order.Id" class="btn-detail">Подробнее</a></td>
                     </tr>

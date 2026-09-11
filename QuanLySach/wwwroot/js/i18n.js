@@ -142,7 +142,10 @@ function collectTextNodes(root) {
     while ((node = walker.nextNode())) {
         const text = node.nodeValue.trim();
         if (!text || text.length > 400) continue;
-        if (/^[\d\s.,%+\-:/()₫$€]*$/.test(text)) continue;
+        // Bỏ qua các đoạn CHỈ chứa số + ký hiệu tiền/số lượng (vd: "550,00 ₽ × 1").
+        // Trước đây thiếu ký hiệu ₽ và × nên Google Translate lỡ dịch luôn các dòng
+        // giá tiền, biến "₽" thành chữ "RUR" trong phần thân trang.
+        if (/^[\d\s.,%+\-:/()₫$€₽×шт]*$/.test(text)) continue;
         if (isSkippableNode(node)) continue;
         nodes.push(node);
     }
@@ -157,15 +160,51 @@ function collectAttrElements(root) {
     return result;
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function translateOne(text, targetLang) {
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            const url = 'https://translate.googleapis.com/translate_a/single'
+                + '?client=gtx&sl=ru&tl=' + targetLang + '&dt=t&q=' + encodeURIComponent(text);
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const data = await resp.json();
+            const translated = (data[0] || []).map(seg => seg[0]).join('');
+            if (translated) return { text: translated, ok: true };
+        } catch (e) {
+            // rơi xuống retry bên dưới
+        }
+        if (attempt < maxAttempts) await sleep(250 * attempt);
+    }
+    return { text, ok: false };
+}
+
 async function callTranslateBatch(texts, targetLang) {
-    const resp = await fetch('/Translate/Batch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ texts, targetLang })
-    });
-    if (!resp.ok) throw new Error('Translate API error: ' + resp.status);
-    const data = await resp.json();
-    return { results: data.results || texts, ok: data.ok || texts.map(() => false) };
+    const results = new Array(texts.length);
+    const ok = new Array(texts.length);
+    // Google hay chặn/429 nếu bắn quá nhiều request song song cùng lúc từ 1 trình duyệt,
+    // đặc biệt các trang có nhiều chữ (Profile, Checkout...). Giảm còn 2 luồng song song
+    // + có retry (translateOne) để tăng tỉ lệ dịch thành công, tránh bị dịch dở dang.
+    const CONCURRENCY = 2;
+    let idx = 0;
+
+    async function worker() {
+        while (idx < texts.length) {
+            const i = idx++;
+            const { text: translated, ok: success } = await translateOne(texts[i], targetLang);
+            results[i] = translated;
+            ok[i] = success;
+            // Giãn nhẹ giữa các request để giảm khả năng bị rate-limit.
+            await sleep(60);
+        }
+    }
+
+    await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+    return { results, ok };
 }
 
 async function autoTranslatePage(lang) {

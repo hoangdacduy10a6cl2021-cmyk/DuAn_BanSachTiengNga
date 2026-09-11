@@ -21,10 +21,14 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// TẠM THỜI bật trang lỗi chi tiết kể cả trên production để tìm nguyên nhân lỗi 500.
-// ⚠️ Sau khi đã tìm ra và sửa lỗi, PHẢI đổi lại thành "if (app.Environment.IsDevelopment())"
-// để không lộ thông tin nhạy cảm (đường dẫn server, connection string, stack trace...) cho người dùng thật.
-app.UseDeveloperExceptionPage();
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+}
 
 app.UseStaticFiles();
 app.UseRouting();
@@ -46,6 +50,10 @@ app.Use(async (context, next) =>
     }
     await next();
 });
+
+// Tính năng "Chế độ bảo trì" đã được TẮT HẲN ở đây.
+// Trang QuanTri > Settings vẫn còn checkbox "Chế độ bảo trì" và vẫn lưu được vào DB,
+// nhưng nó không còn tác dụng chặn website nữa vì middleware đọc cờ này đã bị bỏ.
 
 app.UseAuthorization();
 app.MapControllerRoute(

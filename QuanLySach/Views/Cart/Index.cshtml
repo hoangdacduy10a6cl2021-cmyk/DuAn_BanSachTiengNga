@@ -31,18 +31,18 @@
                                     <span style="color:#e53935; font-weight:700; margin-left:6px;">-@item.Book.DiscountPercent%</span>
                                 }
                             </p>
-                            <p class="cart-item-price-mobile">@item.Book?.FinalPrice.ToString("0.00") ₽ × @item.Quantity = <strong>@((item.Book!.FinalPrice * item.Quantity).ToString("0.00")) ₽</strong></p>
+                            <p class="cart-item-price-mobile notranslate">@item.Book?.FinalPrice.ToString("0.00") ₽ × @item.Quantity = <strong>@((item.Book!.FinalPrice * item.Quantity).ToString("0.00")) ₽</strong></p>
                         </div>
                         <div class="cart-item-right">
-                            <div class="cart-item-price">
+                            <div class="cart-item-price notranslate">
                                 @item.Book?.FinalPrice.ToString("0.00") ₽
                                 @if (item.Book != null && item.Book.HasDiscount)
                                 {
                                     <span style="font-size:12px; color:#999; text-decoration:line-through; display:block;">@item.Book.Price.ToString("0.00") ₽</span>
                                 }
                             </div>
-                            <div class="cart-item-qty">× @item.Quantity</div>
-                            <div class="cart-item-total">@((item.Book!.FinalPrice * item.Quantity).ToString("0.00")) ₽</div>
+                            <div class="cart-item-qty notranslate">× @item.Quantity</div>
+                            <div class="cart-item-total notranslate">@((item.Book!.FinalPrice * item.Quantity).ToString("0.00")) ₽</div>
                         </div>
                         <form asp-action="Remove" method="post">
                             <input type="hidden" name="id" value="@item.Id" />
@@ -58,7 +58,7 @@
                 {
                     <div class="summary-line">
                         <span class="summary-book-title">@item.Book?.Title</span>
-                        <span>@item.Book?.FinalPrice.ToString("0.00") ₽ × @item.Quantity</span>
+                        <span class="notranslate">@item.Book?.FinalPrice.ToString("0.00") ₽ × @item.Quantity</span>
                     </div>
                 }
                 <div class="summary-delivery">
@@ -84,16 +84,16 @@
 
                 <div class="summary-line" id="promo-subtotal-line" style="display:@(string.IsNullOrEmpty(appliedCode) ? "none" : "flex")">
                     <span>Tạm tính:</span>
-                    <span id="promo-subtotal-value">@(((decimal)ViewBag.SubTotal).ToString("0.00")) ₽</span>
+                    <span id="promo-subtotal-value" class="notranslate">@(((decimal)ViewBag.SubTotal).ToString("0.00")) ₽</span>
                 </div>
                 <div class="summary-line summary-discount" id="promo-discount-line" style="display:@(string.IsNullOrEmpty(appliedCode) ? "none" : "flex")">
                     <span>Giảm giá:</span>
-                    <span id="promo-discount-value">-@(((decimal)ViewBag.DiscountAmount).ToString("0.00")) ₽</span>
+                    <span id="promo-discount-value" class="notranslate">-@(((decimal)ViewBag.DiscountAmount).ToString("0.00")) ₽</span>
                 </div>
 
                 <div class="cart-total-row">
                     <span>Итого:</span>
-                    <span class="cart-total" id="cart-total-value">@(((decimal)ViewBag.CartTotal).ToString("0.00")) ₽</span>
+                    <span class="cart-total notranslate" id="cart-total-value">@(((decimal)ViewBag.CartTotal).ToString("0.00")) ₽</span>
                 </div>
                 <a asp-action="Checkout" class="btn-checkout">Đặt hàng</a>
             </div>
