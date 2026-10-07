@@ -130,3 +130,23 @@
         </div>
     }
 </div>
+
+@section Scripts {
+    <script src="~/js/search-translate.js?v=1"></script>
+    <script>
+        // Cho phép tìm sách bằng tiếng Anh / tiếng Việt: dịch từ khoá sang tiếng Nga
+        // (DB lưu tên sách + tác giả bằng tiếng Nga) rồi mới gửi form tìm kiếm.
+        (function () {
+            const input = document.querySelector('input[name="searchTerm"]');
+            if (!input) return;
+            const form = input.closest('form');
+            form.addEventListener('submit', async function (e) {
+                const typed = input.value.trim();
+                if (!typed) return;
+                e.preventDefault();
+                input.value = await toRussianQuery(typed);
+                form.submit();
+            });
+        })();
+    </script>
+}

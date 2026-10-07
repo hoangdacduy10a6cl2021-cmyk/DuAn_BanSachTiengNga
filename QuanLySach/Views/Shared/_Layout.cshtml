@@ -377,6 +377,7 @@
     </style>
 
     <script src="~/js/site.js?v=4"></script>
+    <script src="~/js/search-translate.js?v=1"></script>
     <script src="~/js/i18n.js?v=2"></script>
     <script>
             function toggleMobileMenu() {
@@ -418,7 +419,15 @@
 
                 searchDebounceTimer = setTimeout(async () => {
                     try {
-                        const res = await fetch('/Books/LiveSearch?q=' + encodeURIComponent(value.trim()));
+                        const typed = value.trim();
+                        // DB lưu tiếng Nga -> dịch từ khoá EN/VI sang tiếng Nga trước khi tìm
+                        const query = await toRussianQuery(typed);
+
+                        // Người dùng đã gõ tiếp trong lúc đang dịch -> bỏ kết quả cũ
+                        const input = document.getElementById('searchInput');
+                        if (input && input.value.trim() !== typed) return;
+
+                        const res = await fetch('/Books/LiveSearch?q=' + encodeURIComponent(query));
                         const data = await res.json();
                         renderSearchDropdown(data);
                     } catch (err) {
@@ -437,15 +446,15 @@
                 }
 
                 dropdown.innerHTML = items.map(item => `
-                                <a class="search-dropdown-item" href="/Books/Detail/${item.id}">
-                                <img src="${item.image || '/images/no-image.png'}" alt="${item.title}" />
-                                <div class="info">
-                                <span class="title">${item.title}</span>
-                                <span class="author">${item.author || ''}</span>
-                                <span class="price">${formatPrice(item.price)}</span>
-                                </div>
-                                </a>
-                                `).join('');
+                                            <a class="search-dropdown-item" href="/Books/Detail/${item.id}">
+                                            <img src="${item.image || '/images/no-image.png'}" alt="${item.title}" />
+                                            <div class="info">
+                                            <span class="title">${item.title}</span>
+                                            <span class="author">${item.author || ''}</span>
+                                            <span class="price">${formatPrice(item.price)}</span>
+                                            </div>
+                                            </a>
+                                            `).join('');
 
                 dropdown.classList.add('show');
             }
@@ -455,10 +464,12 @@
                 return Number(price).toLocaleString('ru-RU') + ' ₽';
             }
 
-            function goSearch() {
+            async function goSearch() {
                 const value = document.getElementById('searchInput').value.trim();
                 if (value.length === 0) return;
-                window.location.href = '/Books/Search?q=' + encodeURIComponent(value);
+                // DB lưu tiếng Nga -> dịch từ khoá EN/VI sang tiếng Nga trước khi tìm
+                const query = await toRussianQuery(value);
+                window.location.href = '/Books/Search?q=' + encodeURIComponent(query);
             }
 
             document.addEventListener('click', function (e) {
