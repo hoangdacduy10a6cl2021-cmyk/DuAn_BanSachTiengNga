@@ -1,0 +1,337 @@
+﻿@{
+    string page = ViewBag.Page as string ?? "shipping";
+
+    string title = page switch
+    {
+        "returns" => "Возврат и обмен",
+        "help" => "Помощь",
+        _ => "Доставка и оплата"
+    };
+
+    ViewData["Title"] = title;
+}
+
+<div class="info-page">
+    <div class="container">
+
+        <h1 class="info-title">@title</h1>
+
+        <div class="info-layout">
+
+            <!-- MENU BÊN TRÁI -->
+            <aside class="info-sidebar">
+                <ul>
+                    <li class="@(page == "shipping" ? "active" : "")">
+                        <a asp-controller="Home" asp-action="ShippingInfo"><i class="fas fa-truck"></i> Доставка и оплата</a>
+                    </li>
+                    <li class="@(page == "returns" ? "active" : "")">
+                        <a asp-controller="Home" asp-action="Returns"><i class="fas fa-undo"></i> Возврат и обмен</a>
+                    </li>
+                    <li class="@(page == "help" ? "active" : "")">
+                        <a asp-controller="Home" asp-action="Help"><i class="fas fa-question-circle"></i> Помощь</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="Contact"><i class="fas fa-envelope"></i> Контакты</a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- NỘI DUNG -->
+            <div class="info-content">
+
+                @if (page == "shipping")
+                {
+                    <section class="info-section">
+                        <h2><i class="fas fa-truck"></i> Способы доставки</h2>
+                        <div class="info-cards">
+                            <div class="info-card">
+                                <h3>Курьером</h3>
+                                <p class="info-badge">Бесплатно</p>
+                                <p>Срок доставки: 1–3 дня. Курьер привезёт заказ по указанному вами адресу.</p>
+                            </div>
+                            <div class="info-card">
+                                <h3>Почтой России</h3>
+                                <p class="info-badge">Бесплатно</p>
+                                <p>Срок доставки: 5–7 дней. Заказ придёт в ваше почтовое отделение.</p>
+                            </div>
+                        </div>
+                        <p class="info-note">Доставка доступна только по России. Дополнительная комиссия не взимается.</p>
+                    </section>
+
+                    <section class="info-section">
+                        <h2><i class="fas fa-credit-card"></i> Способы оплаты</h2>
+                        <ul class="info-list">
+                            <li><strong>Наличными при получении</strong> — оплатите заказ курьеру или на почте. Бесплатно.</li>
+                            <li><strong>По QR-коду</strong> (Vietcombank / ZaloPay) — отсканируйте код в приложении банка на этапе оформления заказа.</li>
+                        </ul>
+                    </section>
+
+                    <section class="info-section">
+                        <h2><i class="fas fa-shopping-cart"></i> Как оформить заказ</h2>
+                        <ol class="info-list">
+                            <li>Добавьте нужные книги в корзину.</li>
+                            <li>Откройте корзину и нажмите «Оформить заказ». Для оформления нужно войти в аккаунт.</li>
+                            <li>Укажите адрес доставки, выберите способ доставки и оплаты.</li>
+                            <li>Подтвердите заказ — статус заказа можно посмотреть в личном кабинете.</li>
+                        </ol>
+                    </section>
+                }
+                else if (page == "returns")
+                {
+                    <section class="info-section">
+                        <h2><i class="fas fa-undo"></i> Условия возврата</h2>
+                        <ul class="info-list">
+                            <li>Вы можете вернуть книгу надлежащего качества в течение <strong>7 дней</strong> после получения заказа.</li>
+                            <li>Книга должна сохранить товарный вид: без повреждений, пометок и следов использования.</li>
+                            <li>Если вы получили книгу с браком или не ту, которую заказывали, мы обменяем её или вернём деньги.</li>
+                        </ul>
+                    </section>
+
+                    <section class="info-section">
+                        <h2><i class="fas fa-list-ol"></i> Как оформить возврат</h2>
+                        <ol class="info-list">
+                            <li>Напишите нам через страницу <a asp-controller="Home" asp-action="Contact">«Контакты»</a> и укажите номер заказа и причину возврата.</li>
+                            <li>Мы ответим и подскажем, как передать книгу обратно.</li>
+                            <li>После проверки книги мы вернём деньги тем же способом, которым вы оплачивали заказ.</li>
+                        </ol>
+                    </section>
+
+                    <p class="info-note">По вопросам возврата вы также можете позвонить нам: 0946029615.</p>
+                }
+                else
+                {
+                    <section class="info-section">
+                        <h2><i class="fas fa-question-circle"></i> Частые вопросы</h2>
+
+                        <details class="info-faq">
+                            <summary>Как сделать заказ?</summary>
+                            <p>Добавьте книги в корзину, откройте корзину и нажмите «Оформить заказ». Подробнее — на странице <a asp-controller="Home" asp-action="ShippingInfo">«Доставка и оплата»</a>.</p>
+                        </details>
+
+                        <details class="info-faq">
+                            <summary>Как зарегистрироваться и войти?</summary>
+                            <p>Нажмите «Войти / Аккаунт» в правом верхнем углу. Новым покупателям нужно сначала пройти регистрацию, указав имя, e-mail и пароль.</p>
+                        </details>
+
+                        <details class="info-faq">
+                            <summary>Я забыл пароль. Что делать?</summary>
+                            <p>На странице входа нажмите «Забыли пароль» и введите свой e-mail.</p>
+                        </details>
+
+                        <details class="info-faq">
+                            <summary>Как применить промокод?</summary>
+                            <p>Введите промокод на странице <a asp-controller="Home" asp-action="Promotions">«Акции»</a> или в корзине. Скидка применится ко всем книгам в заказе.</p>
+                        </details>
+
+                        <details class="info-faq">
+                            <summary>Почему я не могу добавить книгу в корзину?</summary>
+                            <p>Скорее всего, этой книги сейчас нет в наличии (на карточке будет отметка «Нет в наличии»). Попробуйте заглянуть позже.</p>
+                        </details>
+
+                        <details class="info-faq">
+                            <summary>Как изменить язык сайта?</summary>
+                            <p>Нажмите на значок глобуса в верхней панели сайта и выберите нужный язык.</p>
+                        </details>
+                    </section>
+
+                    <section class="info-section">
+                        <h2><i class="fas fa-headset"></i> Не нашли ответ?</h2>
+                        <p>Напишите нам через страницу <a asp-controller="Home" asp-action="Contact">«Контакты»</a>, позвоните по номеру 0946029615 или отправьте письмо на Русские-книги@gmail.com.</p>
+                    </section>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-page {
+        padding: 40px 0 60px;
+        background: #fdf8f0;
+    }
+
+    .info-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 32px;
+        color: #b8860b;
+        margin: 0 0 28px;
+        text-align: center;
+    }
+
+    .info-layout {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 28px;
+        align-items: start;
+    }
+
+    .info-sidebar {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        padding: 12px;
+    }
+
+        .info-sidebar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .info-sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            color: #444;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+            .info-sidebar a:hover {
+                background: #f7efdc;
+            }
+
+        .info-sidebar li.active a {
+            background: #b8860b;
+            color: #fff;
+            font-weight: 700;
+        }
+
+    .info-content {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        padding: 32px 36px;
+    }
+
+    .info-section {
+        margin-bottom: 32px;
+    }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: #333;
+            margin: 0 0 16px;
+        }
+
+            .info-section h2 i {
+                color: #b8860b;
+                margin-right: 8px;
+            }
+
+        .info-section p {
+            color: #555;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .info-section a,
+        .info-note a {
+            color: #b8860b;
+            font-weight: 600;
+        }
+
+    .info-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 14px;
+    }
+
+    .info-card {
+        border: 1px solid #ecdcae;
+        border-radius: 10px;
+        padding: 18px 20px;
+        background: #fffaf0;
+    }
+
+        .info-card h3 {
+            margin: 0 0 8px;
+            font-size: 17px;
+            color: #333;
+        }
+
+        .info-card p {
+            color: #555;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .info-card .info-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+    .info-note {
+        font-size: 13.5px;
+        color: #777;
+        margin: 0;
+    }
+
+    .info-list {
+        color: #555;
+        line-height: 1.8;
+        padding-left: 22px;
+        margin: 0;
+    }
+
+        .info-list li {
+            margin-bottom: 6px;
+        }
+
+    .info-faq {
+        border: 1px solid #ecdcae;
+        border-radius: 8px;
+        padding: 0 16px;
+        margin-bottom: 10px;
+        background: #fffaf0;
+    }
+
+        .info-faq summary {
+            cursor: pointer;
+            padding: 14px 0;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .info-faq p {
+            padding-bottom: 14px;
+        }
+</style>
+<style>
+    @@media (max-width: 768px) {
+        .info-page {
+            padding: 20px 0 40px;
+        }
+
+        .info-title {
+            font-size: 24px;
+        }
+
+        .info-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .info-content {
+            padding: 20px 16px;
+        }
+
+        .info-cards {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

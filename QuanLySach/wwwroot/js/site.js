@@ -13,7 +13,16 @@ function addToCart(bookId) {
                 if (cartText && data.cartTotal) {
                     cartText.textContent = data.cartTotal;
                 }
+            } else {
+                // Trước đây nhánh này bị bỏ trống -> bấm nút mà không có phản hồi gì (hết hàng, v.v.)
+                showNotification(
+                    data.message || t('add_to_cart_failed', 'Не удалось добавить книгу в корзину.'),
+                    true
+                );
             }
+        })
+        .catch(() => {
+            showNotification(t('add_to_cart_failed', 'Не удалось добавить книгу в корзину.'), true);
         });
 }
 
@@ -21,12 +30,13 @@ function getToken() {
     return document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
 }
 
-function showNotification(msg) {
+function showNotification(msg, isError) {
     const div = document.createElement('div');
     div.textContent = msg;
-    div.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#b8860b;color:#fff;padding:12px 20px;border-radius:6px;z-index:9999;font-size:14px;';
+    const bg = isError ? '#c0392b' : '#b8860b';
+    div.style.cssText = 'position:fixed;bottom:20px;right:20px;background:' + bg + ';color:#fff;padding:12px 20px;border-radius:6px;z-index:9999;font-size:14px;max-width:340px;';
     document.body.appendChild(div);
-    setTimeout(() => div.remove(), 3000);
+    setTimeout(() => div.remove(), isError ? 4000 : 3000);
 }
 
 // SLIDESHOW
@@ -68,6 +78,18 @@ function translatePage(lang) {
     window.location.href = translateUrl;
 }
 
+// ===== WISHLIST (nút tim) =====
+function setWishlistState(btn, liked) {
+    const icon = btn.querySelector('i');
+    if (liked) {
+        btn.classList.add('active');
+        if (icon) icon.style.color = '#e53935';
+    } else {
+        btn.classList.remove('active');
+        if (icon) icon.style.color = '';
+    }
+}
+
 function toggleWishlist(bookId, btn) {
     fetch('/Account/ToggleWishlist', {
         method: 'POST',
@@ -77,18 +99,36 @@ function toggleWishlist(bookId, btn) {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                if (data.added) {
-                    btn.classList.add('active');
-                    btn.querySelector('i').style.color = '#e53935';
-                } else {
-                    btn.classList.remove('active');
-                    btn.querySelector('i').style.color = '';
-                }
+                setWishlistState(btn, data.added);
             } else {
                 alert(data.message);
             }
         });
 }
+
+// Lấy BookId của nút tim từ data-book-id hoặc từ onclick="toggleWishlist(123, this)"
+function getWishlistBookId(btn) {
+    if (btn.dataset && btn.dataset.bookId) return parseInt(btn.dataset.bookId, 10);
+    const m = (btn.getAttribute('onclick') || '').match(/toggleWishlist\(\s*(\d+)/);
+    return m ? parseInt(m[1], 10) : null;
+}
+
+// Khi load trang: hỏi server user đã thích những sách nào và tô hồng sẵn các nút tim tương ứng
+document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.wishlist-btn');
+    if (buttons.length === 0) return;
+
+    fetch('/Account/GetWishlistIds')
+        .then(r => r.json())
+        .then(ids => {
+            const liked = new Set(ids);
+            buttons.forEach(btn => {
+                const id = getWishlistBookId(btn);
+                if (id !== null && liked.has(id)) setWishlistState(btn, true);
+            });
+        })
+        .catch(() => { /* lỗi mạng thì thôi, nút tim vẫn dùng bình thường */ });
+});
 
 // QR MODAL - dùng cho trang Payment profile (qrModal)
 const qrData = {
@@ -167,7 +207,7 @@ function liveSearch(query) {
     }
 
     searchTimer = setTimeout(() => {
-        fetch('/Home/Search?q=' + encodeURIComponent(query))
+        fetch('/Books/LiveSearch?q=' + encodeURIComponent(query))
             .then(res => res.json())
             .then(data => {
                 if (data.length === 0) {
@@ -194,7 +234,7 @@ function goSearch() {
     const input = document.getElementById('searchInput');
     if (!input) return;
     const q = input.value;
-    if (q.trim()) window.location.href = '/Books/Index?search=' + encodeURIComponent(q);
+    if (q.trim()) window.location.href = '/Books/Search?q=' + encodeURIComponent(q);
 }
 
 // Đóng dropdown khi click ra ngoài

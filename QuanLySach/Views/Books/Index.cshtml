@@ -67,6 +67,10 @@
                                     {
                                         <span class="discount-badge">-@book.DiscountPercent%</span>
                                     }
+                                    @if (book.Stock <= 0)
+                                    {
+                                        <span class="out-of-stock-badge">Нет в наличии</span>
+                                    }
                                     <button class="wishlist-btn"
                                             onclick="event.preventDefault(); toggleWishlist(@book.Id, this)">
                                         <i class="fas fa-heart"></i>
@@ -89,9 +93,18 @@
                                 </div>
                             </a>
                             <div style="padding: 0 14px 14px">
-                                <button class="btn-cart" onclick="addToCart(@book.Id)">
-                                    <i class="fas fa-shopping-cart"></i> В корзину
-                                </button>
+                                @if (book.Stock > 0)
+                                {
+                                    <button class="btn-cart" onclick="addToCart(@book.Id)">
+                                        <i class="fas fa-shopping-cart"></i> В корзину
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn-cart" disabled style="opacity:0.5; cursor:not-allowed;">
+                                        <i class="fas fa-ban"></i> Нет в наличии
+                                    </button>
+                                }
                             </div>
                         </div>
                     }
@@ -135,5 +148,28 @@
         text-decoration: none;
         color: inherit;
         display: block;
+    }
+
+    /* Thẻ sách cao bằng nhau, nút "В корзину" luôn nằm sát đáy dù tên sách dài/ngắn */
+    .books-grid-page .book-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .books-grid-page .book-card-link {
+        flex: 1 1 auto;
+    }
+
+    .out-of-stock-badge {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        background: #c0392b;
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        z-index: 2;
     }
 </style>

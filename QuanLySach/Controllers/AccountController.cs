@@ -113,6 +113,16 @@ namespace QuanLySach.Controllers
         [HttpPost]
         public IActionResult Logout()
         {
+            // Giỏ hàng đang gắn với Session.Id, mà Session.Clear() KHÔNG đổi Id
+            // => nếu không xoá ở đây thì sau khi đăng xuất giỏ hàng vẫn còn nguyên.
+            var sessionId = HttpContext.Session.Id;
+            var cartItems = _db.CartItems.Where(c => c.SessionId == sessionId).ToList();
+            if (cartItems.Any())
+            {
+                _db.CartItems.RemoveRange(cartItems);
+                _db.SaveChanges();
+            }
+
             HttpContext.Session.Clear();
             Response.Cookies.Delete("RememberUserId");
             Response.Cookies.Delete("RememberUserName");
@@ -231,6 +241,21 @@ namespace QuanLySach.Controllers
                 await _db.SaveChangesAsync();
                 return Json(new { success = true, added = true });
             }
+        }
+
+        // Trả về danh sách BookId mà user hiện tại đã thích (để tô hồng sẵn nút tim khi load trang)
+        [HttpGet]
+        public IActionResult GetWishlistIds()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return Json(new List<int>());
+
+            var ids = _db.Wishlists
+                .Where(w => w.UserId == userId)
+                .Select(w => w.BookId)
+                .ToList();
+
+            return Json(ids);
         }
 
         [HttpGet]

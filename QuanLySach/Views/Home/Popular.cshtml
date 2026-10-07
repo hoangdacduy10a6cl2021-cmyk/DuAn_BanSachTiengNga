@@ -21,6 +21,10 @@
                     {
                         <div class="no-cover">Нет обложки</div>
                     }
+                    @if (book.HasDiscount)
+                    {
+                        <span class="discount-badge">-@book.DiscountPercent%</span>
+                    }
                     <!-- Wishlist button giống trang Books -->
                     <button class="wishlist-btn" onclick="toggleWishlist(@book.Id, this)">
                         <i class="fas fa-heart"></i>
@@ -29,11 +33,30 @@
                 <div class="book-info">
                     <h3 class="book-title">@book.Title</h3>
                     <p class="book-author">@book.Author</p>
-                    <p class="book-price">@book.Price.ToString("0.00") ₽</p>
+                    @if (book.HasDiscount)
+                    {
+                        <p class="book-price price-wrap">
+                            <span class="price-new notranslate">@book.FinalPrice.ToString("0.00") ₽</span>
+                            <span class="price-old notranslate">@book.Price.ToString("0.00") ₽</span>
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="book-price notranslate">@book.Price.ToString("0.00") ₽</p>
+                    }
                     <!-- Add to cart giống trang Books -->
-                    <button class="add-to-cart-btn btn-cart" onclick="addToCart(@book.Id)">
-                        <i class="fas fa-shopping-cart"></i> В корзину
-                    </button>
+                    @if (book.Stock > 0)
+                    {
+                        <button class="add-to-cart-btn btn-cart" onclick="addToCart(@book.Id)">
+                            <i class="fas fa-shopping-cart"></i> В корзину
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="add-to-cart-btn btn-cart" disabled style="opacity:0.5; cursor:not-allowed;">
+                            <i class="fas fa-ban"></i> Нет в наличии
+                        </button>
+                    }
                 </div>
             </div>
         }
@@ -74,11 +97,28 @@
         padding: 16px;
         text-align: center;
         transition: transform 0.2s;
+        display: flex;
+        flex-direction: column;
     }
 
-        .book-card:hover {
-            transform: translateY(-4px);
+    /* Nút "В корзину" luôn nằm sát đáy thẻ dù tên sách dài/ngắn */
+    .book-info {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+    }
+
+        .book-info .add-to-cart-btn {
+            margin-top: auto;
         }
+
+    .book-price.price-wrap {
+        justify-content: center;
+    }
+
+    .book-card:hover {
+        transform: translateY(-4px);
+    }
 
     .book-cover {
         position: relative;

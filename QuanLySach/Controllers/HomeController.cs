@@ -141,6 +141,25 @@ namespace QuanLySach.Controllers
             return View();
         }
 
+        // ===== Các trang thông tin ở footer (dùng chung view Info.cshtml) =====
+        public IActionResult ShippingInfo()
+        {
+            ViewBag.Page = "shipping";
+            return View("Info");
+        }
+
+        public IActionResult Returns()
+        {
+            ViewBag.Page = "returns";
+            return View("Info");
+        }
+
+        public IActionResult Help()
+        {
+            ViewBag.Page = "help";
+            return View("Info");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
