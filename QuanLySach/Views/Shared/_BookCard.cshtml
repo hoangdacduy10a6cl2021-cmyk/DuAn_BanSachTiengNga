@@ -2,7 +2,9 @@
 
 <div class="book-card">
     <div class="book-cover">
-        <img src="@Model.CoverImageUrl" alt="@Model.Title" />
+        <a asp-controller="Books" asp-action="Detail" asp-route-id="@Model.Id" class="book-link">
+            <img src="@Model.CoverImageUrl" alt="@Model.Title" />
+        </a>
         @if (Model.HasDiscount)
         {
             <span class="discount-badge">-@Model.DiscountPercent%</span>
@@ -16,7 +18,9 @@
         </button>
     </div>
     <div class="book-info">
-        <h4>@Model.Title</h4>
+        <h4>
+            <a asp-controller="Books" asp-action="Detail" asp-route-id="@Model.Id" class="book-link">@Model.Title</a>
+        </h4>
         <p class="author">@Model.Author</p>
         @if (Model.HasDiscount)
         {
@@ -45,3 +49,15 @@
         }
     </div>
 </div>
+
+<style>
+    .book-link {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+
+        .book-link:hover {
+            color: #b8860b;
+        }
+</style>

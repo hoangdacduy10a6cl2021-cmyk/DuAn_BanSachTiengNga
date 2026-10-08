@@ -15,11 +15,15 @@
                 <div class="book-cover">
                     @if (!string.IsNullOrEmpty(book.CoverImageUrl))
                     {
-                        <img src="@book.CoverImageUrl" alt="@book.Title" />
+                        <a asp-controller="Books" asp-action="Detail" asp-route-id="@book.Id" class="book-link">
+                            <img src="@book.CoverImageUrl" alt="@book.Title" />
+                        </a>
                     }
                     else
                     {
-                        <div class="no-cover">Нет обложки</div>
+                        <a asp-controller="Books" asp-action="Detail" asp-route-id="@book.Id" class="book-link">
+                            <div class="no-cover">Нет обложки</div>
+                        </a>
                     }
                     @if (book.HasDiscount)
                     {
@@ -31,7 +35,7 @@
                     </button>
                 </div>
                 <div class="book-info">
-                    <h3 class="book-title">@book.Title</h3>
+                    <h3 class="book-title"><a asp-controller="Books" asp-action="Detail" asp-route-id="@book.Id" class="book-link">@book.Title</a></h3>
                     <p class="book-author">@book.Author</p>
                     @if (book.HasDiscount)
                     {
@@ -64,6 +68,16 @@
 </div>
 
 <style>
+    .book-link {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+
+        .book-link:hover {
+            color: #b8860b;
+        }
+
     .popular-page {
         max-width: 1200px;
         margin: 40px auto;

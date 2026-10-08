@@ -1,0 +1,284 @@
+﻿/* =====================================================================
+   admin-mobile.css  -  Responsive cho khu vực Admin (Книжный Рай)
+   Nạp SAU admin.css. Phần "Base" giữ nguyên giao diện desktop cũ,
+   phần mobile chỉ có tác dụng khi <html> có class "is-mobile".
+   ===================================================================== */
+
+/* ---------- Base (desktop) ---------- */
+.sidebar-toggle,
+.sidebar-overlay {
+    display: none;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.topbar-search {
+    display: flex;
+}
+
+    .topbar-search input {
+        width: 220px;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px 0 0 6px;
+        font-size: 0.85rem;
+        outline: none;
+    }
+
+    .topbar-search button {
+        padding: 8px 14px;
+        border: none;
+        background: #b8860b;
+        color: #fff;
+        border-radius: 0 6px 6px 0;
+        cursor: pointer;
+    }
+
+.topbar-bell {
+    position: relative;
+    color: #8b6508;
+    font-size: 1.15rem;
+    text-decoration: none;
+}
+
+.admin-main {
+    min-width: 0; /* chống bảng rộng làm tràn cả trang */
+}
+
+/* ---------- Mobile ---------- */
+html.is-mobile body.admin-body {
+    overflow-x: hidden;
+}
+
+html.is-mobile body.sidebar-open {
+    overflow: hidden;
+}
+
+html.is-mobile .admin-wrapper {
+    display: block;
+}
+
+/* Sidebar -> ngăn kéo trượt từ trái */
+html.is-mobile .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 270px;
+    max-width: 85vw;
+    z-index: 1001;
+    transform: translateX(-102%);
+    transition: transform 0.25s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+html.is-mobile body.sidebar-open .admin-sidebar {
+    transform: none;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
+}
+
+html.is-mobile .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(20, 10, 4, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+html.is-mobile body.sidebar-open .sidebar-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Nội dung chính */
+html.is-mobile .admin-main {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 14px 28px;
+}
+
+/* Topbar: hàng 1 = ☰ + tiêu đề + ngôn ngữ + chuông + avatar, hàng 2 = ô tìm kiếm */
+html.is-mobile .admin-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: #f2ede1;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 0 10px;
+    margin-bottom: 16px;
+}
+
+html.is-mobile .sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 1px solid #e2d5b8;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--gold-dark);
+    font-size: 1.05rem;
+    cursor: pointer;
+}
+
+html.is-mobile .topbar-left {
+    order: 1;
+    flex: 1 1 0;
+}
+
+html.is-mobile .admin-topbar h1 {
+    font-size: 1.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+html.is-mobile .topbar-right {
+    display: contents;
+}
+
+html.is-mobile .lang-selector {
+    order: 2;
+}
+
+html.is-mobile .topbar-bell {
+    order: 3;
+    padding: 0 4px;
+}
+
+html.is-mobile .admin-profile {
+    order: 4;
+}
+
+html.is-mobile .admin-profile-text {
+    display: none;
+}
+
+html.is-mobile .topbar-search {
+    order: 5;
+    flex: 1 1 100%;
+    width: 100%;
+}
+
+    html.is-mobile .topbar-search input {
+        flex: 1;
+        width: 100%;
+        min-width: 0;
+        font-size: 16px; /* tránh iOS tự zoom khi focus */
+    }
+
+/* Chọn ngôn ngữ: chạm để mở (mobile không có hover) */
+html.is-mobile .lang-selector:hover .lang-dropdown {
+    display: none;
+}
+
+html.is-mobile .lang-selector.open .lang-dropdown {
+    display: block;
+}
+
+html.is-mobile .lang-current {
+    display: inline-block;
+    padding: 9px 10px;
+    background: #fff;
+}
+
+html.is-mobile .lang-dropdown li {
+    padding: 12px 18px;
+    font-size: 0.95rem;
+}
+
+/* Panel + header của panel (tiêu đề, ô tìm kiếm, nút thêm) */
+html.is-mobile .admin-panel {
+    padding: 14px;
+}
+
+html.is-mobile .panel-header {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    html.is-mobile .panel-header h2 {
+        font-size: 1.05rem;
+    }
+
+    html.is-mobile .panel-header > div {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    html.is-mobile .panel-header form {
+        flex: 1 1 180px;
+        min-width: 0;
+    }
+
+        html.is-mobile .panel-header form input[type=text] {
+            flex: 1;
+            width: 100%;
+            min-width: 0;
+        }
+
+/* Bảng: cuộn ngang bên trong panel thay vì làm tràn cả trang */
+html.is-mobile .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+html.is-mobile .admin-table {
+    font-size: 0.85rem;
+    min-width: calc((var(--cols, 2) - 2) * 110px);
+}
+
+    html.is-mobile .admin-table th,
+    html.is-mobile .admin-table td {
+        padding: 8px 10px;
+    }
+
+        html.is-mobile .admin-table td .btn {
+            white-space: nowrap;
+        }
+
+/* Form: xếp dọc các hàng 2 cột */
+html.is-mobile .admin-form [style*="display:flex; gap:16px"] {
+    flex-direction: column;
+    gap: 0 !important;
+}
+
+html.is-mobile .admin-form input[type=text],
+html.is-mobile .admin-form input[type=number],
+html.is-mobile .admin-form input[type=password],
+html.is-mobile .admin-form select,
+html.is-mobile .admin-form textarea {
+    font-size: 16px;
+}
+
+/* Dải "Недавно добавленные книги" ở trang Обзор: vuốt ngang */
+html.is-mobile .admin-panel > div[style*="display:flex; gap:16px"] {
+    overflow-x: auto;
+}
+
+    html.is-mobile .admin-panel > div[style*="display:flex; gap:16px"] > div {
+        flex: 0 0 120px !important;
+        min-width: 120px !important;
+    }

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" translate="no">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,8 +7,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/admin.css?v=3" />
+    <link rel="stylesheet" href="~/css/admin-mobile.css?v=1" />
+    <script>
+            // Gắn class "is-mobile" cho <html> càng sớm càng tốt (tránh nháy layout).
+            // Tính là mobile khi: cửa sổ hẹp (<= 900px) HOẶC thiết bị cảm ứng có màn hình nhỏ
+            // (kể cả khi Chrome đang bật "Trang web cho máy tính").
+            (function () {
+                var d = document.documentElement;
+                function check() {
+                    var touch = (navigator.maxTouchPoints || 0) > 0;
+                    var smallScreen = Math.min(screen.width, screen.height) <= 820;
+                    d.classList.toggle('is-mobile', window.innerWidth <= 900 || (touch && smallScreen));
+                }
+                check();
+                window.addEventListener('resize', check);
+            })();
+    </script>
 </head>
 <body class="admin-body">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <div class="admin-wrapper">
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
@@ -78,11 +95,16 @@
 
         <main class="admin-main">
             <div class="admin-topbar">
-                <h1>@ViewBag.Title</h1>
-                <div style="display:flex; align-items:center; gap:20px;">
-                    <form asp-controller="QuanTri" asp-action="Books" method="get" style="display:flex;">
-                        <input type="text" name="searchTerm" placeholder="Поиск книг, авторов..." style="width:220px; padding:8px 12px; border:1px solid #ddd; border-radius:6px 0 0 6px; font-size:0.85rem; outline:none;" />
-                        <button type="submit" style="padding:8px 14px; border:none; background:#b8860b; color:#fff; border-radius:0 6px 6px 0; cursor:pointer;">
+                <div class="topbar-left">
+                    <button type="button" class="sidebar-toggle" id="sidebar-toggle" aria-label="Menu" aria-expanded="false">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>@ViewBag.Title</h1>
+                </div>
+                <div class="topbar-right">
+                    <form asp-controller="QuanTri" asp-action="Books" method="get" class="topbar-search">
+                        <input type="text" name="searchTerm" placeholder="Поиск книг, авторов..." />
+                        <button type="submit">
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
@@ -96,7 +118,7 @@
                             <li onclick="setLang('ru')">🇷🇺 Русский</li>
                         </ul>
                     </div>
-                    <a asp-controller="QuanTri" asp-action="Orders" style="position:relative; color:#8b6508; font-size:1.15rem; text-decoration:none;">
+                    <a asp-controller="QuanTri" asp-action="Orders" class="topbar-bell">
                         <i class="fas fa-bell"></i>
                         @if ((int)(ViewBag.NewOrdersCount ?? 0) > 0)
                         {
@@ -127,6 +149,7 @@
     </div>
 
     <script src="~/js/i18n.js?v=2"></script>
+    <script src="~/js/admin-mobile.js?v=1"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

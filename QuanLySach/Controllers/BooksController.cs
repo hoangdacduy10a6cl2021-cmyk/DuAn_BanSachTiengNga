@@ -104,7 +104,7 @@ namespace QuanLySach.Controllers
         }
 
         // ===== TRANG KẾT QUẢ TÌM KIẾM ĐẦY ĐỦ =====
-        public async Task<IActionResult> Search(string q, int page = 1, int pageSize = 8)
+        public async Task<IActionResult> Search(string q, string? orig = null, int page = 1, int pageSize = 8)
         {
             if (string.IsNullOrWhiteSpace(q))
                 return RedirectToAction("Index");
@@ -120,6 +120,8 @@ namespace QuanLySach.Controllers
 
             ViewBag.Categories = categories;
             ViewBag.SearchQuery = q;
+            // Từ khoá người dùng gõ ban đầu (VI/EN) để hiển thị lại trong ô tìm kiếm, tránh bị đổi sang tiếng Nga
+            ViewBag.SearchDisplay = string.IsNullOrWhiteSpace(orig) ? q : orig.Trim();
             ViewBag.Page = page;
             ViewBag.PageSize = pageSize;
             ViewBag.TotalPages = (int)Math.Ceiling((double)total / pageSize);

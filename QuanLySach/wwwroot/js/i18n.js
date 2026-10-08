@@ -31,7 +31,8 @@ const translations = {
         address: "6/3 Myasnitskaya St., Bldg. 1, Moscow, Russia, 101000",
         copyright: "© 2026 Book Paradise. All rights reserved.",
         added_to_cart: "Book added to cart!",
-        fill_required_fields: "Please fill in all required fields!"
+        fill_required_fields: "Please fill in all required fields!",
+        not_found: "Not found"
     },
     vi: {
         shipping_info: "Giao hàng & Thanh toán",
@@ -64,7 +65,8 @@ const translations = {
         address: "Phố Myasnitskaya, số 6/3, tòa 1, Moscow, Nga, 101000",
         copyright: "© 2026 Thiên đường sách. Bảo lưu mọi quyền.",
         added_to_cart: "Đã thêm sách vào giỏ hàng!",
-        fill_required_fields: "Vui lòng điền đầy đủ tất cả các trường bắt buộc!"
+        fill_required_fields: "Vui lòng điền đầy đủ tất cả các trường bắt buộc!",
+        not_found: "Không tìm thấy"
     }
 };
 

@@ -2678,4 +2678,9 @@ html, body {
         grid-template-columns: 1fr;
     }
 }
+@media (min-width: 769px) {
+    .footer-area.hide-on-desktop {
+        display: none;
+    }
+}
 

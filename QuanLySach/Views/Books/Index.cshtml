@@ -10,7 +10,7 @@
         @if (ViewBag.SearchQuery != null)
         {
             <h1 class="books-page-title">
-                Результаты поиска: «@ViewBag.SearchQuery»
+                Результаты поиска: «<span class="notranslate">@(ViewBag.SearchDisplay ?? ViewBag.SearchQuery)</span>»
             </h1>
             <p style="color:#888; margin-bottom:20px; font-size:14px;">
                 Найдено: @Model.Count книг
@@ -113,7 +113,7 @@
                     {
                         <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#888;">
                             <i class="fas fa-search" style="font-size:48px; color:#ddd; display:block; margin-bottom:16px;"></i>
-                            <p style="font-size:1.1rem;">Книги не найдены по запросу «@ViewBag.SearchQuery»</p>
+                            <p style="font-size:1.1rem;">Книги не найдены по запросу «<span class="notranslate">@(ViewBag.SearchDisplay ?? ViewBag.SearchQuery)</span>»</p>
                             <a asp-action="Index" style="color:#b8860b; margin-top:12px; display:inline-block;">
                                 ← Вернуться ко всем книгам
                             </a>

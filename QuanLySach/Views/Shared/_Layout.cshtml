@@ -148,7 +148,7 @@
                 <input type="text" id="searchInput" placeholder="Поиск книг..."
                        data-i18n-placeholder="search_placeholder"
                        autocomplete="off"
-                       value="@ViewBag.SearchQuery"
+                       value="@(ViewBag.SearchDisplay ?? ViewBag.SearchQuery)"
                        oninput="liveSearch(this.value)"
                        onkeydown="if(event.key==='Enter') goSearch()" />
                 <button onclick="goSearch()"><i class="fas fa-search"></i></button>
@@ -215,8 +215,11 @@
         @RenderBody()
     </main>
 
-    @if (ViewData["HideFooter"] == null || !(bool)ViewData["HideFooter"])
-    {
+    @{
+        // Login/Register/ForgotPassword: ẩn footer trên desktop (giữ như cũ) nhưng vẫn hiện trên mobile
+        var hideFooterOnDesktop = ViewData["HideFooter"] != null && (bool)ViewData["HideFooter"];
+    }
+    <div class="footer-area @(hideFooterOnDesktop ? "hide-on-desktop" : "")">
         <!-- FEATURES BAR -->
         <div class="features-bar">
             <div class="container features-inner">
@@ -301,7 +304,7 @@
                 <p data-i18n="copyright">© 2026 Книжный Рай. Все права защищены.</p>
             </div>
         </footer>
-    }
+    </div>
 
     @if (TempData["ToastSuccess"] != null)
     {
@@ -440,7 +443,7 @@
                 const dropdown = document.getElementById('searchDropdown');
 
                 if (!items || items.length === 0) {
-                    dropdown.innerHTML = '<div class="search-dropdown-empty">Не найдено</div>';
+                    dropdown.innerHTML = '<div class="search-dropdown-empty">' + t('not_found', 'Не найдено') + '</div>';
                     dropdown.classList.add('show');
                     return;
                 }
@@ -469,7 +472,8 @@
                 if (value.length === 0) return;
                 // DB lưu tiếng Nga -> dịch từ khoá EN/VI sang tiếng Nga trước khi tìm
                 const query = await toRussianQuery(value);
-                window.location.href = '/Books/Search?q=' + encodeURIComponent(query);
+                window.location.href = '/Books/Search?q=' + encodeURIComponent(query)
+                    + '&orig=' + encodeURIComponent(value);
             }
 
             document.addEventListener('click', function (e) {
