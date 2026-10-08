@@ -1,0 +1,48 @@
+﻿/* =====================================================================
+   lang-mobile.css - Nút chọn ngôn ngữ cho MOBILE (web bán sách)
+   Trên mobile (<= 768px) site.css ẩn cả .top-bar nên mất nút dịch;
+   file này hiện lại nút 🌐 trong header, mở bằng cách chạm.
+   ===================================================================== */
+
+/* Desktop: ẩn (đã có selector ở top-bar) */
+.lang-selector-mobile {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .lang-selector-mobile {
+        display: inline-block;
+        margin-left: 0;
+        align-self: center;
+    }
+
+        .lang-selector-mobile .lang-current {
+            display: inline-block;
+            padding: 7px 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--brown-mid);
+            background: #fff;
+            border: 1px solid var(--gold-light);
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        /* Mobile không có hover -> chỉ mở khi có class .open */
+        .lang-selector-mobile:hover .lang-dropdown {
+            display: none;
+        }
+
+        .lang-selector-mobile.open .lang-dropdown {
+            display: block;
+        }
+
+        .lang-selector-mobile .lang-dropdown {
+            min-width: 160px;
+        }
+
+            .lang-selector-mobile .lang-dropdown li {
+                padding: 12px 18px;
+                font-size: 15px;
+            }
+}
