@@ -109,7 +109,12 @@ namespace QuanLySach.Controllers
         }
         public async Task<IActionResult> NewBooks(int page = 1, string sortOrder = "newest")
         {
-            int pageSize = 12;
+            // Lấy "Sản phẩm trên mỗi trang" từ trang Cài đặt của admin
+            int pageSize = await _db.SiteSettings.AsNoTracking()
+                .Select(s => s.ItemsPerPage)
+                .FirstOrDefaultAsync();
+            if (pageSize < 4) pageSize = 12;
+            if (page < 1) page = 1;
 
             var query = _db.Books
                 .Where(b => b.IsNew)

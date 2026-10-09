@@ -279,10 +279,127 @@ function restoreOriginalText() {
     });
 }
 
+// ===== Dịch văn bản tạo động bằng JS (thông báo từ server, nhãn biểu đồ Chart.js...) =====
+// Chữ vẽ trong <canvas> và chuỗi sinh ra sau khi trang tải xong KHÔNG nằm trong DOM lúc quét,
+// nên autoTranslatePage() không dịch được. Các hàm dưới đây xử lý riêng cho những trường hợp đó.
+// Quy ước: mọi chuỗi gốc luôn viết bằng TIẾNG NGA, hàm tự đổi sang ngôn ngữ đang chọn.
+
+// Bảng dịch cố định (chính xác hơn Google cho từ ngắn như tên tháng, trạng thái đơn hàng)
+const STATIC_RU_TEXT = {
+    vi: {
+        'Янв': 'Th1', 'Фев': 'Th2', 'Мар': 'Th3', 'Апр': 'Th4', 'Май': 'Th5', 'Июн': 'Th6',
+        'Июл': 'Th7', 'Авг': 'Th8', 'Сен': 'Th9', 'Окт': 'Th10', 'Ноя': 'Th11', 'Дек': 'Th12',
+        'Доход (₽)': 'Thu nhập (₽)',
+        'Новый': 'Mới',
+        'Обрабатывается': 'Đang xử lý',
+        'Доставляется': 'Đang giao',
+        'Выполнен': 'Hoàn thành',
+        'Отменён': 'Đã hủy',
+        'Прочее': 'Khác'
+    },
+    en: {
+        'Янв': 'Jan', 'Фев': 'Feb', 'Мар': 'Mar', 'Апр': 'Apr', 'Май': 'May', 'Июн': 'Jun',
+        'Июл': 'Jul', 'Авг': 'Aug', 'Сен': 'Sep', 'Окт': 'Oct', 'Ноя': 'Nov', 'Дек': 'Dec',
+        'Доход (₽)': 'Revenue (₽)',
+        'Новый': 'New',
+        'Обрабатывается': 'Processing',
+        'Доставляется': 'Shipping',
+        'Выполнен': 'Completed',
+        'Отменён': 'Cancelled',
+        'Прочее': 'Other'
+    }
+};
+
+function getSiteLang() {
+    return localStorage.getItem('siteLang') || 'ru';
+}
+
+// Dịch 1 mảng chuỗi tiếng Nga -> ngôn ngữ lang. Thứ tự tra: bảng cố định -> cache -> Google.
+// Chuỗi chỉ gồm số/ký hiệu (vd "27/08") được giữ nguyên.
+async function translateRuTexts(texts, lang) {
+    if (lang === 'ru') return texts.slice();
+
+    const staticMap = STATIC_RU_TEXT[lang] || {};
+    const cache = loadAutoCache();
+    const langCache = cache[lang] || (cache[lang] = {});
+    const out = texts.slice();
+    const pendingIdx = [];
+
+    texts.forEach((raw, i) => {
+        const key = (raw == null ? '' : String(raw)).trim();
+        if (!key || /^[\d\s.,%+\-:/()₫$€₽×шт]*$/.test(key)) return;
+        if (staticMap[key]) { out[i] = staticMap[key]; return; }
+        if (langCache[key]) { out[i] = langCache[key]; return; }
+        pendingIdx.push(i);
+    });
+
+    if (pendingIdx.length > 0) {
+        const uniq = Array.from(new Set(pendingIdx.map(i => String(texts[i]).trim())));
+        const { results, ok } = await callTranslateBatch(uniq, lang);
+        uniq.forEach((t, j) => {
+            if (ok[j]) langCache[t] = results[j] ?? t;
+        });
+        saveAutoCache(cache);
+        pendingIdx.forEach(i => {
+            const key = String(texts[i]).trim();
+            if (langCache[key]) out[i] = langCache[key];
+        });
+    }
+    return out;
+}
+
+// Dịch 1 chuỗi tiếng Nga sang ngôn ngữ đang chọn (dùng cho thông báo tạo động).
+async function translateRuText(text) {
+    const [result] = await translateRuTexts([text], getSiteLang());
+    return result;
+}
+
+// ----- Biểu đồ Chart.js -----
+const translatableCharts = [];
+let chartRefreshToken = 0;
+
+// Gọi 1 lần sau khi tạo biểu đồ:  const c = new Chart(...); registerTranslatableChart(c);
+// Nhãn trục / legend / tên dataset gốc (tiếng Nga) được lưu lại để dịch qua lại RU <-> EN <-> VI.
+function registerTranslatableChart(chart) {
+    chart.$ruLabels = Array.isArray(chart.data.labels) ? chart.data.labels.slice() : [];
+    chart.$ruDatasetLabels = chart.data.datasets.map(d => d.label);
+    translatableCharts.push(chart);
+    refreshTranslatableCharts();
+}
+
+async function refreshTranslatableCharts() {
+    const token = ++chartRefreshToken;
+    const lang = getSiteLang();
+
+    for (const chart of translatableCharts) {
+        try {
+            let labels = chart.$ruLabels.slice();
+            let datasetLabels = chart.$ruDatasetLabels.slice();
+
+            if (lang !== 'ru') {
+                labels = await translateRuTexts(chart.$ruLabels, lang);
+                datasetLabels = await translateRuTexts(chart.$ruDatasetLabels.map(l => l || ''), lang);
+            }
+
+            // Người dùng vừa đổi ngôn ngữ lần nữa -> bỏ kết quả cũ
+            if (token !== chartRefreshToken) return;
+
+            chart.data.labels = labels;
+            chart.data.datasets.forEach((d, i) => {
+                if (chart.$ruDatasetLabels[i]) d.label = datasetLabels[i];
+            });
+            chart.update();
+        } catch (e) {
+            console.warn('Không dịch được nhãn biểu đồ:', e);
+        }
+    }
+}
+
 function setLang(lang) {
     localStorage.setItem('siteLang', lang);
     applyLang(lang);
     autoTranslatePage(lang);
+    refreshTranslatableCharts();
 }
 
 // Dùng cho các thông báo được tạo động bằng JS (toast, alert...) sau khi trang đã tải xong,

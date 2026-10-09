@@ -125,10 +125,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script>
         const ctx = document.getElementById('revenueChart');
-        new Chart(ctx, {
+        const revenueChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: [@Html.Raw(ViewBag.ChartLabels)],
+                labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
                 datasets: [{
                     label: 'Доход (₽)',
                     data: [@Html.Raw(ViewBag.ChartValues)],
@@ -148,5 +148,8 @@
                 }
             }
         });
+
+        // Dịch nhãn tháng + tên dataset trong canvas khi đổi ngôn ngữ (xem i18n.js)
+        registerTranslatableChart(revenueChart);
     </script>
 }

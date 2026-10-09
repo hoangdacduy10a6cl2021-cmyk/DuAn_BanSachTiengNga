@@ -13,8 +13,20 @@ namespace QuanLySach.Controllers
             _db = db;
         }
 
-        public async Task<IActionResult> Index(int? categoryId, string sort = "popular", int page = 1, int pageSize = 8, bool isNew = false)
+        // Lấy "Sản phẩm trên mỗi trang" từ trang Cài đặt của admin
+        private async Task<int> GetItemsPerPageAsync()
         {
+            var n = await _db.SiteSettings.AsNoTracking()
+                .Select(s => s.ItemsPerPage)
+                .FirstOrDefaultAsync();
+            return n >= 4 ? n : 8;
+        }
+
+        public async Task<IActionResult> Index(int? categoryId, string sort = "popular", int page = 1, int? pageSize = null, bool isNew = false)
+        {
+            int size = pageSize ?? await GetItemsPerPageAsync();
+            if (page < 1) page = 1;
+
             var query = _db.Books.Include(b => b.Category).AsQueryable();
 
             if (categoryId.HasValue)
@@ -32,15 +44,15 @@ namespace QuanLySach.Controllers
             };
 
             int total = await query.CountAsync();
-            var books = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var books = await query.Skip((page - 1) * size).Take(size).ToListAsync();
             var categories = await _db.Categories.ToListAsync();
 
             ViewBag.Categories = categories;
             ViewBag.CurrentCategory = categoryId;
             ViewBag.Sort = sort;
             ViewBag.Page = page;
-            ViewBag.PageSize = pageSize;
-            ViewBag.TotalPages = (int)Math.Ceiling((double)total / pageSize);
+            ViewBag.PageSize = size;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)total / size);
             ViewBag.IsNewFilter = isNew;
 
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -104,10 +116,13 @@ namespace QuanLySach.Controllers
         }
 
         // ===== TRANG KẾT QUẢ TÌM KIẾM ĐẦY ĐỦ =====
-        public async Task<IActionResult> Search(string q, string? orig = null, int page = 1, int pageSize = 8)
+        public async Task<IActionResult> Search(string q, string? orig = null, int page = 1, int? pageSize = null)
         {
             if (string.IsNullOrWhiteSpace(q))
                 return RedirectToAction("Index");
+
+            int size = pageSize ?? await GetItemsPerPageAsync();
+            if (page < 1) page = 1;
 
             var query = _db.Books
                 .Include(b => b.Category)
@@ -115,7 +130,7 @@ namespace QuanLySach.Controllers
                 .AsQueryable();
 
             int total = await query.CountAsync();
-            var books = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var books = await query.Skip((page - 1) * size).Take(size).ToListAsync();
             var categories = await _db.Categories.ToListAsync();
 
             ViewBag.Categories = categories;
@@ -123,8 +138,8 @@ namespace QuanLySach.Controllers
             // Từ khoá người dùng gõ ban đầu (VI/EN) để hiển thị lại trong ô tìm kiếm, tránh bị đổi sang tiếng Nga
             ViewBag.SearchDisplay = string.IsNullOrWhiteSpace(orig) ? q : orig.Trim();
             ViewBag.Page = page;
-            ViewBag.PageSize = pageSize;
-            ViewBag.TotalPages = (int)Math.Ceiling((double)total / pageSize);
+            ViewBag.PageSize = size;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)total / size);
             ViewBag.CurrentCategory = null;
             ViewBag.Sort = "popular";
 

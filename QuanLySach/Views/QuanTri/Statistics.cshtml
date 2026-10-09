@@ -8,7 +8,8 @@
     var dayLabels = JsonSerializer.Serialize(Model.RevenueByDay.Select(x => x.Label));
     var dayValues = JsonSerializer.Serialize(Model.RevenueByDay.Select(x => x.Value));
 
-    var catLabels = JsonSerializer.Serialize(Model.RevenueByCategory.Select(x => x.CategoryName));
+    // "Khác" là tên mặc định trong controller khi sách không có thể loại -> đổi sang tiếng Nga
+    var catLabels = JsonSerializer.Serialize(Model.RevenueByCategory.Select(x => x.CategoryName == "Khác" ? "Прочее" : x.CategoryName));
     var catValues = JsonSerializer.Serialize(Model.RevenueByCategory.Select(x => x.Revenue));
 
     var statusLabels = JsonSerializer.Serialize(Model.OrdersByStatus.Select(x => x.Status));
@@ -111,7 +112,7 @@
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script>
-        new Chart(document.getElementById('revenueByDayChart'), {
+        const revenueByDayChart = new Chart(document.getElementById('revenueByDayChart'), {
             type: 'line',
             data: {
                 labels: @Html.Raw(dayLabels),
@@ -133,7 +134,7 @@
             }
         });
 
-        new Chart(document.getElementById('statusChart'), {
+        const statusChart = new Chart(document.getElementById('statusChart'), {
             type: 'doughnut',
             data: {
                 labels: @Html.Raw(statusLabels),
@@ -145,7 +146,7 @@
             options: { responsive: true, maintainAspectRatio: false }
         });
 
-        new Chart(document.getElementById('categoryChart'), {
+        const categoryChart = new Chart(document.getElementById('categoryChart'), {
             type: 'bar',
             data: {
                 labels: @Html.Raw(catLabels),
@@ -162,5 +163,10 @@
                 scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('ru-RU') } } }
             }
         });
+
+        // Dịch nhãn trong canvas (ngày, trạng thái, thể loại, tên dataset) khi đổi ngôn ngữ (xem i18n.js)
+        registerTranslatableChart(revenueByDayChart);
+        registerTranslatableChart(statusChart);
+        registerTranslatableChart(categoryChart);
     </script>
 }

@@ -19,22 +19,22 @@
             <div class="promo-banner-icon"><i class="fa-solid fa-gift"></i></div>
         </div>
 
-        <!-- NHẬP MÃ GIẢM GIÁ -->
+        <!-- ПРОМОКОД -->
         <div class="promo-code-section">
             <div class="promo-code-box">
                 <div class="promo-code-icon"><i class="fa-solid fa-ticket"></i></div>
                 <div class="promo-code-text">
-                    <h3>Bạn có mã giảm giá?</h3>
-                    <p>Nhập mã bên dưới để áp dụng giảm giá cho tất cả sách trong đơn hàng của bạn</p>
+                    <h3>У вас есть промокод?</h3>
+                    <p>Введите код ниже, чтобы получить скидку на все книги в вашем заказе</p>
                 </div>
                 <div class="promo-code-form">
                     <div id="promo-input-row" class="promo-code-input-row" style="display:@(string.IsNullOrEmpty(appliedPromoCode) ? "flex" : "none")">
-                        <input type="text" id="promoCodeInput" placeholder="Nhập mã giảm giá, ví dụ: SUMMER25" maxlength="30" />
-                        <button type="button" id="promoApplyBtn" onclick="applyPromoCode()">Áp dụng</button>
+                        <input type="text" id="promoCodeInput" placeholder="Введите промокод, например: SUMMER25" maxlength="30" />
+                        <button type="button" id="promoApplyBtn" onclick="applyPromoCode()">Применить</button>
                     </div>
                     <div id="promo-applied-row" class="promo-code-applied-row" style="display:@(string.IsNullOrEmpty(appliedPromoCode) ? "none" : "flex")">
-                        <span><i class="fas fa-check-circle"></i> Đang áp dụng mã <strong id="promo-code-label">@appliedPromoCode</strong> (giảm <span id="promo-percent-label">@appliedPromoPercent</span>%)</span>
-                        <button type="button" class="promo-remove-btn" onclick="removePromoCode()">Gỡ mã</button>
+                        <span><i class="fas fa-check-circle"></i> Применён промокод <strong id="promo-code-label" class="notranslate" translate="no">@appliedPromoCode</strong> (скидка <span id="promo-percent-label">@appliedPromoPercent</span>%)</span>
+                        <button type="button" class="promo-remove-btn" onclick="removePromoCode()">Снять промокод</button>
                     </div>
                     <div id="promo-message" class="promo-code-message"></div>
                 </div>
@@ -56,8 +56,8 @@
             <div class="promo-card">
                 <div class="promo-badge">2+1</div>
                 <div class="promo-card-icon"><i class="fa-solid fa-gift"></i></div>
-                <h3>Три по цене двух</h3>
-                <p>При покупке 2 книг — третья в подарок. Акция распространяется на весь каталог</p>
+                <h3>Купи 2 — получи 1 в подарок</h3>
+                <p>При покупке 2 книг третья — в подарок. Акция распространяется на весь каталог</p>
                 <div class="promo-period"><i class="fas fa-calendar"></i> До 31 декабря 2026</div>
                 <a asp-controller="Books" asp-action="Index" class="promo-btn">Перейти к каталогу</a>
             </div>
@@ -98,18 +98,6 @@
                 <a asp-controller="Books" asp-action="Index" class="promo-btn">Выбрать подарок</a>
             </div>
 
-        </div>
-
-        <!-- NEWSLETTER -->
-        <div class="promo-newsletter">
-            <div class="promo-newsletter-text">
-                <h3>Подпишитесь на рассылку</h3>
-                <p>Получайте информацию о новых акциях и скидках первыми</p>
-            </div>
-            <div class="promo-newsletter-form">
-                <input type="email" placeholder="Введите ваш e-mail" />
-                <button>Подписаться</button>
-            </div>
         </div>
 
     </div>
@@ -166,7 +154,7 @@
         line-height: 1;
     }
 
-    /* NHẬP MÃ GIẢM GIÁ */
+    /* ПРОМОКОД */
     .promo-code-section {
         margin-bottom: 40px;
     }
@@ -382,63 +370,6 @@
             background: #9a6f00;
             color: white;
         }
-
-    /* NEWSLETTER */
-    .promo-newsletter {
-        background: #333;
-        border-radius: 12px;
-        padding: 40px 48px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 40px;
-    }
-
-    .promo-newsletter-text h3 {
-        font-family: 'Playfair Display', serif;
-        font-size: 24px;
-        color: white;
-        margin: 0 0 8px;
-    }
-
-    .promo-newsletter-text p {
-        color: #aaa;
-        margin: 0;
-        font-size: 15px;
-    }
-
-    .promo-newsletter-form {
-        display: flex;
-        gap: 12px;
-        flex: 1;
-        max-width: 440px;
-    }
-
-        .promo-newsletter-form input {
-            flex: 1;
-            padding: 12px 18px;
-            border-radius: 6px;
-            border: none;
-            font-size: 14px;
-            font-family: 'Lato', sans-serif;
-        }
-
-        .promo-newsletter-form button {
-            padding: 12px 24px;
-            background: #b8860b;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s;
-        }
-
-            .promo-newsletter-form button:hover {
-                background: #9a6f00;
-            }
 </style>
 <style>
     @@media (max-width: 768px) {
@@ -476,41 +407,29 @@
         .promo-card {
             padding: 20px 16px;
         }
-
-        .promo-newsletter {
-            flex-direction: column;
-            padding: 24px 16px;
-            gap: 16px;
-            border-radius: 12px;
-        }
-
-        .promo-newsletter-text h3 {
-            font-size: 20px;
-        }
-
-        .promo-newsletter-form {
-            flex-direction: column;
-            max-width: 100%;
-            width: 100%;
-        }
-
-            .promo-newsletter-form input,
-            .promo-newsletter-form button {
-                width: 100%;
-            }
     }
 </style>
 
 <script>
+    // Hiện chữ Nga ngay, rồi (nếu đang bật EN/VI) dịch lại bằng translateRuText() trong i18n.js
+    function showPromoMessage(textRu, type) {
+        const msg = document.getElementById('promo-message');
+        msg.textContent = textRu;
+        msg.className = 'promo-code-message ' + type;
+        if (typeof translateRuText === 'function' && (localStorage.getItem('siteLang') || 'ru') !== 'ru') {
+            translateRuText(textRu).then(function (translated) {
+                if (msg.className.indexOf(type) !== -1) msg.textContent = translated;
+            });
+        }
+    }
+
     function applyPromoCode() {
         const input = document.getElementById('promoCodeInput');
         const btn = document.getElementById('promoApplyBtn');
-        const msg = document.getElementById('promo-message');
         const code = input.value.trim();
 
         if (!code) {
-            msg.textContent = 'Vui lòng nhập mã giảm giá.';
-            msg.className = 'promo-code-message error';
+            showPromoMessage('Пожалуйста, введите промокод.', 'error');
             return;
         }
 
@@ -523,21 +442,18 @@
             .then(data => {
                 btn.disabled = false;
                 if (data.success) {
-                    msg.textContent = data.message;
-                    msg.className = 'promo-code-message success';
+                    showPromoMessage(data.message, 'success');
                     document.getElementById('promo-code-label').textContent = data.code;
                     document.getElementById('promo-percent-label').textContent = data.discountPercent;
                     document.getElementById('promo-input-row').style.display = 'none';
                     document.getElementById('promo-applied-row').style.display = 'flex';
                 } else {
-                    msg.textContent = data.message;
-                    msg.className = 'promo-code-message error';
+                    showPromoMessage(data.message, 'error');
                 }
             })
             .catch(() => {
                 btn.disabled = false;
-                msg.textContent = 'Có lỗi xảy ra, vui lòng thử lại.';
-                msg.className = 'promo-code-message error';
+                showPromoMessage('Произошла ошибка, попробуйте ещё раз.', 'error');
             });
     }
 

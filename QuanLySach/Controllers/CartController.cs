@@ -80,11 +80,11 @@ namespace QuanLySach.Controllers
         public IActionResult ApplyPromo(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
-                return Json(new { success = false, message = "Vui lòng nhập mã giảm giá." });
+                return Json(new { success = false, message = "Пожалуйста, введите промокод." });
 
             var promo = FindValidPromo(code);
             if (promo == null)
-                return Json(new { success = false, message = "Mã giảm giá không tồn tại hoặc đã hết hạn." });
+                return Json(new { success = false, message = "Промокод не существует или срок его действия истёк." });
 
             HttpContext.Session.SetString("PromoCode", promo.Code);
 
@@ -101,7 +101,7 @@ namespace QuanLySach.Controllers
             return Json(new
             {
                 success = true,
-                message = $"Đã áp dụng mã \"{promo.Code}\" – giảm {promo.DiscountPercent}%.",
+                message = $"Промокод «{promo.Code}» применён — скидка {promo.DiscountPercent}%.",
                 code = promo.Code,
                 discountPercent = promo.DiscountPercent,
                 subTotal = subTotal.ToString("0.00"),
@@ -186,7 +186,7 @@ namespace QuanLySach.Controllers
         {
             if (HttpContext.Session.GetInt32("UserId") == null)
             {
-                TempData["ToastError"] = "Vui lòng đăng nhập để tiến hành thanh toán.";
+                TempData["ToastError"] = "Пожалуйста, войдите в аккаунт, чтобы оформить заказ.";
                 return RedirectToAction("Login", "Account");
             }
 
@@ -211,7 +211,7 @@ namespace QuanLySach.Controllers
         {
             if (HttpContext.Session.GetInt32("UserId") == null)
             {
-                TempData["ToastError"] = "Vui lòng đăng nhập để tiến hành thanh toán.";
+                TempData["ToastError"] = "Пожалуйста, войдите в аккаунт, чтобы оформить заказ.";
                 return RedirectToAction("Login", "Account");
             }
 

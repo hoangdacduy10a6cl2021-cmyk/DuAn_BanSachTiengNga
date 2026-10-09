@@ -1,6 +1,11 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @using QuanLySach.Models
 @inject AppDbContext Db
+@{
+    var siteSetting = await Db.SiteSettings.AsNoTracking().FirstOrDefaultAsync();
+    var siteName = string.IsNullOrWhiteSpace(siteSetting?.StoreName) ? "Книжный Рай" : siteSetting!.StoreName;
+    bool IsHttp(string? u) => !string.IsNullOrWhiteSpace(u) && (u.StartsWith("http://") || u.StartsWith("https://"));
+}
 <!DOCTYPE html>
 <html lang="ru" translate="no">
 <head>
@@ -9,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/css/site.css?v=4" />
     <link rel="stylesheet" href="~/css/lang-mobile.css?v=1" />
-    <title>Книжный Рай — Книжный рай </title>
+    <title>@siteName</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
@@ -270,15 +275,24 @@
         <footer class="site-footer">
             <div class="container footer-inner">
                 <div class="footer-logo">
-                    <img src="~/images/logo.png" alt="Книжный Рай" />
+                    <img src="~/images/logo.png" alt="@siteName" />
                     <div>
-                        <h3>Книжный Рай</h3>
+                        <h3>@siteName</h3>
                         <span data-i18n="tagline">— Книжный рай —</span>
                     </div>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-vk"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        @if (IsHttp(siteSetting?.FacebookUrl))
+                        {
+                            <a href="@siteSetting!.FacebookUrl" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+                        }
+                        @if (IsHttp(siteSetting?.InstagramUrl))
+                        {
+                            <a href="@siteSetting!.InstagramUrl" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                        }
+                        @if (IsHttp(siteSetting?.TelegramUrl))
+                        {
+                            <a href="@siteSetting!.TelegramUrl" target="_blank" rel="noopener"><i class="fab fa-telegram"></i></a>
+                        }
                     </div>
                 </div>
 
@@ -306,14 +320,30 @@
                 <div class="footer-col">
                     <h4 data-i18n="contact">Контакты</h4>
                     <ul>
-                        <li><i class="fas fa-phone"></i> 0946029615</li>
-                        <li><i class="fas fa-envelope"></i> Русские-книги@gmail.com</li>
-                        <li><i class="fas fa-map-marker-alt"></i> <span data-i18n="address">ул. Мясницкая, д. 6/3, стр. 1, Москва, Россия, 101000</span></li>
+                        @if (!string.IsNullOrWhiteSpace(siteSetting?.StorePhone))
+                        {
+                            <li><i class="fas fa-phone"></i> @siteSetting!.StorePhone</li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(siteSetting?.StoreEmail))
+                        {
+                            <li><i class="fas fa-envelope"></i> @siteSetting!.StoreEmail</li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(siteSetting?.StoreAddress))
+                        {
+                            <li><i class="fas fa-map-marker-alt"></i> <span class="notranslate">@siteSetting!.StoreAddress</span></li>
+                        }
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p data-i18n="copyright">© 2026 Книжный Рай. Все права защищены.</p>
+                @if (!string.IsNullOrWhiteSpace(siteSetting?.FooterText))
+                {
+                    <p class="notranslate">@siteSetting!.FooterText</p>
+                }
+                else
+                {
+                    <p data-i18n="copyright">© 2026 Книжный Рай. Все права защищены.</p>
+                }
             </div>
         </footer>
     </div>
