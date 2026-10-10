@@ -75,7 +75,7 @@ namespace QuanLySach.Controllers
             _db.ContactMessages.Add(contactMessage);
             await _db.SaveChangesAsync();
 
-            TempData["ContactSuccess"] = "Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.";
+            TempData["ContactSuccess"] = "Спасибо за обращение! Мы ответим вам как можно скорее.";
             return RedirectToAction("Contact");
         }
         public IActionResult Promotions()

@@ -76,7 +76,9 @@ namespace QuanLySach.Controllers
                 HttpContext.Session.SetString("AdminName", admin.FullName);
                 HttpContext.Session.SetString("AdminRole", admin.Role?.Name ?? "");
                 HttpContext.Session.SetInt32("AdminRoleId", admin.RoleId);
-                TempData["ToastSuccess"] = "Добро пожаловать, администратор!";
+                // Dùng "Success" (layout admin hiển thị) thay vì "ToastSuccess" (layout khách hiển thị),
+                // nếu không thông báo sẽ nằm chờ rồi bật ra ở trang khách đầu tiên.
+                TempData["Success"] = "Добро пожаловать, администратор!";
                 return RedirectToAction("Index", "QuanTri");
             }
 
@@ -127,7 +129,9 @@ namespace QuanLySach.Controllers
             Response.Cookies.Delete("RememberUserId");
             Response.Cookies.Delete("RememberUserName");
             TempData["ToastSuccess"] = "Вы успешно вышли из системы!";
-            return RedirectToAction("Index", "Home");
+
+            // Đăng xuất xong về trang đăng nhập (không về Home, vì Home sẽ đẩy tiếp sang Đăng ký)
+            return RedirectToAction("Login", "Account");
         }
 
         [HttpGet]
@@ -256,14 +260,6 @@ namespace QuanLySach.Controllers
                 .ToList();
 
             return Json(ids);
-        }
-
-        [HttpGet]
-        public IActionResult Addresses()
-        {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null) return RedirectToAction("Login");
-            return View();
         }
 
         [HttpGet]

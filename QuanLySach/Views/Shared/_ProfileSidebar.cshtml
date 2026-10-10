@@ -19,11 +19,6 @@
                 <i class="fas fa-heart"></i> Избранное
             </a>
         </li>
-        <li class="@(current == "Addresses" ? "active" : "")">
-            <a asp-controller="Account" asp-action="Addresses">
-                <i class="fas fa-map-marker-alt"></i> Адреса доставки
-            </a>
-        </li>
         <li class="@(current == "Payment" ? "active" : "")">
             <a asp-controller="Account" asp-action="Payment">
                 <i class="fas fa-credit-card"></i> Способы оплаты
